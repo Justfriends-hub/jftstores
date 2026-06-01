@@ -74,9 +74,10 @@ export async function subscribeToPush(opts?: { roleTag?: "customer" | "seller" }
   const perm = await Notification.requestPermission();
   if (perm !== "granted") return false;
 
+  const key = urlBase64ToUint8Array(vapid);
   const sub = await reg.pushManager.subscribe({
     userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(vapid),
+    applicationServerKey: key.buffer.slice(key.byteOffset, key.byteOffset + key.byteLength) as ArrayBuffer,
   });
 
   const json = sub.toJSON();
