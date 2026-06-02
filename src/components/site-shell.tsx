@@ -132,7 +132,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">Sell with us</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/register" className="hover:text-foreground">Open a free storefront</Link></li>
+            <li><Link to="/sell" className="hover:text-foreground">Open a free storefront</Link></li>
             <li><Link to="/login" className="hover:text-foreground">Seller sign in</Link></li>
           </ul>
         </div>
