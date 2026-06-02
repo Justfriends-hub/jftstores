@@ -75,14 +75,21 @@ export function SiteHeader() {
               <DropdownMenuSeparator />
               {isSeller ? (
                 <DropdownMenuItem asChild>
-                  <Link to="/stores">
+                  <Link to="/dashboard">
                     <Store className="mr-2 h-4 w-4" /> My dashboard
                   </Link>
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem asChild>
-                  <Link to="/stores">
+                  <Link to="/sell">
                     <Store className="mr-2 h-4 w-4" /> Open a store
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              {isAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin">
+                    <Store className="mr-2 h-4 w-4" /> Admin panel
                   </Link>
                 </DropdownMenuItem>
               )}
