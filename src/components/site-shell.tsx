@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function SiteHeader() {
-  const { user, isSeller, signOut } = useAuth();
+  const { user, isSeller, isAdmin, signOut } = useAuth();
   const { count } = useCart();
   const [q, setQ] = useState("");
 
