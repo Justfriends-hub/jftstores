@@ -43,7 +43,7 @@ function AdminPage() {
     setReady(true);
   }
 
-  async function setSellerStatus(id: string, status: "approved" | "rejected" | "pending") {
+  async function setSellerStatus(id: string, status: "approved" | "suspended" | "pending") {
     const { error } = await supabase.from("sellers").update({ status }).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success(`Seller ${status}`);
@@ -87,7 +87,7 @@ function AdminPage() {
                   </div>
                   <div className="flex gap-2">
                     <Button size="sm" onClick={() => setSellerStatus(s.id, "approved")}>Approve</Button>
-                    <Button size="sm" variant="outline" onClick={() => setSellerStatus(s.id, "rejected")}>Reject</Button>
+                    <Button size="sm" variant="outline" onClick={() => setSellerStatus(s.id, "suspended")}>Suspend</Button>
                   </div>
                 </li>
               ))}
@@ -107,7 +107,7 @@ function AdminPage() {
                 <div className="flex items-center gap-3">
                   <Badge variant={s.status === "approved" ? "default" : "secondary"}>{s.status}</Badge>
                   {s.status !== "approved" && <Button size="sm" variant="ghost" onClick={() => setSellerStatus(s.id, "approved")}>Approve</Button>}
-                  {s.status !== "rejected" && <Button size="sm" variant="ghost" onClick={() => setSellerStatus(s.id, "rejected")}>Reject</Button>}
+                  {s.status !== "suspended" && <Button size="sm" variant="ghost" onClick={() => setSellerStatus(s.id, "suspended")}>Suspend</Button>}
                 </div>
               </li>
             ))}
