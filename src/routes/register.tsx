@@ -33,7 +33,7 @@ function RegisterPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `${window.location.origin}/sell`,
         data: { full_name: fullName },
       },
     });
