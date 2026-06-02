@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function SiteHeader() {
-  const { user, isSeller, signOut } = useAuth();
+  const { user, isSeller, isAdmin, signOut } = useAuth();
   const { count } = useCart();
   const [q, setQ] = useState("");
 
@@ -75,14 +75,21 @@ export function SiteHeader() {
               <DropdownMenuSeparator />
               {isSeller ? (
                 <DropdownMenuItem asChild>
-                  <Link to="/stores">
+                  <Link to="/dashboard">
                     <Store className="mr-2 h-4 w-4" /> My dashboard
                   </Link>
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem asChild>
-                  <Link to="/stores">
+                  <Link to="/sell">
                     <Store className="mr-2 h-4 w-4" /> Open a store
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              {isAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin">
+                    <Store className="mr-2 h-4 w-4" /> Admin panel
                   </Link>
                 </DropdownMenuItem>
               )}
@@ -125,7 +132,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">Sell with us</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/register" className="hover:text-foreground">Open a free storefront</Link></li>
+            <li><Link to="/sell" className="hover:text-foreground">Open a free storefront</Link></li>
             <li><Link to="/login" className="hover:text-foreground">Seller sign in</Link></li>
           </ul>
         </div>
