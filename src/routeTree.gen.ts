@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoresRouteImport } from './routes/stores'
+import { Route as SellRouteImport } from './routes/sell'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CartRouteImport } from './routes/cart'
@@ -19,6 +20,11 @@ import { Route as StoreSlugRouteImport } from './routes/store.$slug'
 const StoresRoute = StoresRouteImport.update({
   id: '/stores',
   path: '/stores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellRoute = SellRouteImport.update({
+  id: '/sell',
+  path: '/sell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
   '/store/$slug': typeof StoreSlugRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
   '/store/$slug': typeof StoreSlugRoute
 }
@@ -69,20 +77,36 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
   '/store/$slug': typeof StoreSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cart' | '/login' | '/register' | '/stores' | '/store/$slug'
+  fullPaths:
+    | '/'
+    | '/cart'
+    | '/login'
+    | '/register'
+    | '/sell'
+    | '/stores'
+    | '/store/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cart' | '/login' | '/register' | '/stores' | '/store/$slug'
+  to:
+    | '/'
+    | '/cart'
+    | '/login'
+    | '/register'
+    | '/sell'
+    | '/stores'
+    | '/store/$slug'
   id:
     | '__root__'
     | '/'
     | '/cart'
     | '/login'
     | '/register'
+    | '/sell'
     | '/stores'
     | '/store/$slug'
   fileRoutesById: FileRoutesById
@@ -92,6 +116,7 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  SellRoute: typeof SellRoute
   StoresRoute: typeof StoresRoute
   StoreSlugRoute: typeof StoreSlugRoute
 }
@@ -103,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/stores'
       fullPath: '/stores'
       preLoaderRoute: typeof StoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sell': {
+      id: '/sell'
+      path: '/sell'
+      fullPath: '/sell'
+      preLoaderRoute: typeof SellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -148,9 +180,20 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  SellRoute: SellRoute,
   StoresRoute: StoresRoute,
   StoreSlugRoute: StoreSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
