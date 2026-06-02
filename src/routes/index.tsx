@@ -55,7 +55,7 @@ function HomePage() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full">
-                <Link to="/register">Open your free shop</Link>
+                <Link to="/sell">Open your free shop</Link>
               </Button>
             </div>
             <div className="mt-10 flex items-center gap-6 text-xs text-muted-foreground">
@@ -169,7 +169,7 @@ function HomePage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild size="lg" variant="secondary" className="rounded-full">
-                <Link to="/register">Open my free shop</Link>
+                <Link to="/sell">Open my free shop</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white">
                 <Link to="/stores">See live shops</Link>
@@ -190,7 +190,7 @@ function EmptyMakersCallout() {
         Shops are being approved as we speak. Be one of the first to open yours.
       </p>
       <Button asChild className="mt-5 rounded-full">
-        <Link to="/register">Open your free shop</Link>
+        <Link to="/sell">Open your free shop</Link>
       </Button>
     </div>
   );
