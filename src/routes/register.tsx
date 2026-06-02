@@ -23,7 +23,7 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) navigate({ to: "/", replace: true });
+    if (user) navigate({ to: "/sell", replace: true });
   }, [user, navigate]);
 
   const onRegister = async (e: React.FormEvent) => {
