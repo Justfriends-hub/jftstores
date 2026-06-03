@@ -22,7 +22,7 @@ async function log(adminId: string, action: string, targetType: string | null, t
     action,
     target_type: targetType,
     target_id: targetId,
-    meta,
+    meta: meta as never,
   });
 }
 
