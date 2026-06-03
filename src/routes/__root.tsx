@@ -15,6 +15,8 @@ import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useTrackPageView } from "@/lib/tracking";
+import { useAuth } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
