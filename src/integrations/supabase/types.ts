@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          id: string
+          meta: Json | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -61,6 +91,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ip_blocks: {
+        Row: {
+          blocked_at: string
+          blocked_by: string | null
+          id: string
+          ip_address: string
+          reason: string | null
+        }
+        Insert: {
+          blocked_at?: string
+          blocked_by?: string | null
+          id?: string
+          ip_address: string
+          reason?: string | null
+        }
+        Update: {
+          blocked_at?: string
+          blocked_by?: string | null
+          id?: string
+          ip_address?: string
+          reason?: string | null
+        }
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -156,6 +210,60 @@ export type Database = {
         }
         Relationships: []
       }
+      page_visits: {
+        Row: {
+          city: string | null
+          country: string | null
+          country_code: string | null
+          id: string
+          ip_address: string | null
+          latitude: number | null
+          longitude: number | null
+          page_url: string
+          referrer: string | null
+          region: string | null
+          session_id: string | null
+          store_slug: string | null
+          user_agent: string | null
+          user_id: string | null
+          visited_at: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          id?: string
+          ip_address?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          page_url: string
+          referrer?: string | null
+          region?: string | null
+          session_id?: string | null
+          store_slug?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          visited_at?: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          id?: string
+          ip_address?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          page_url?: string
+          referrer?: string | null
+          region?: string | null
+          session_id?: string | null
+          store_slug?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          visited_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string | null
@@ -215,6 +323,12 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          ip_city: string | null
+          ip_country: string | null
+          ip_region: string | null
+          is_blocked: boolean
+          last_active_at: string | null
+          referral_store_slug: string | null
           updated_at: string
           whatsapp_number: string | null
         }
@@ -223,6 +337,12 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          ip_city?: string | null
+          ip_country?: string | null
+          ip_region?: string | null
+          is_blocked?: boolean
+          last_active_at?: string | null
+          referral_store_slug?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -231,6 +351,12 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          ip_city?: string | null
+          ip_country?: string | null
+          ip_region?: string | null
+          is_blocked?: boolean
+          last_active_at?: string | null
+          referral_store_slug?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -285,9 +411,12 @@ export type Database = {
           id: string
           is_featured: boolean
           logo_url: string | null
+          rank: number
           slug: string
           status: Database["public"]["Enums"]["seller_status"]
           theme_id: string | null
+          total_orders: number
+          total_revenue: number
           updated_at: string
           user_id: string
           whatsapp_number: string | null
@@ -301,9 +430,12 @@ export type Database = {
           id?: string
           is_featured?: boolean
           logo_url?: string | null
+          rank?: number
           slug: string
           status?: Database["public"]["Enums"]["seller_status"]
           theme_id?: string | null
+          total_orders?: number
+          total_revenue?: number
           updated_at?: string
           user_id: string
           whatsapp_number?: string | null
@@ -317,9 +449,12 @@ export type Database = {
           id?: string
           is_featured?: boolean
           logo_url?: string | null
+          rank?: number
           slug?: string
           status?: Database["public"]["Enums"]["seller_status"]
           theme_id?: string | null
+          total_orders?: number
+          total_revenue?: number
           updated_at?: string
           user_id?: string
           whatsapp_number?: string | null
@@ -387,6 +522,39 @@ export type Database = {
           name?: string
           preview_image_url?: string | null
           slug?: string
+        }
+        Relationships: []
+      }
+      user_journeys: {
+        Row: {
+          created_at: string
+          from_page: string | null
+          from_store_slug: string | null
+          id: string
+          session_id: string | null
+          to_page: string | null
+          to_store_slug: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          from_page?: string | null
+          from_store_slug?: string | null
+          id?: string
+          session_id?: string | null
+          to_page?: string | null
+          to_store_slug?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          from_page?: string | null
+          from_store_slug?: string | null
+          id?: string
+          session_id?: string | null
+          to_page?: string | null
+          to_store_slug?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
