@@ -106,14 +106,16 @@ export function useTrackPageView() {
         // Update profile last_active + ip fields + referral on first auth'd visit
         if (userId) {
           const referralStore = localStorage.getItem(REFERRAL_STORE_KEY);
-          const patch: Record<string, unknown> = {
-            last_active_at: new Date().toISOString(),
-            ip_country: geo?.country_name ?? null,
-            ip_region: geo?.region ?? null,
-            ip_city: geo?.city ?? null,
-          };
-          if (referralStore) patch.referral_store_slug = referralStore;
-          void supabase.from("profiles").update(patch).eq("id", userId);
+          void supabase
+            .from("profiles")
+            .update({
+              last_active_at: new Date().toISOString(),
+              ip_country: geo?.country_name ?? null,
+              ip_region: geo?.region ?? null,
+              ip_city: geo?.city ?? null,
+              ...(referralStore ? { referral_store_slug: referralStore } : {}),
+            })
+            .eq("id", userId);
         }
       } catch {
         // Swallow all errors — tracking must never break the app
