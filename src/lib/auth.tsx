@@ -9,6 +9,7 @@ type AuthState = {
   session: Session | null;
   roles: Role[];
   loading: boolean;
+  isBlocked: boolean;
   signOut: () => Promise<void>;
   isAdmin: boolean;
   isSeller: boolean;
@@ -19,18 +20,28 @@ const AuthContext = createContext<AuthState | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<Role[]>([]);
+  const [isBlocked, setIsBlocked] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Important: synchronous setSession in the listener; defer Supabase calls.
+    const loadUserData = (userId: string) => {
+      void supabase.from("user_roles").select("role").eq("user_id", userId).then(({ data }) => {
+        setRoles((data ?? []).map((r) => r.role as Role));
+      });
+      void supabase.from("profiles").select("is_blocked").eq("id", userId).maybeSingle().then(({ data }) => {
+        if (data?.is_blocked) {
+          setIsBlocked(true);
+          void supabase.auth.signOut();
+        } else {
+          setIsBlocked(false);
+        }
+      });
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_evt, s) => {
       setSession(s);
       if (s?.user) {
-        setTimeout(() => {
-          supabase.from("user_roles").select("role").eq("user_id", s.user.id).then(({ data }) => {
-            setRoles((data ?? []).map((r) => r.role as Role));
-          });
-        }, 0);
+        setTimeout(() => loadUserData(s.user.id), 0);
       } else {
         setRoles([]);
       }
@@ -39,13 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       if (data.session?.user) {
-        supabase.from("user_roles").select("role").eq("user_id", data.session.user.id).then(({ data: r }) => {
-          setRoles((r ?? []).map((x) => x.role as Role));
-          setLoading(false);
-        });
-      } else {
-        setLoading(false);
+        loadUserData(data.session.user.id);
       }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -56,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     roles,
     loading,
+    isBlocked,
     isAdmin: roles.includes("admin"),
     isSeller: roles.includes("seller"),
     signOut: async () => {
