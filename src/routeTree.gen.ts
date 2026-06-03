@@ -22,6 +22,7 @@ import { Route as StoreSlugRouteImport } from './routes/store.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminStoresRouteImport } from './routes/admin.stores'
 import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
+import { Route as AdminStoresIdRouteImport } from './routes/admin.stores.$id'
 
 const StoresRoute = StoresRouteImport.update({
   id: '/stores',
@@ -88,6 +89,11 @@ const AdminUsersIdRoute = AdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AdminUsersRoute,
 } as any)
+const AdminStoresIdRoute = AdminStoresIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminStoresRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -98,10 +104,11 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
-  '/admin/stores': typeof AdminStoresRoute
+  '/admin/stores': typeof AdminStoresRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/store/$slug': typeof StoreSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/stores/$id': typeof AdminStoresIdRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
 }
 export interface FileRoutesByTo {
@@ -112,10 +119,11 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
-  '/admin/stores': typeof AdminStoresRoute
+  '/admin/stores': typeof AdminStoresRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/store/$slug': typeof StoreSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/stores/$id': typeof AdminStoresIdRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
 }
 export interface FileRoutesById {
@@ -128,10 +136,11 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
-  '/admin/stores': typeof AdminStoresRoute
+  '/admin/stores': typeof AdminStoresRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/store/$slug': typeof StoreSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/stores/$id': typeof AdminStoresIdRoute
   '/admin/users/$id': typeof AdminUsersIdRoute
 }
 export interface FileRouteTypes {
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/store/$slug'
     | '/admin/'
+    | '/admin/stores/$id'
     | '/admin/users/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/store/$slug'
     | '/admin'
+    | '/admin/stores/$id'
     | '/admin/users/$id'
   id:
     | '__root__'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/store/$slug'
     | '/admin/'
+    | '/admin/stores/$id'
     | '/admin/users/$id'
   fileRoutesById: FileRoutesById
 }
@@ -286,8 +298,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersIdRouteImport
       parentRoute: typeof AdminUsersRoute
     }
+    '/admin/stores/$id': {
+      id: '/admin/stores/$id'
+      path: '/$id'
+      fullPath: '/admin/stores/$id'
+      preLoaderRoute: typeof AdminStoresIdRouteImport
+      parentRoute: typeof AdminStoresRoute
+    }
   }
 }
+
+interface AdminStoresRouteChildren {
+  AdminStoresIdRoute: typeof AdminStoresIdRoute
+}
+
+const AdminStoresRouteChildren: AdminStoresRouteChildren = {
+  AdminStoresIdRoute: AdminStoresIdRoute,
+}
+
+const AdminStoresRouteWithChildren = AdminStoresRoute._addFileChildren(
+  AdminStoresRouteChildren,
+)
 
 interface AdminUsersRouteChildren {
   AdminUsersIdRoute: typeof AdminUsersIdRoute
@@ -302,13 +333,13 @@ const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
-  AdminStoresRoute: typeof AdminStoresRoute
+  AdminStoresRoute: typeof AdminStoresRouteWithChildren
   AdminUsersRoute: typeof AdminUsersRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminStoresRoute: AdminStoresRoute,
+  AdminStoresRoute: AdminStoresRouteWithChildren,
   AdminUsersRoute: AdminUsersRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
 }
