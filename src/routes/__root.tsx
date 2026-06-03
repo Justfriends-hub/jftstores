@@ -140,10 +140,35 @@ function RootComponent() {
       <AuthProvider>
         <CartProvider>
           <AuthListener />
-          <Outlet />
+          <TrackingMount />
+          <BlockedGate>
+            <Outlet />
+          </BlockedGate>
           <Toaster position="top-center" />
         </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function TrackingMount() {
+  useTrackPageView();
+  return null;
+}
+
+function BlockedGate({ children }: { children: ReactNode }) {
+  const { isBlocked } = useAuth();
+  if (isBlocked) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="max-w-md text-center">
+          <h1 className="font-serif text-3xl">Your account has been suspended</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            If you believe this is a mistake, please contact support.
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return <>{children}</>;
 }
