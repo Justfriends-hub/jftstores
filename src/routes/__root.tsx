@@ -143,14 +143,31 @@ function RootComponent() {
         <CartProvider>
           <AuthListener />
           <TrackingMount />
+          <PWAMount />
           <BlockedGate>
             <Outlet />
           </BlockedGate>
+          <InstallBanner />
           <Toaster position="top-center" />
         </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function PWAMount() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!("serviceWorker" in navigator)) return;
+    if (!import.meta.env.PROD) return;
+    try {
+      if (window.self !== window.top) return;
+    } catch { return; }
+    const h = window.location.hostname;
+    if (h.includes("id-preview--") || h.includes("lovableproject.com")) return;
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }, []);
+  return null;
 }
 
 function TrackingMount() {
