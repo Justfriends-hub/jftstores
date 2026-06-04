@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { NotificationBell } from "@/components/notification-bell";
 import { ShoppingBag, Search, Sun, User, LogOut, Store } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
