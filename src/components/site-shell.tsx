@@ -63,6 +63,8 @@ export function SiteHeader() {
           )}
         </Link>
 
+        <NotificationBell />
+
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
