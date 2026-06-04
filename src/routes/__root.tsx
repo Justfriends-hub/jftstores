@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTrackPageView } from "@/lib/tracking";
 import { useAuth } from "@/lib/auth";
+import { InstallBanner } from "@/components/install-banner";
 
 function NotFoundComponent() {
   return (
