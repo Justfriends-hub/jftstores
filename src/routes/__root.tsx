@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTrackPageView } from "@/lib/tracking";
 import { useAuth } from "@/lib/auth";
+import { InstallBanner } from "@/components/install-banner";
 
 function NotFoundComponent() {
   return (
@@ -92,6 +93,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -141,14 +144,31 @@ function RootComponent() {
         <CartProvider>
           <AuthListener />
           <TrackingMount />
+          <PWAMount />
           <BlockedGate>
             <Outlet />
           </BlockedGate>
+          <InstallBanner />
           <Toaster position="top-center" />
         </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function PWAMount() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!("serviceWorker" in navigator)) return;
+    if (!import.meta.env.PROD) return;
+    try {
+      if (window.self !== window.top) return;
+    } catch { return; }
+    const h = window.location.hostname;
+    if (h.includes("id-preview--") || h.includes("lovableproject.com")) return;
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }, []);
+  return null;
 }
 
 function TrackingMount() {

@@ -44,6 +44,50 @@ export type Database = {
         }
         Relationships: []
       }
+      broadcasts: {
+        Row: {
+          admin_id: string
+          body: string
+          created_at: string
+          id: string
+          recipients_count: number
+          target: string
+          target_seller_id: string | null
+          title: string
+          url: string | null
+        }
+        Insert: {
+          admin_id: string
+          body: string
+          created_at?: string
+          id?: string
+          recipients_count?: number
+          target: string
+          target_seller_id?: string | null
+          title: string
+          url?: string | null
+        }
+        Update: {
+          admin_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          recipients_count?: number
+          target?: string
+          target_seller_id?: string | null
+          title?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcasts_target_seller_id_fkey"
+            columns: ["target_seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -113,6 +157,39 @@ export type Database = {
           id?: string
           ip_address?: string
           reason?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_read: boolean
+          title: string
+          type: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          title: string
+          type?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          title?: string
+          type?: string
+          url?: string | null
+          user_id?: string
         }
         Relationships: []
       }
