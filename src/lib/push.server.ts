@@ -63,8 +63,7 @@ export async function sendPushToUsers(userIds: string[], payload: PushPayload): 
   const { data: subs } = await supabaseAdmin
     .from("push_subscriptions")
     .select("id, endpoint, p256dh, auth")
-    .in("user_id", userIds)
-    .eq("is_active", true);
+    .in("user_id", userIds);
 
   if (!subs || subs.length === 0) return;
 
