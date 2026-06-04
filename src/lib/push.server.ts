@@ -84,7 +84,7 @@ export async function sendPushToUsers(userIds: string[], payload: PushPayload): 
           },
         });
         if (res.status === 404 || res.status === 410) {
-          await supabaseAdmin.from("push_subscriptions").update({ is_active: false }).eq("id", sub.id);
+          await supabaseAdmin.from("push_subscriptions").delete().eq("id", sub.id);
         }
       } catch (e) {
         console.error("push delivery error", e);
