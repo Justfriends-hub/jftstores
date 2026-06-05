@@ -5,7 +5,9 @@
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY || "";
+const VAPID_PUBLIC =
+  process.env.VAPID_PUBLIC_KEY ||
+  "BD7-g9CGmVA4AgNEyoCaJc4R0RB_l9Nvc69loRNxXIa99cMmA0dFNJuuDJOGPz8ryB3RoVJ_H0JPvQDNZRXEWpM";
 const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY || "";
 const VAPID_SUBJECT = process.env.VAPID_SUBJECT || "mailto:admin@justfriendstore.com";
 
