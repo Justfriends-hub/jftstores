@@ -61,11 +61,17 @@ function arrayBufferToBase64(buf: ArrayBuffer | null): string {
   return btoa(bin);
 }
 
+// VAPID public key — public by design (clients use it to subscribe).
+// Private counterpart is server-only (VAPID_PRIVATE_KEY secret).
+const VAPID_PUBLIC_KEY =
+  (import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined) ||
+  "BD7-g9CGmVA4AgNEyoCaJc4R0RB_l9Nvc69loRNxXIa99cMmA0dFNJuuDJOGPz8ryB3RoVJ_H0JPvQDNZRXEWpM";
+
 export async function subscribeToPush(opts?: { roleTag?: "customer" | "seller" }): Promise<boolean> {
   if (!pushSupported()) return false;
-  const vapid = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined;
+  const vapid = VAPID_PUBLIC_KEY;
   if (!vapid) {
-    console.warn("[push] VITE_VAPID_PUBLIC_KEY not configured");
+    console.warn("[push] VAPID public key not configured");
     return false;
   }
   const reg = await ensureServiceWorker();

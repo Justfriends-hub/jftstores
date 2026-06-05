@@ -51,8 +51,11 @@ export function StoreSettings({ seller, onChange }: { seller: SellerRow; onChang
       toast.error("Max 5MB");
       return;
     }
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData.user?.id;
+    if (!uid) { toast.error("Not signed in"); return; }
     const ext = file.name.split(".").pop() || "jpg";
-    const path = `${seller.id}/${kind}-${Date.now()}.${ext}`;
+    const path = `${uid}/${kind}-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("store-assets").upload(path, file, { upsert: true });
     if (error) {
       toast.error(error.message);
