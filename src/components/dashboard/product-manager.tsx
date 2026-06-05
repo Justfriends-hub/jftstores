@@ -160,8 +160,11 @@ function ProductDialog({ sellerId, product, onClose, onSaved }: {
     for (const f of Array.from(files).slice(0, 8 - images.length)) {
       if (!ALLOWED.includes(f.type)) { toast.error(`${f.name}: must be jpg/png/webp`); continue; }
       if (f.size > MAX) { toast.error(`${f.name}: max 5MB`); continue; }
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData.user?.id;
+      if (!uid) { toast.error("Not signed in"); continue; }
       const ext = f.name.split(".").pop() || "jpg";
-      const path = `${sellerId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const path = `${uid}/${sellerId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
       const { error } = await supabase.storage.from("product-images").upload(path, f);
       if (error) { toast.error(error.message); continue; }
       const { data } = supabase.storage.from("product-images").getPublicUrl(path);
