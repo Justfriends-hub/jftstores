@@ -254,10 +254,13 @@ export type Database = {
       orders: {
         Row: {
           created_at: string
+          currency: string
           customer_email: string
           customer_id: string | null
           customer_name: string | null
           id: string
+          payment_provider: string | null
+          payment_reference: string | null
           status: Database["public"]["Enums"]["order_status"]
           stripe_payment_id: string | null
           total_amount: number
@@ -265,10 +268,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          currency?: string
           customer_email: string
           customer_id?: string | null
           customer_name?: string | null
           id?: string
+          payment_provider?: string | null
+          payment_reference?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           stripe_payment_id?: string | null
           total_amount: number
@@ -276,10 +282,13 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          currency?: string
           customer_email?: string
           customer_id?: string | null
           customer_name?: string | null
           id?: string
+          payment_provider?: string | null
+          payment_reference?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           stripe_payment_id?: string | null
           total_amount?: number
