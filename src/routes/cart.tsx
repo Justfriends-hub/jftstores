@@ -97,18 +97,18 @@ function CartPage() {
               ))}
             </div>
 
-            <aside className="h-fit rounded-2xl border border-border bg-card p-5">
+            <aside className="h-fit rounded-2xl border border-border bg-card p-5 md:sticky md:top-24">
               <h2 className="font-serif text-lg">Order summary</h2>
               <dl className="mt-4 space-y-2 text-sm">
                 <div className="flex justify-between"><dt className="text-muted-foreground">Items</dt><dd>{count}</dd></div>
                 <div className="flex justify-between"><dt className="text-muted-foreground">Shops</dt><dd>{bySeller.length}</dd></div>
-                <div className="flex justify-between border-t border-border pt-3 text-base font-semibold"><dt>Total</dt><dd>€{total.toFixed(2)}</dd></div>
+                <div className="flex justify-between border-t border-border pt-3 text-base font-semibold"><dt>Total</dt><dd>₦{total.toLocaleString()}</dd></div>
               </dl>
-              <Button className="mt-5 w-full rounded-full" size="lg" disabled>
-                Checkout (coming next)
+              <Button asChild className="mt-5 w-full rounded-full h-12 text-base" size="lg">
+                <Link to="/checkout">Proceed to checkout <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
               </Button>
-              <p className="mt-3 text-[11px] text-muted-foreground">
-                Stripe checkout ships in the next slice. For now you can message any shop directly on WhatsApp using the buttons above.
+              <p className="mt-3 text-[11px] text-muted-foreground text-center">
+                Secure payment via Paystack. You'll be asked to sign in if you haven't already.
               </p>
             </aside>
           </div>
