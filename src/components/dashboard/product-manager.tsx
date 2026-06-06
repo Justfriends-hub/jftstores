@@ -94,7 +94,7 @@ export function ProductManager({ sellerId }: { sellerId: string }) {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="font-medium truncate">{p.name}</p>
-                        <p className="text-xs text-muted-foreground">€{Number(p.price).toFixed(2)} · stock {p.stock}</p>
+                        <p className="text-xs text-muted-foreground">₦{Number(p.price).toLocaleString()} · stock {p.stock}</p>
                       </div>
                       <Badge variant={p.is_active ? "default" : "secondary"} className="text-[10px]">
                         {p.is_active ? "active" : "hidden"}
@@ -221,7 +221,7 @@ function ProductDialog({ sellerId, product, onClose, onSaved }: {
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <Label>Price (€) *</Label>
+              <Label>Price (₦) *</Label>
               <Input type="number" step="0.01" min="0" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
             </div>
             <div>

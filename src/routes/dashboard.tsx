@@ -111,7 +111,7 @@ function DashboardPage() {
                   <li key={it.id} className="flex items-center justify-between px-4 py-3 text-sm gap-3">
                     <div className="min-w-0">
                       <p className="font-medium truncate">{it.product_name}</p>
-                      <p className="text-xs text-muted-foreground">× {it.quantity} · €{(Number(it.price_at_purchase) * it.quantity).toFixed(2)} · {new Date(it.created_at).toLocaleDateString()}</p>
+                      <p className="text-xs text-muted-foreground">× {it.quantity} · ₦{(Number(it.price_at_purchase) * it.quantity).toLocaleString()} · {new Date(it.created_at).toLocaleDateString()}</p>
                     </div>
                     <Button size="sm" variant={it.fulfilled ? "ghost" : "outline"} onClick={() => toggleFulfilled(it)}>
                       {it.fulfilled ? "Fulfilled ✓" : "Mark fulfilled"}

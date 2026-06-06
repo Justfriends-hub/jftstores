@@ -71,7 +71,7 @@ function CartPage() {
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
                               <div className="truncate text-sm font-semibold">{it.productName}</div>
-                              <div className="text-xs text-muted-foreground">€{it.price.toFixed(2)}</div>
+                              <div className="text-xs text-muted-foreground">₦{it.price.toLocaleString()}</div>
                             </div>
                             <button onClick={() => remove(it.productId)} className="text-muted-foreground hover:text-destructive" aria-label="Remove">
                               <Trash2 className="h-4 w-4" />
@@ -83,7 +83,7 @@ function CartPage() {
                               <span className="w-7 text-center text-sm font-semibold">{it.quantity}</span>
                               <button onClick={() => setQty(it.productId, it.quantity + 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Plus className="h-3.5 w-3.5" /></button>
                             </div>
-                            <div className="text-sm font-semibold">€{(it.price * it.quantity).toFixed(2)}</div>
+                            <div className="text-sm font-semibold">₦{(it.price * it.quantity).toLocaleString()}</div>
                           </div>
                         </div>
                       </li>
@@ -91,7 +91,7 @@ function CartPage() {
                   </ul>
                   <div className="flex items-center justify-between border-t border-border bg-muted/30 px-5 py-3 text-sm">
                     <span className="text-muted-foreground">Shop subtotal</span>
-                    <span className="font-semibold">€{g.subtotal.toFixed(2)}</span>
+                    <span className="font-semibold">₦{g.subtotal.toLocaleString()}</span>
                   </div>
                 </div>
               ))}
