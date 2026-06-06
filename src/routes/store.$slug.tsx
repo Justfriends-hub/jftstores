@@ -234,7 +234,7 @@ function ProductCard({ product, seller, theme }: { product: Product; seller: Sel
             <h3 className="truncate text-base font-semibold">{product.name}</h3>
             {product.category && <div className="text-xs opacity-70">{product.category}</div>}
           </div>
-          <div className="shrink-0 text-base font-semibold">€{Number(product.price).toFixed(2)}</div>
+          <div className="shrink-0 text-base font-semibold">₦{Number(product.price).toLocaleString()}</div>
         </div>
         {product.description && <p className="mt-2 line-clamp-2 text-xs opacity-80">{product.description}</p>}
 
