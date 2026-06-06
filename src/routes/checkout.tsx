@@ -84,7 +84,7 @@ function CheckoutPage() {
               });
               clear();
               toast.success("Payment confirmed");
-              navigate({ to: "/checkout/success", search: { order: res.orderId } as never });
+              navigate({ to: "/checkout/success", search: { order: res.orderId ?? "" } });
             } catch (e) {
               toast.error(e instanceof Error ? e.message : "Could not verify payment");
               setPaying(false);
