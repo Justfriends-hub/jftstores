@@ -72,14 +72,23 @@ function DashboardPage() {
     <PageShell>
       <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 space-y-6">
         <header className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="font-serif text-3xl">{seller.business_name}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Status: <Badge variant={seller.status === "approved" ? "default" : "secondary"}>{seller.status}</Badge>
-            </p>
-            {seller.status !== "approved" && (
-              <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">Your store isn't public yet — an admin still needs to approve it. You can add products and customise it now so it's ready to go live.</p>
-            )}
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="grid h-16 w-16 sm:h-20 sm:w-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-muted ring-1 ring-border">
+              {seller.logo_url ? (
+                <img src={seller.logo_url} alt={seller.business_name} className="h-full w-full object-cover" />
+              ) : (
+                <span className="font-serif text-2xl text-muted-foreground">{seller.business_name[0]}</span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <h1 className="font-serif text-2xl sm:text-3xl truncate">{seller.business_name}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Status: <Badge variant={seller.status === "approved" ? "default" : "secondary"}>{seller.status}</Badge>
+              </p>
+              {seller.status !== "approved" && (
+                <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">Your store isn't public yet — an admin still needs to approve it. You can add products and customise it now so it's ready to go live.</p>
+              )}
+            </div>
           </div>
           <Button asChild variant="outline" className="rounded-full">
             <Link to="/store/$slug" params={{ slug: seller.slug }}>View storefront</Link>
