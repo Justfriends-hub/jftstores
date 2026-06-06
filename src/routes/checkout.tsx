@@ -31,7 +31,7 @@ function CheckoutPage() {
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      navigate({ to: "/login", search: { redirect: "/checkout" } as never });
+      navigate({ to: "/login" });
       return;
     }
     setEmail((e) => e || user.email || "");
