@@ -13,6 +13,7 @@ import {
   respondToOffer,
   listMessages,
   getConversationHeader,
+  openConversation,
 } from "@/lib/chat.functions";
 
 type Msg = {
@@ -300,6 +301,7 @@ export function NegotiateButton({
   const { user } = useAuth();
   const [open, setOpen] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const openConv = useServerFn(openConversation);
 
   async function handleClick() {
     if (!user) {
@@ -310,11 +312,7 @@ export function NegotiateButton({
     }
     setLoading(true);
     try {
-      const { openConversation } = await import("@/lib/chat.functions");
-      // openConversation is a server fn - must be invoked via its RPC call
-      const res = await (openConversation as unknown as (args: { data: { sellerId: string; productId?: string } }) => Promise<{ conversationId: string }>)({
-        data: { sellerId, productId },
-      });
+      const res = await openConv({ data: { sellerId, productId } });
       setOpen(res.conversationId);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not open chat");
