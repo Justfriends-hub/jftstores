@@ -316,7 +316,7 @@ export const adminFlagConversation = createServerFn({ method: "POST" })
       .update({ flagged: data.flagged })
       .eq("id", data.conversationId);
     await supabaseAdmin.from("admin_logs").insert({
-      actor_id: context.userId,
+      admin_id: context.userId,
       action: data.flagged ? "flag_conversation" : "unflag_conversation",
       target_type: "conversation",
       target_id: data.conversationId,
