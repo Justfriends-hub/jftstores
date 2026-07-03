@@ -92,6 +92,8 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          negotiated_price: number | null
+          negotiation_id: string | null
           product_id: string
           quantity: number
           seller_id: string
@@ -102,6 +104,8 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          negotiated_price?: number | null
+          negotiation_id?: string | null
           product_id: string
           quantity?: number
           seller_id: string
@@ -112,6 +116,8 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          negotiated_price?: number | null
+          negotiation_id?: string | null
           product_id?: string
           quantity?: number
           seller_id?: string
@@ -121,6 +127,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "cart_items_negotiation_id_fkey"
+            columns: ["negotiation_id"]
+            isOneToOne: false
+            referencedRelation: "negotiated_prices"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "cart_items_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
@@ -129,6 +142,60 @@ export type Database = {
           },
           {
             foreignKeyName: "cart_items_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          customer_id: string
+          flagged: boolean
+          id: string
+          last_message_at: string
+          product_id: string | null
+          seller_id: string
+          status: Database["public"]["Enums"]["conversation_status"]
+          store_slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          flagged?: boolean
+          id?: string
+          last_message_at?: string
+          product_id?: string | null
+          seller_id: string
+          status?: Database["public"]["Enums"]["conversation_status"]
+          store_slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          flagged?: boolean
+          id?: string
+          last_message_at?: string
+          product_id?: string | null
+          seller_id?: string
+          status?: Database["public"]["Enums"]["conversation_status"]
+          store_slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_seller_id_fkey"
             columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "sellers"
@@ -159,6 +226,130 @@ export type Database = {
           reason?: string | null
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          is_read: boolean
+          message_type: Database["public"]["Enums"]["message_type"]
+          negotiation_id: string | null
+          offer_amount: number | null
+          offer_status: Database["public"]["Enums"]["offer_status"] | null
+          product_id: string | null
+          sender_id: string | null
+          sender_role: string
+        }
+        Insert: {
+          content?: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message_type?: Database["public"]["Enums"]["message_type"]
+          negotiation_id?: string | null
+          offer_amount?: number | null
+          offer_status?: Database["public"]["Enums"]["offer_status"] | null
+          product_id?: string | null
+          sender_id?: string | null
+          sender_role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message_type?: Database["public"]["Enums"]["message_type"]
+          negotiation_id?: string | null
+          offer_amount?: number | null
+          offer_status?: Database["public"]["Enums"]["offer_status"] | null
+          product_id?: string | null
+          sender_id?: string | null
+          sender_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      negotiated_prices: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          customer_id: string
+          expires_at: string
+          id: string
+          negotiated_price: number
+          original_price: number
+          product_id: string
+          seller_id: string
+          status: Database["public"]["Enums"]["offer_status"]
+          updated_at: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          customer_id: string
+          expires_at?: string
+          id?: string
+          negotiated_price: number
+          original_price: number
+          product_id: string
+          seller_id: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          customer_id?: string
+          expires_at?: string
+          id?: string
+          negotiated_price?: number
+          original_price?: number
+          product_id?: string
+          seller_id?: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "negotiated_prices_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "negotiated_prices_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "negotiated_prices_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -198,8 +389,12 @@ export type Database = {
           created_at: string
           fulfilled: boolean
           id: string
+          negotiated_price: number | null
+          negotiation_id: string | null
           order_id: string
+          original_price: number | null
           price_at_purchase: number
+          price_reduction: number | null
           product_id: string
           product_name: string
           quantity: number
@@ -209,8 +404,12 @@ export type Database = {
           created_at?: string
           fulfilled?: boolean
           id?: string
+          negotiated_price?: number | null
+          negotiation_id?: string | null
           order_id: string
+          original_price?: number | null
           price_at_purchase: number
+          price_reduction?: number | null
           product_id: string
           product_name: string
           quantity: number
@@ -220,14 +419,25 @@ export type Database = {
           created_at?: string
           fulfilled?: boolean
           id?: string
+          negotiated_price?: number | null
+          negotiation_id?: string | null
           order_id?: string
+          original_price?: number | null
           price_at_purchase?: number
+          price_reduction?: number | null
           product_id?: string
           product_name?: string
           quantity?: number
           seller_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "order_items_negotiation_id_fkey"
+            columns: ["negotiation_id"]
+            isOneToOne: false
+            referencedRelation: "negotiated_prices"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "order_items_order_id_fkey"
             columns: ["order_id"]
@@ -680,6 +890,9 @@ export type Database = {
     }
     Enums: {
       app_role: "customer" | "seller" | "admin"
+      conversation_status: "active" | "negotiating" | "price_agreed" | "closed"
+      message_type: "text" | "offer" | "system"
+      offer_status: "pending" | "accepted" | "declined" | "expired"
       order_status: "pending" | "paid" | "fulfilled" | "cancelled"
       seller_status: "pending" | "approved" | "suspended"
       visit_source: "direct" | "whatsapp" | "search"
@@ -811,6 +1024,9 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["customer", "seller", "admin"],
+      conversation_status: ["active", "negotiating", "price_agreed", "closed"],
+      message_type: ["text", "offer", "system"],
+      offer_status: ["pending", "accepted", "declined", "expired"],
       order_status: ["pending", "paid", "fulfilled", "cancelled"],
       seller_status: ["pending", "approved", "suspended"],
       visit_source: ["direct", "whatsapp", "search"],

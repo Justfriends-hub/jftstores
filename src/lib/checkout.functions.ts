@@ -9,6 +9,7 @@ const cartItemSchema = z.object({
   productName: z.string().min(1).max(200),
   price: z.number().nonnegative(),
   quantity: z.number().int().positive().max(999),
+  negotiationId: z.string().uuid().nullable().optional(),
 });
 
 const verifySchema = z.object({
@@ -19,6 +20,76 @@ const verifySchema = z.object({
   items: z.array(cartItemSchema).min(1).max(200),
 });
 
+/**
+ * Server-side price resolution: for each item, if a valid (accepted + non-expired)
+ * negotiation exists for this customer/product/seller, use negotiated_price. Never
+ * trust the client-sent price beyond product lookup.
+ */
+async function resolveVerifiedItems(
+  customerId: string,
+  items: z.infer<typeof cartItemSchema>[],
+) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const productIds = Array.from(new Set(items.map((i) => i.productId)));
+  const { data: products } = await supabaseAdmin
+    .from("products")
+    .select("id, price, name, seller_id")
+    .in("id", productIds);
+  const pmap = new Map((products ?? []).map((p) => [p.id, p]));
+
+  const { data: negs } = await supabaseAdmin
+    .from("negotiated_prices")
+    .select("id, product_id, seller_id, negotiated_price, original_price, status, expires_at")
+    .eq("customer_id", customerId)
+    .eq("status", "accepted")
+    .in("product_id", productIds);
+  const now = Date.now();
+  const validNegs = new Map<string, { id: string; price: number }>();
+  for (const n of negs ?? []) {
+    if (new Date(n.expires_at).getTime() > now) {
+      validNegs.set(`${n.product_id}:${n.seller_id}`, {
+        id: n.id, price: Number(n.negotiated_price),
+      });
+    }
+  }
+
+  let total = 0;
+  const rows = items.map((i) => {
+    const p = pmap.get(i.productId);
+    if (!p) throw new Error(`Product not found: ${i.productId}`);
+    if (p.seller_id !== i.sellerId) throw new Error("Item/seller mismatch");
+    const original = Number(p.price);
+    const key = `${i.productId}:${i.sellerId}`;
+    const neg = validNegs.get(key);
+    const effective = neg ? neg.price : original;
+    total += effective * i.quantity;
+    return {
+      product_id: i.productId,
+      seller_id: i.sellerId,
+      product_name: p.name,
+      quantity: i.quantity,
+      price_at_purchase: effective,
+      original_price: original,
+      negotiated_price: neg ? neg.price : null,
+      price_reduction: neg ? original - neg.price : null,
+      negotiation_id: neg?.id ?? null,
+    };
+  });
+  return { total, rows };
+}
+
+/**
+ * Public helper for client: get the server-verified total in NGN
+ * for the cart before initializing Paystack.
+ */
+export const computeVerifiedTotal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ items: z.array(cartItemSchema).min(1).max(200) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { total } = await resolveVerifiedItems(context.userId, data.items);
+    return { total };
+  });
+
 export const verifyPaystackAndCreateOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => verifySchema.parse(d))
@@ -26,7 +97,6 @@ export const verifyPaystackAndCreateOrder = createServerFn({ method: "POST" })
     const secret = process.env.PAYSTACK_SECRET_KEY;
     if (!secret) throw new Error("Payment provider not configured");
 
-    // 1. Verify with Paystack
     const res = await fetch(
       `https://api.paystack.co/transaction/verify/${encodeURIComponent(data.reference)}`,
       { headers: { Authorization: `Bearer ${secret}` } },
@@ -39,19 +109,20 @@ export const verifyPaystackAndCreateOrder = createServerFn({ method: "POST" })
     if (!body.status || !body.data || body.data.status !== "success") {
       throw new Error("Payment was not successful");
     }
-
-    const expectedTotal = data.items.reduce((n, i) => n + i.price * i.quantity, 0);
-    const expectedKobo = Math.round(expectedTotal * 100);
-    if (body.data.amount < expectedKobo) {
-      throw new Error("Paid amount does not match cart total");
-    }
     if (body.data.currency && body.data.currency.toUpperCase() !== "NGN") {
       throw new Error("Unexpected currency");
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { total: expectedTotal, rows } = await resolveVerifiedItems(
+      context.userId, data.items,
+    );
+    const expectedKobo = Math.round(expectedTotal * 100);
+    if (body.data.amount < expectedKobo) {
+      throw new Error("Paid amount does not match verified cart total");
+    }
 
-    // Idempotency: if this reference already produced an order, return it.
+    // Idempotency
     const { data: existing } = await supabaseAdmin
       .from("orders")
       .select("id")
@@ -59,7 +130,6 @@ export const verifyPaystackAndCreateOrder = createServerFn({ method: "POST" })
       .maybeSingle();
     if (existing) return { ok: true, orderId: existing.id, duplicate: true };
 
-    // 2. Create order
     const { data: order, error: orderErr } = await supabaseAdmin
       .from("orders")
       .insert({
@@ -76,20 +146,12 @@ export const verifyPaystackAndCreateOrder = createServerFn({ method: "POST" })
       .single();
     if (orderErr || !order) throw new Error(orderErr?.message ?? "Failed to create order");
 
-    // 3. Create order items
-    const itemsRows = data.items.map((i) => ({
-      order_id: order.id,
-      product_id: i.productId,
-      seller_id: i.sellerId,
-      product_name: i.productName,
-      price_at_purchase: i.price,
-      quantity: i.quantity,
-    }));
+    const itemsRows = rows.map((r) => ({ order_id: order.id, ...r }));
     const { error: itemsErr } = await supabaseAdmin.from("order_items").insert(itemsRows);
     if (itemsErr) throw new Error(itemsErr.message);
 
-    // 4. Notify sellers (triggers in DB already insert per-item notifications; add phone metadata as separate notification with contact info)
-    const sellerIds = Array.from(new Set(data.items.map((i) => i.sellerId)));
+    // Notify sellers with contact info
+    const sellerIds = Array.from(new Set(rows.map((r) => r.seller_id)));
     const { data: sellers } = await supabaseAdmin
       .from("sellers")
       .select("id, user_id, business_name")
@@ -123,7 +185,7 @@ export const getOrderSummary = createServerFn({ method: "POST" })
     if (order.customer_id !== context.userId) throw new Error("Forbidden");
     const { data: items } = await supabaseAdmin
       .from("order_items")
-      .select("id, product_name, quantity, price_at_purchase, seller_id")
+      .select("id, product_name, quantity, price_at_purchase, seller_id, original_price, negotiated_price, price_reduction")
       .eq("order_id", order.id);
     return { order, items: items ?? [] };
   });

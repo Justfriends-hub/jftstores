@@ -4,6 +4,7 @@ import { PageShell } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { NegotiateButton } from "@/components/chat/chat-drawer";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { bySeller, setQty, remove, total, count, clear } = useCart();
+  const { bySeller, setQty, remove, total, originalTotal, savings, count, clear } = useCart();
 
   return (
     <PageShell>
@@ -61,33 +62,49 @@ function CartPage() {
                     )}
                   </div>
                   <ul className="divide-y divide-border">
-                    {g.items.map((it) => (
-                      <li key={it.productId} className="flex gap-4 p-4">
-                        <div
-                          className="h-20 w-20 shrink-0 rounded-xl bg-muted"
-                          style={it.image ? { backgroundImage: `url(${it.image})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
-                        />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <div className="truncate text-sm font-semibold">{it.productName}</div>
-                              <div className="text-xs text-muted-foreground">₦{it.price.toLocaleString()}</div>
+                    {g.items.map((it) => {
+                      const negotiated = typeof it.negotiatedPrice === "number" && it.negotiatedPrice < it.price;
+                      const unit = negotiated ? it.negotiatedPrice! : it.price;
+                      return (
+                        <li key={it.productId} className="flex gap-4 p-4">
+                          <div
+                            className="h-20 w-20 shrink-0 rounded-xl bg-muted"
+                            style={it.image ? { backgroundImage: `url(${it.image})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <div className="truncate text-sm font-semibold">{it.productName}</div>
+                                {negotiated ? (
+                                  <div className="text-xs">
+                                    <span className="line-through text-muted-foreground">₦{it.price.toLocaleString()}</span>{" "}
+                                    <span className="font-semibold text-emerald-700 dark:text-emerald-400">₦{unit.toLocaleString()}</span>
+                                  </div>
+                                ) : (
+                                  <div className="text-xs text-muted-foreground">₦{it.price.toLocaleString()}</div>
+                                )}
+                              </div>
+                              <button onClick={() => remove(it.productId)} className="text-muted-foreground hover:text-destructive" aria-label="Remove">
+                                <Trash2 className="h-4 w-4" />
+                              </button>
                             </div>
-                            <button onClick={() => remove(it.productId)} className="text-muted-foreground hover:text-destructive" aria-label="Remove">
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                          <div className="mt-3 flex items-center justify-between">
-                            <div className="flex items-center gap-1 rounded-full border border-border">
-                              <button onClick={() => setQty(it.productId, it.quantity - 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Minus className="h-3.5 w-3.5" /></button>
-                              <span className="w-7 text-center text-sm font-semibold">{it.quantity}</span>
-                              <button onClick={() => setQty(it.productId, it.quantity + 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Plus className="h-3.5 w-3.5" /></button>
+                            <div className="mt-3 flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1 rounded-full border border-border">
+                                <button onClick={() => setQty(it.productId, it.quantity - 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Minus className="h-3.5 w-3.5" /></button>
+                                <span className="w-7 text-center text-sm font-semibold">{it.quantity}</span>
+                                <button onClick={() => setQty(it.productId, it.quantity + 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Plus className="h-3.5 w-3.5" /></button>
+                              </div>
+                              <div className="text-sm font-semibold">₦{(unit * it.quantity).toLocaleString()}</div>
                             </div>
-                            <div className="text-sm font-semibold">₦{(it.price * it.quantity).toLocaleString()}</div>
+                            {!negotiated && (
+                              <div className="mt-2">
+                                <NegotiateButton sellerId={it.sellerId} productId={it.productId} className="h-8 text-xs" label="Negotiate Price 💬" />
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      );
+                    })}
                   </ul>
                   <div className="flex items-center justify-between border-t border-border bg-muted/30 px-5 py-3 text-sm">
                     <span className="text-muted-foreground">Shop subtotal</span>
@@ -102,10 +119,19 @@ function CartPage() {
               <dl className="mt-4 space-y-2 text-sm">
                 <div className="flex justify-between"><dt className="text-muted-foreground">Items</dt><dd>{count}</dd></div>
                 <div className="flex justify-between"><dt className="text-muted-foreground">Shops</dt><dd>{bySeller.length}</dd></div>
+                {savings > 0 && (
+                  <>
+                    <div className="flex justify-between text-xs"><dt className="text-muted-foreground">Original</dt><dd className="line-through">₦{originalTotal.toLocaleString()}</dd></div>
+                    <div className="flex justify-between text-xs text-emerald-700 dark:text-emerald-400"><dt>Savings</dt><dd>-₦{savings.toLocaleString()}</dd></div>
+                  </>
+                )}
                 <div className="flex justify-between border-t border-border pt-3 text-base font-semibold"><dt>Total</dt><dd>₦{total.toLocaleString()}</dd></div>
               </dl>
               <Button asChild className="mt-5 w-full rounded-full h-12 text-base" size="lg">
-                <Link to="/checkout">Proceed to checkout <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
+                <Link to="/checkout">
+                  {savings > 0 ? `Proceed to Checkout — ₦${total.toLocaleString()}` : "Proceed to checkout"}
+                  <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Link>
               </Button>
               <p className="mt-3 text-[11px] text-muted-foreground text-center">
                 Secure payment via Paystack. You'll be asked to sign in if you haven't already.

@@ -8,9 +8,21 @@ export type CartItem = {
   sellerWhatsApp?: string | null;
   productName: string;
   price: number;
+  negotiatedPrice?: number | null;
+  negotiationId?: string | null;
   image?: string | null;
   quantity: number;
 };
+
+export function effectivePrice(i: CartItem): number {
+  return typeof i.negotiatedPrice === "number" && i.negotiatedPrice > 0 && i.negotiatedPrice < i.price
+    ? i.negotiatedPrice
+    : i.price;
+}
+
+export function isMultiStoreCart(items: CartItem[]): boolean {
+  return new Set(items.map((i) => i.sellerId)).size > 1;
+}
 
 type CartState = {
   items: CartItem[];
@@ -19,8 +31,14 @@ type CartState = {
   setQty: (productId: string, qty: number) => void;
   clear: () => void;
   clearSeller: (sellerId: string) => void;
+  applyNegotiation: (productId: string, negotiatedPrice: number, negotiationId: string) => void;
+  clearNegotiation: (productId: string) => void;
+  syncNegotiations: (map: Map<string, { price: number; id: string }>) => void;
   count: number;
-  total: number;
+  total: number; // effective (negotiated where applicable)
+  originalTotal: number;
+  savings: number;
+  multiStore: boolean;
   bySeller: Array<{
     sellerId: string;
     sellerSlug: string;
@@ -28,6 +46,8 @@ type CartState = {
     sellerWhatsApp?: string | null;
     items: CartItem[];
     subtotal: number;
+    originalSubtotal: number;
+    savings: number;
   }>;
 };
 
@@ -42,24 +62,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const raw = typeof window !== "undefined" ? localStorage.getItem(KEY) : null;
       if (raw) setItems(JSON.parse(raw));
-    } catch {
-      /* noop */
-    }
+    } catch { /* noop */ }
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    try {
-      localStorage.setItem(KEY, JSON.stringify(items));
-    } catch {
-      /* noop */
-    }
+    try { localStorage.setItem(KEY, JSON.stringify(items)); } catch { /* noop */ }
   }, [items, hydrated]);
 
   const bySeller = useMemo(() => {
     const map = new Map<string, CartState["bySeller"][number]>();
     for (const it of items) {
+      const eff = effectivePrice(it);
       const entry = map.get(it.sellerId) ?? {
         sellerId: it.sellerId,
         sellerSlug: it.sellerSlug,
@@ -67,13 +82,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
         sellerWhatsApp: it.sellerWhatsApp,
         items: [],
         subtotal: 0,
+        originalSubtotal: 0,
+        savings: 0,
       };
       entry.items.push(it);
-      entry.subtotal += it.price * it.quantity;
+      entry.subtotal += eff * it.quantity;
+      entry.originalSubtotal += it.price * it.quantity;
+      entry.savings += (it.price - eff) * it.quantity;
       map.set(it.sellerId, entry);
     }
     return Array.from(map.values());
   }, [items]);
+
+  const total = items.reduce((n, i) => n + effectivePrice(i) * i.quantity, 0);
+  const originalTotal = items.reduce((n, i) => n + i.price * i.quantity, 0);
 
   const value: CartState = {
     items,
@@ -96,8 +118,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
       ),
     clear: () => setItems([]),
     clearSeller: (sellerId) => setItems((prev) => prev.filter((p) => p.sellerId !== sellerId)),
+    applyNegotiation: (productId, negotiatedPrice, negotiationId) =>
+      setItems((prev) =>
+        prev.map((p) => (p.productId === productId ? { ...p, negotiatedPrice, negotiationId } : p)),
+      ),
+    clearNegotiation: (productId) =>
+      setItems((prev) =>
+        prev.map((p) => (p.productId === productId ? { ...p, negotiatedPrice: null, negotiationId: null } : p)),
+      ),
+    syncNegotiations: (map) =>
+      setItems((prev) =>
+        prev.map((p) => {
+          const n = map.get(p.productId);
+          if (n) return { ...p, negotiatedPrice: n.price, negotiationId: n.id };
+          if (p.negotiationId) return { ...p, negotiatedPrice: null, negotiationId: null };
+          return p;
+        }),
+      ),
     count: items.reduce((n, i) => n + i.quantity, 0),
-    total: items.reduce((n, i) => n + i.price * i.quantity, 0),
+    total,
+    originalTotal,
+    savings: originalTotal - total,
+    multiStore: isMultiStoreCart(items),
     bySeller,
   };
 

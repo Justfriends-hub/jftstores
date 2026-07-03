@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { PAYSTACK_PUBLIC_KEY } from "@/lib/paystack-config";
-import { verifyPaystackAndCreateOrder } from "@/lib/checkout.functions";
+import { verifyPaystackAndCreateOrder, computeVerifiedTotal } from "@/lib/checkout.functions";
+import { NegotiateButton } from "@/components/chat/chat-drawer";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout — Just Friends Store" }] }),
@@ -18,10 +19,11 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function CheckoutPage() {
-  const { items, total, count, bySeller, clear } = useCart();
+  const { items, total, originalTotal, savings, count, bySeller, clear } = useCart();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const verify = useServerFn(verifyPaystackAndCreateOrder);
+  const computeTotal = useServerFn(computeVerifiedTotal);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,13 +55,22 @@ function CheckoutPage() {
     if (count === 0) return;
     setPaying(true);
     try {
+      // Get server-verified total (applies accepted negotiations, ignores expired)
+      const { total: verifiedTotal } = await computeTotal({
+        data: {
+          items: items.map((i) => ({
+            productId: i.productId, sellerId: i.sellerId, productName: i.productName,
+            price: i.price, quantity: i.quantity, negotiationId: i.negotiationId ?? null,
+          })),
+        },
+      });
       const { default: PaystackPop } = await import("@paystack/inline-js");
       const ref = `JFS-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
       const paystack = new PaystackPop();
       paystack.newTransaction({
         key: PAYSTACK_PUBLIC_KEY,
         email: email.trim(),
-        amount: Math.round(total * 100), // kobo
+        amount: Math.round(verifiedTotal * 100),
         currency: "NGN",
         reference: ref,
         firstName: name.trim(),
@@ -79,6 +90,7 @@ function CheckoutPage() {
                     productName: i.productName,
                     price: i.price,
                     quantity: i.quantity,
+                    negotiationId: i.negotiationId ?? null,
                   })),
                 },
               });
@@ -121,30 +133,60 @@ function CheckoutPage() {
               {bySeller.map((g) => (
                 <div key={g.sellerId} className="border-b border-border pb-3 last:border-0">
                   <div className="text-xs font-semibold text-muted-foreground">{g.sellerName}</div>
-                  <ul className="mt-2 space-y-2">
-                    {g.items.map((it) => (
-                      <li key={it.productId} className="flex gap-3 text-sm">
-                        <div
-                          className="h-12 w-12 shrink-0 rounded-lg bg-muted"
-                          style={it.image ? { backgroundImage: `url(${it.image})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
-                        />
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate font-medium">{it.productName}</div>
-                          <div className="text-xs text-muted-foreground">× {it.quantity} · ₦{(it.price * it.quantity).toLocaleString()}</div>
-                        </div>
-                      </li>
-                    ))}
+                  <ul className="mt-2 space-y-3">
+                    {g.items.map((it) => {
+                      const negotiated = typeof it.negotiatedPrice === "number" && it.negotiatedPrice < it.price;
+                      const line = (negotiated ? it.negotiatedPrice! : it.price) * it.quantity;
+                      return (
+                        <li key={it.productId} className="flex gap-3 text-sm">
+                          <div
+                            className="h-12 w-12 shrink-0 rounded-lg bg-muted"
+                            style={it.image ? { backgroundImage: `url(${it.image})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="truncate font-medium">{it.productName}</div>
+                            {negotiated ? (
+                              <>
+                                <div className="text-xs text-muted-foreground line-through">₦{(it.price * it.quantity).toLocaleString()}</div>
+                                <div className="text-xs text-emerald-700 dark:text-emerald-400">-₦{((it.price - it.negotiatedPrice!) * it.quantity).toLocaleString()}</div>
+                                <div className="text-sm font-semibold">× {it.quantity} · ₦{line.toLocaleString()}</div>
+                              </>
+                            ) : (
+                              <div className="text-xs text-muted-foreground">× {it.quantity} · ₦{line.toLocaleString()}</div>
+                            )}
+                            {!negotiated && (
+                              <div className="mt-1.5">
+                                <NegotiateButton sellerId={it.sellerId} productId={it.productId} className="h-8 text-xs px-3" label="Negotiate Price 💬" />
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                   <div className="mt-2 flex justify-between text-xs">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span className="font-semibold">₦{g.subtotal.toLocaleString()}</span>
                   </div>
+                  {g.savings > 0 && (
+                    <div className="mt-1 text-[11px] text-emerald-700 dark:text-emerald-400">
+                      You saved ₦{g.savings.toLocaleString()} here 🎉
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-            <div className="mt-4 flex items-baseline justify-between border-t border-border pt-3">
+            {savings > 0 && (
+              <div className="mt-3 text-xs text-emerald-700 dark:text-emerald-400 text-right">
+                Total savings: -₦{savings.toLocaleString()} 🎉
+              </div>
+            )}
+            <div className="mt-2 flex items-baseline justify-between border-t border-border pt-3">
               <span className="text-sm text-muted-foreground">Grand total</span>
-              <span className="font-serif text-2xl">₦{total.toLocaleString()}</span>
+              <div className="text-right">
+                {savings > 0 && <div className="text-xs text-muted-foreground line-through">₦{originalTotal.toLocaleString()}</div>}
+                <span className="font-serif text-2xl">₦{total.toLocaleString()}</span>
+              </div>
             </div>
           </aside>
 

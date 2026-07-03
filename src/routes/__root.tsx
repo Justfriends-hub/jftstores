@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTrackPageView } from "@/lib/tracking";
 import { useAuth } from "@/lib/auth";
 import { InstallBanner } from "@/components/install-banner";
+import { NegotiationsSync } from "@/lib/use-negotiations";
 
 function NotFoundComponent() {
   return (
@@ -145,6 +146,7 @@ function RootComponent() {
           <AuthListener />
           <TrackingMount />
           <PWAMount />
+          <NegotiationsSync />
           <BlockedGate>
             <Outlet />
           </BlockedGate>
