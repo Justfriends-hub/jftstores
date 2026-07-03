@@ -26,10 +26,10 @@ const verifySchema = z.object({
  * trust the client-sent price beyond product lookup.
  */
 async function resolveVerifiedItems(
-  supabaseAdmin: Awaited<ReturnType<typeof import("@/integrations/supabase/client.server")>>["supabaseAdmin"],
   customerId: string,
   items: z.infer<typeof cartItemSchema>[],
 ) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const productIds = Array.from(new Set(items.map((i) => i.productId)));
   const { data: products } = await supabaseAdmin
     .from("products")
@@ -86,8 +86,7 @@ export const computeVerifiedTotal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ items: z.array(cartItemSchema).min(1).max(200) }).parse(d))
   .handler(async ({ data, context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { total } = await resolveVerifiedItems(supabaseAdmin, context.userId, data.items);
+    const { total } = await resolveVerifiedItems(context.userId, data.items);
     return { total };
   });
 
@@ -116,7 +115,7 @@ export const verifyPaystackAndCreateOrder = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { total: expectedTotal, rows } = await resolveVerifiedItems(
-      supabaseAdmin, context.userId, data.items,
+      context.userId, data.items,
     );
     const expectedKobo = Math.round(expectedTotal * 100);
     if (body.data.amount < expectedKobo) {
