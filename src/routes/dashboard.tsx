@@ -112,6 +112,11 @@ function DashboardPage() {
             <StoreSettings seller={seller} onChange={() => user && loadSeller(user.id)} />
           </TabsContent>
 
+          <TabsContent value="messages" className="mt-6">
+            <h2 className="font-serif text-xl mb-3">Customer messages</h2>
+            <SellerMessages initialOpen={typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("c") : null} />
+          </TabsContent>
+
           <TabsContent value="orders" className="mt-6">
             <h2 className="font-serif text-xl mb-3">Recent orders ({items.length})</h2>
             {items.length === 0 ? (
