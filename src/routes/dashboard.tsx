@@ -96,10 +96,11 @@ function DashboardPage() {
           </Button>
         </header>
 
-        <Tabs defaultValue="products" className="w-full">
+        <Tabs defaultValue={typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "messages" ? "messages" : "products"} className="w-full">
           <TabsList>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="settings">Store & theme</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
           </TabsList>
 
