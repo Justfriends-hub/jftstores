@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { ProductManager } from "@/components/dashboard/product-manager";
 import { StoreSettings } from "@/components/dashboard/store-settings";
+import { SellerMessages } from "@/components/dashboard/seller-messages";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Seller dashboard — Just Friends Store" }] }),
@@ -95,10 +96,11 @@ function DashboardPage() {
           </Button>
         </header>
 
-        <Tabs defaultValue="products" className="w-full">
+        <Tabs defaultValue={typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "messages" ? "messages" : "products"} className="w-full">
           <TabsList>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="settings">Store & theme</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
           </TabsList>
 
@@ -108,6 +110,11 @@ function DashboardPage() {
 
           <TabsContent value="settings" className="mt-6">
             <StoreSettings seller={seller} onChange={() => user && loadSeller(user.id)} />
+          </TabsContent>
+
+          <TabsContent value="messages" className="mt-6">
+            <h2 className="font-serif text-xl mb-3">Customer messages</h2>
+            <SellerMessages initialOpen={typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("c") : null} />
           </TabsContent>
 
           <TabsContent value="orders" className="mt-6">

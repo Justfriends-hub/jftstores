@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, Store, ShoppingCart, BarChart3, ArrowLeft, Megaphone } from "lucide-react";
+import { LayoutDashboard, Users, Store, ShoppingCart, BarChart3, ArrowLeft, Megaphone, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +18,7 @@ const items = [
   { title: "Users", url: "/admin/users", icon: Users },
   { title: "Stores", url: "/admin/stores", icon: Store },
   { title: "Orders", url: "/admin/orders", icon: ShoppingCart },
+  { title: "Conversations", url: "/admin/conversations", icon: MessageSquare },
   { title: "Broadcasts", url: "/admin/broadcasts", icon: Megaphone },
   { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
 ];

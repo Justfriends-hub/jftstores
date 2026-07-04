@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -24,6 +25,7 @@ import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminStoresRouteImport } from './routes/admin.stores'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminConversationsRouteImport } from './routes/admin.conversations'
 import { Route as AdminBroadcastsRouteImport } from './routes/admin.broadcasts'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
@@ -42,6 +44,11 @@ const SellRoute = SellRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -104,6 +111,11 @@ const AdminOrdersRoute = AdminOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminConversationsRoute = AdminConversationsRouteImport.update({
+  id: '/conversations',
+  path: '/conversations',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminBroadcastsRoute = AdminBroadcastsRouteImport.update({
   id: '/broadcasts',
   path: '/broadcasts',
@@ -132,11 +144,13 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/broadcasts': typeof AdminBroadcastsRoute
+  '/admin/conversations': typeof AdminConversationsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/stores': typeof AdminStoresRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
@@ -152,11 +166,13 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/broadcasts': typeof AdminBroadcastsRoute
+  '/admin/conversations': typeof AdminConversationsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/stores': typeof AdminStoresRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
@@ -174,11 +190,13 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
   '/stores': typeof StoresRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/broadcasts': typeof AdminBroadcastsRoute
+  '/admin/conversations': typeof AdminConversationsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/stores': typeof AdminStoresRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
@@ -197,11 +215,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/dashboard'
     | '/login'
+    | '/messages'
     | '/register'
     | '/sell'
     | '/stores'
     | '/admin/analytics'
     | '/admin/broadcasts'
+    | '/admin/conversations'
     | '/admin/orders'
     | '/admin/stores'
     | '/admin/users'
@@ -217,11 +237,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/dashboard'
     | '/login'
+    | '/messages'
     | '/register'
     | '/sell'
     | '/stores'
     | '/admin/analytics'
     | '/admin/broadcasts'
+    | '/admin/conversations'
     | '/admin/orders'
     | '/admin/stores'
     | '/admin/users'
@@ -238,11 +260,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/dashboard'
     | '/login'
+    | '/messages'
     | '/register'
     | '/sell'
     | '/stores'
     | '/admin/analytics'
     | '/admin/broadcasts'
+    | '/admin/conversations'
     | '/admin/orders'
     | '/admin/stores'
     | '/admin/users'
@@ -260,6 +284,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  MessagesRoute: typeof MessagesRoute
   RegisterRoute: typeof RegisterRoute
   SellRoute: typeof SellRoute
   StoresRoute: typeof StoresRoute
@@ -287,6 +312,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -373,6 +405,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrdersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/conversations': {
+      id: '/admin/conversations'
+      path: '/conversations'
+      fullPath: '/admin/conversations'
+      preLoaderRoute: typeof AdminConversationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/broadcasts': {
       id: '/admin/broadcasts'
       path: '/broadcasts'
@@ -431,6 +470,7 @@ const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBroadcastsRoute: typeof AdminBroadcastsRoute
+  AdminConversationsRoute: typeof AdminConversationsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminStoresRoute: typeof AdminStoresRouteWithChildren
   AdminUsersRoute: typeof AdminUsersRouteWithChildren
@@ -440,6 +480,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBroadcastsRoute: AdminBroadcastsRoute,
+  AdminConversationsRoute: AdminConversationsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminStoresRoute: AdminStoresRouteWithChildren,
   AdminUsersRoute: AdminUsersRouteWithChildren,
@@ -467,6 +508,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRouteWithChildren,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  MessagesRoute: MessagesRoute,
   RegisterRoute: RegisterRoute,
   SellRoute: SellRoute,
   StoresRoute: StoresRoute,
