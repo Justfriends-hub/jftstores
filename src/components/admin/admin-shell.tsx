@@ -18,6 +18,7 @@ const items = [
   { title: "Users", url: "/admin/users", icon: Users },
   { title: "Stores", url: "/admin/stores", icon: Store },
   { title: "Orders", url: "/admin/orders", icon: ShoppingCart },
+  { title: "Conversations", url: "/admin/conversations", icon: MessageSquare },
   { title: "Broadcasts", url: "/admin/broadcasts", icon: Megaphone },
   { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
 ];
