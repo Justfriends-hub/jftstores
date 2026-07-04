@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { ProductManager } from "@/components/dashboard/product-manager";
 import { StoreSettings } from "@/components/dashboard/store-settings";
+import { SellerMessages } from "@/components/dashboard/seller-messages";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Seller dashboard — Just Friends Store" }] }),
