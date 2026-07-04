@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, Store, ShoppingCart, BarChart3, ArrowLeft, Megaphone } from "lucide-react";
+import { LayoutDashboard, Users, Store, ShoppingCart, BarChart3, ArrowLeft, Megaphone, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
