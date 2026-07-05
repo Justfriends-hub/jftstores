@@ -10,6 +10,8 @@ import { useAuth } from "@/lib/auth";
 import { ProductManager } from "@/components/dashboard/product-manager";
 import { StoreSettings } from "@/components/dashboard/store-settings";
 import { SellerMessages } from "@/components/dashboard/seller-messages";
+import { useUnreadMessages } from "@/lib/use-unread";
+import { UnreadBadge } from "@/components/unread-badge";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Seller dashboard — Just Friends Store" }] }),
