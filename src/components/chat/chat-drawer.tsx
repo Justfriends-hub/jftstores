@@ -14,6 +14,7 @@ import {
   listMessages,
   getConversationHeader,
   openConversation,
+  markConversationRead,
 } from "@/lib/chat.functions";
 
 type Msg = {
@@ -63,6 +64,7 @@ export function ChatDrawer({
   const respond = useServerFn(respondToOffer);
   const fetchMsgs = useServerFn(listMessages);
   const fetchHeader = useServerFn(getConversationHeader);
+  const markRead = useServerFn(markConversationRead);
 
   const refresh = useCallback(async () => {
     const [h, m] = await Promise.all([
@@ -74,6 +76,12 @@ export function ChatDrawer({
   }, [conversationId, fetchHeader, fetchMsgs]);
 
   useEffect(() => { void refresh(); }, [refresh]);
+
+  // Mark conversation read when opened (skip admin read-only view).
+  useEffect(() => {
+    if (readOnly) return;
+    void markRead({ data: { conversationId } }).catch(() => {});
+  }, [conversationId, readOnly, markRead, messages.length]);
 
   useEffect(() => {
     const ch = supabase

@@ -1,4 +1,6 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState, useCallback } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { LayoutDashboard, Users, Store, ShoppingCart, BarChart3, ArrowLeft, Megaphone, MessageSquare } from "lucide-react";
 import {
   Sidebar,
@@ -12,6 +14,9 @@ import {
   SidebarTrigger,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { supabase } from "@/integrations/supabase/client";
+import { adminGetAttentionCounts } from "@/lib/chat.functions";
+import { UnreadBadge } from "@/components/unread-badge";
 
 const items = [
   { title: "Overview", url: "/admin", icon: LayoutDashboard, exact: true },
@@ -28,6 +33,21 @@ function AdminSidebar() {
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(url + "/");
 
+  const getAttention = useServerFn(adminGetAttentionCounts);
+  const [flagged, setFlagged] = useState(0);
+  const refresh = useCallback(async () => {
+    try { const d = await getAttention(); setFlagged(d.flagged ?? 0); } catch { /* ignore */ }
+  }, [getAttention]);
+  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    const ch = supabase
+      .channel("admin-attention")
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "conversations" }, () => { void refresh(); })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "conversations" }, () => { void refresh(); })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [refresh]);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -43,6 +63,7 @@ function AdminSidebar() {
                     <Link to={it.url}>
                       <it.icon className="h-4 w-4" />
                       <span>{it.title}</span>
+                      {it.url === "/admin/conversations" && <UnreadBadge count={flagged} className="ml-auto" />}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

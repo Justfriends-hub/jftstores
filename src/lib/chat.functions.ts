@@ -323,3 +323,78 @@ export const adminFlagConversation = createServerFn({ method: "POST" })
     });
     return { ok: true };
   });
+
+// ---- Unread message counts ----
+
+// Returns unread counts for the current user (as customer + seller) plus
+// per-conversation map. RLS scopes messages to conversations the user is in.
+export const getUnreadCounts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const sb = context.supabase;
+    const { data: seller } = await sb
+      .from("sellers")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+
+    // All unread messages I can see that I did not send.
+    const { data: rows } = await sb
+      .from("messages")
+      .select("conversation_id, sender_id, sender_role, conversations!inner(customer_id, seller_id)")
+      .eq("is_read", false)
+      .neq("sender_role", "system");
+
+    let customerTotal = 0;
+    let sellerTotal = 0;
+    const byConversation: Record<string, number> = {};
+    for (const r of (rows ?? []) as Array<{
+      conversation_id: string;
+      sender_id: string | null;
+      sender_role: string;
+      conversations: { customer_id: string; seller_id: string } | null;
+    }>) {
+      if (r.sender_id === context.userId) continue;
+      const conv = r.conversations;
+      if (!conv) continue;
+      const iAmCustomer = conv.customer_id === context.userId;
+      const iAmSeller = !!seller && conv.seller_id === seller.id;
+      if (!iAmCustomer && !iAmSeller) continue;
+      byConversation[r.conversation_id] = (byConversation[r.conversation_id] ?? 0) + 1;
+      if (iAmCustomer && r.sender_role === "seller") customerTotal++;
+      if (iAmSeller && r.sender_role === "customer") sellerTotal++;
+    }
+    return { customerTotal, sellerTotal, total: customerTotal + sellerTotal, byConversation };
+  });
+
+// Mark all messages in a conversation as read (except the ones I sent).
+export const markConversationRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ conversationId: uuid }).parse(d))
+  .handler(async ({ data, context }) => {
+    const sb = context.supabase;
+    const { error } = await sb
+      .from("messages")
+      .update({ is_read: true })
+      .eq("conversation_id", data.conversationId)
+      .eq("is_read", false)
+      .neq("sender_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// Admin: attention counts (flagged + unread admin view heuristic).
+export const adminGetAttentionCounts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const sb = context.supabase;
+    const { data: isAdmin } = await sb.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    if (!isAdmin) throw new Error("Forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { count: flagged } = await supabaseAdmin
+      .from("conversations")
+      .select("id", { count: "exact", head: true })
+      .eq("flagged", true);
+    return { flagged: flagged ?? 0 };
+  });
+

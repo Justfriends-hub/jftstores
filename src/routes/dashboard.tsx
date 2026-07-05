@@ -10,6 +10,8 @@ import { useAuth } from "@/lib/auth";
 import { ProductManager } from "@/components/dashboard/product-manager";
 import { StoreSettings } from "@/components/dashboard/store-settings";
 import { SellerMessages } from "@/components/dashboard/seller-messages";
+import { useUnreadMessages } from "@/lib/use-unread";
+import { UnreadBadge } from "@/components/unread-badge";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Seller dashboard — Just Friends Store" }] }),
@@ -32,6 +34,7 @@ function DashboardPage() {
   const [seller, setSeller] = useState<Seller | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [ready, setReady] = useState(false);
+  const { sellerTotal } = useUnreadMessages();
 
   const loadSeller = useCallback(async (uid: string) => {
     const { data: s } = await supabase
@@ -100,7 +103,10 @@ function DashboardPage() {
           <TabsList>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="settings">Store & theme</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsTrigger value="messages" className="gap-2">
+              Messages
+              <UnreadBadge count={sellerTotal} />
+            </TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
           </TabsList>
 
