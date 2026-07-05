@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import { listMyConversationsForCustomer } from "@/lib/chat.functions";
 import { ChatDrawer } from "@/components/chat/chat-drawer";
+import { useUnreadMessages } from "@/lib/use-unread";
+import { UnreadBadge } from "@/components/unread-badge";
 
 export const Route = createFileRoute("/messages")({
   head: () => ({ meta: [{ title: "Messages — Just Friends Store" }] }),
