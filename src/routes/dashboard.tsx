@@ -34,6 +34,7 @@ function DashboardPage() {
   const [seller, setSeller] = useState<Seller | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [ready, setReady] = useState(false);
+  const { sellerTotal } = useUnreadMessages();
 
   const loadSeller = useCallback(async (uid: string) => {
     const { data: s } = await supabase
