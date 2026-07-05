@@ -103,7 +103,10 @@ function DashboardPage() {
           <TabsList>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="settings">Store & theme</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsTrigger value="messages" className="gap-2">
+              Messages
+              <UnreadBadge count={sellerTotal} />
+            </TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
           </TabsList>
 
