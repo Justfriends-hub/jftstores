@@ -1,4 +1,6 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState, useCallback } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { LayoutDashboard, Users, Store, ShoppingCart, BarChart3, ArrowLeft, Megaphone, MessageSquare } from "lucide-react";
 import {
   Sidebar,
@@ -12,6 +14,9 @@ import {
   SidebarTrigger,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { supabase } from "@/integrations/supabase/client";
+import { adminGetAttentionCounts } from "@/lib/chat.functions";
+import { UnreadBadge } from "@/components/unread-badge";
 
 const items = [
   { title: "Overview", url: "/admin", icon: LayoutDashboard, exact: true },
