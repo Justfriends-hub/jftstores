@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { listSellerConversations } from "@/lib/chat.functions";
 import { ChatDrawer } from "@/components/chat/chat-drawer";
+import { useUnreadMessages } from "@/lib/use-unread";
+import { UnreadBadge } from "@/components/unread-badge";
 
 type Row = {
   id: string;
