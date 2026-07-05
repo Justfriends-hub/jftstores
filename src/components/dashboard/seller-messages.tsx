@@ -22,6 +22,7 @@ type Row = {
 export function SellerMessages({ initialOpen }: { initialOpen?: string | null }) {
   const { user } = useAuth();
   const list = useServerFn(listSellerConversations);
+  const { byConversation, refresh: refreshUnread } = useUnreadMessages();
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(initialOpen ?? null);
@@ -56,24 +57,32 @@ export function SellerMessages({ initialOpen }: { initialOpen?: string | null })
   return (
     <>
       <ul className="divide-y divide-border rounded-lg border border-border bg-background">
-        {rows.map((r) => (
-          <li key={r.id}>
-            <button onClick={() => setOpenId(r.id)} className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-muted/50">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-medium truncate">{r.profiles?.full_name || r.profiles?.email || "Customer"}</span>
-                  <Badge variant="secondary" className="capitalize text-[10px]">{r.status.replace("_", " ")}</Badge>
+        {rows.map((r) => {
+          const unread = byConversation[r.id] ?? 0;
+          return (
+            <li key={r.id}>
+              <button
+                onClick={() => { setOpenId(r.id); setTimeout(() => { void refreshUnread(); }, 400); }}
+                className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-muted/50 ${unread ? "bg-muted/30" : ""}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`truncate ${unread ? "font-semibold" : "font-medium"}`}>{r.profiles?.full_name || r.profiles?.email || "Customer"}</span>
+                    <Badge variant="secondary" className="capitalize text-[10px]">{r.status.replace("_", " ")}</Badge>
+                    <UnreadBadge count={unread} />
+                  </div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {r.products?.name ? `About: ${r.products.name} · ` : ""}
+                    {r.last_message_at ? new Date(r.last_message_at).toLocaleString() : ""}
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground truncate">
-                  {r.products?.name ? `About: ${r.products.name} · ` : ""}
-                  {r.last_message_at ? new Date(r.last_message_at).toLocaleString() : ""}
-                </div>
-              </div>
-            </button>
-          </li>
-        ))}
+              </button>
+            </li>
+          );
+        })}
       </ul>
-      {openId && <ChatDrawer conversationId={openId} onClose={() => setOpenId(null)} />}
+      {openId && <ChatDrawer conversationId={openId} onClose={() => { setOpenId(null); void refreshUnread(); }} />}
     </>
   );
 }
+
