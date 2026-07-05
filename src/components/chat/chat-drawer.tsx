@@ -14,6 +14,7 @@ import {
   listMessages,
   getConversationHeader,
   openConversation,
+  markConversationRead,
 } from "@/lib/chat.functions";
 
 type Msg = {
