@@ -30,6 +30,7 @@ function MessagesPage() {
   const [rows, setRows] = useState<Conv[]>([]);
   const [ready, setReady] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
+  const { byConversation, customerTotal, refresh: refreshUnread } = useUnreadMessages();
 
   useEffect(() => {
     if (loading) return;
