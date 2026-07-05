@@ -56,38 +56,45 @@ function MessagesPage() {
   return (
     <PageShell>
       <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-4">
-        <h1 className="font-serif text-3xl">Messages</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="font-serif text-3xl">Messages</h1>
+          <UnreadBadge count={customerTotal} />
+        </div>
         {rows.length === 0 ? (
           <Card><CardContent className="p-6 text-sm text-muted-foreground text-center">No conversations yet. Start chatting from a store page.</CardContent></Card>
         ) : (
           <ul className="divide-y divide-border rounded-lg border border-border bg-background">
-            {rows.map((c) => (
-              <li key={c.id}>
-                <button
-                  onClick={() => setOpenId(c.id)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted/50"
-                >
-                  <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-muted">
-                    {c.sellers?.logo_url
-                      ? <img src={c.sellers.logo_url} alt="" className="h-full w-full object-cover" />
-                      : <span className="font-serif text-sm">{c.sellers?.business_name?.[0] ?? "?"}</span>}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate font-medium">{c.sellers?.business_name ?? "Store"}</span>
-                      <Badge variant="secondary" className="capitalize text-[10px]">{c.status.replace("_", " ")}</Badge>
+            {rows.map((c) => {
+              const unread = byConversation[c.id] ?? 0;
+              return (
+                <li key={c.id}>
+                  <button
+                    onClick={() => { setOpenId(c.id); setTimeout(() => { void refreshUnread(); }, 400); }}
+                    className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted/50 ${unread ? "bg-muted/30" : ""}`}
+                  >
+                    <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-muted">
+                      {c.sellers?.logo_url
+                        ? <img src={c.sellers.logo_url} alt="" className="h-full w-full object-cover" />
+                        : <span className="font-serif text-sm">{c.sellers?.business_name?.[0] ?? "?"}</span>}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {c.last_message_at ? new Date(c.last_message_at).toLocaleString() : ""}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`truncate ${unread ? "font-semibold" : "font-medium"}`}>{c.sellers?.business_name ?? "Store"}</span>
+                        <Badge variant="secondary" className="capitalize text-[10px]">{c.status.replace("_", " ")}</Badge>
+                        <UnreadBadge count={unread} />
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {c.last_message_at ? new Date(c.last_message_at).toLocaleString() : ""}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              </li>
-            ))}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
-      {openId && <ChatDrawer conversationId={openId} onClose={() => setOpenId(null)} />}
+      {openId && <ChatDrawer conversationId={openId} onClose={() => { setOpenId(null); void refreshUnread(); }} />}
     </PageShell>
   );
 }
