@@ -33,16 +33,17 @@ function MessagesPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const { byConversation, customerTotal, refresh: refreshUnread } = useUnreadMessages();
 
+  const refreshList = async () => {
+    try { const data = await list(); setRows(data as unknown as Conv[]); }
+    finally { setReady(true); }
+  };
+
   useEffect(() => {
     if (loading) return;
     if (!user) { navigate({ to: "/login", replace: true }); return; }
-    (async () => {
-      try {
-        const data = await list();
-        setRows(data as unknown as Conv[]);
-      } finally { setReady(true); }
-    })();
-  }, [user, loading, navigate, list]);
+    void refreshList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
