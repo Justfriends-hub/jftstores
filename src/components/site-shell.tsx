@@ -68,7 +68,23 @@ export function SiteHeader() {
           )}
         </Link>
 
+        {user && (
+          <Link
+            to="/messages"
+            className="relative hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted"
+            aria-label="Messages"
+          >
+            <MessageSquare className="h-5 w-5" />
+            {unreadTotal > 0 && (
+              <span className="absolute -right-0.5 -top-0.5">
+                <UnreadBadge count={unreadTotal} />
+              </span>
+            )}
+          </Link>
+        )}
+
         <NotificationBell />
+
 
         {user ? (
           <DropdownMenu>
