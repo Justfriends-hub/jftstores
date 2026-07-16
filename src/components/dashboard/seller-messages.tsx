@@ -8,6 +8,7 @@ import { listSellerConversations } from "@/lib/chat.functions";
 import { ChatDrawer } from "@/components/chat/chat-drawer";
 import { useUnreadMessages } from "@/lib/use-unread";
 import { UnreadBadge } from "@/components/unread-badge";
+import { ConversationRowActions } from "@/components/chat/conversation-row-actions";
 
 type Row = {
   id: string;
@@ -60,10 +61,13 @@ export function SellerMessages({ initialOpen }: { initialOpen?: string | null })
         {rows.map((r) => {
           const unread = byConversation[r.id] ?? 0;
           return (
-            <li key={r.id}>
-              <button
+            <li key={r.id} className={`px-4 py-3 ${unread ? "bg-muted/30" : ""}`}>
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => { setOpenId(r.id); setTimeout(() => { void refreshUnread(); }, 400); }}
-                className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-muted/50 ${unread ? "bg-muted/30" : ""}`}
+                onKeyDown={(e) => { if (e.key === "Enter") { setOpenId(r.id); setTimeout(() => { void refreshUnread(); }, 400); } }}
+                className="flex w-full items-center justify-between gap-3 text-left cursor-pointer"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -76,7 +80,12 @@ export function SellerMessages({ initialOpen }: { initialOpen?: string | null })
                     {r.last_message_at ? new Date(r.last_message_at).toLocaleString() : ""}
                   </div>
                 </div>
-              </button>
+              </div>
+              <ConversationRowActions
+                conversationId={r.id}
+                status={r.status as "active" | "negotiating" | "price_agreed" | "resolved" | "closed"}
+                onChanged={() => { void refresh(); void refreshUnread(); }}
+              />
             </li>
           );
         })}

@@ -383,6 +383,50 @@ export const markConversationRead = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// Set a conversation's status. Participants (customer or seller) only.
+// Allowed transitions: active | negotiating | price_agreed | resolved | closed.
+export const setConversationStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      conversationId: uuid,
+      status: z.enum(["active", "resolved", "closed"]),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const sb = context.supabase;
+    const { data: conv } = await sb
+      .from("conversations")
+      .select("id, customer_id, seller_id, status, sellers(user_id)")
+      .eq("id", data.conversationId)
+      .maybeSingle();
+    if (!conv) throw new Error("Chat not found");
+    const isCustomer = conv.customer_id === context.userId;
+    const sellerUser = (conv.sellers as unknown as { user_id: string } | null)?.user_id;
+    const isSeller = sellerUser === context.userId;
+    if (!isCustomer && !isSeller) throw new Error("Forbidden");
+
+    const { error } = await sb
+      .from("conversations")
+      .update({ status: data.status })
+      .eq("id", data.conversationId);
+    if (error) throw new Error(error.message);
+
+    const label =
+      data.status === "resolved" ? "marked this conversation as resolved" :
+      data.status === "closed" ? "closed this conversation" :
+      "reopened this conversation";
+    await sb.from("messages").insert({
+      conversation_id: data.conversationId,
+      sender_id: context.userId,
+      sender_role: "system",
+      message_type: "system",
+      content: `${isCustomer ? "Customer" : "Seller"} ${label}.`,
+    });
+    return { ok: true };
+  });
+
+
 // Admin: attention counts (flagged + unread admin view heuristic).
 export const adminGetAttentionCounts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

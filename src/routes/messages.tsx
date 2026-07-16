@@ -9,6 +9,7 @@ import { listMyConversationsForCustomer } from "@/lib/chat.functions";
 import { ChatDrawer } from "@/components/chat/chat-drawer";
 import { useUnreadMessages } from "@/lib/use-unread";
 import { UnreadBadge } from "@/components/unread-badge";
+import { ConversationRowActions } from "@/components/chat/conversation-row-actions";
 
 export const Route = createFileRoute("/messages")({
   head: () => ({ meta: [{ title: "Messages — Just Friends Store" }] }),
@@ -32,16 +33,17 @@ function MessagesPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const { byConversation, customerTotal, refresh: refreshUnread } = useUnreadMessages();
 
+  const refreshList = async () => {
+    try { const data = await list(); setRows(data as unknown as Conv[]); }
+    finally { setReady(true); }
+  };
+
   useEffect(() => {
     if (loading) return;
     if (!user) { navigate({ to: "/login", replace: true }); return; }
-    (async () => {
-      try {
-        const data = await list();
-        setRows(data as unknown as Conv[]);
-      } finally { setReady(true); }
-    })();
-  }, [user, loading, navigate, list]);
+    void refreshList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -67,10 +69,13 @@ function MessagesPage() {
             {rows.map((c) => {
               const unread = byConversation[c.id] ?? 0;
               return (
-                <li key={c.id}>
-                  <button
+                <li key={c.id} className={`px-4 py-3 ${unread ? "bg-muted/30" : ""}`}>
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => { setOpenId(c.id); setTimeout(() => { void refreshUnread(); }, 400); }}
-                    className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted/50 ${unread ? "bg-muted/30" : ""}`}
+                    onKeyDown={(e) => { if (e.key === "Enter") { setOpenId(c.id); setTimeout(() => { void refreshUnread(); }, 400); } }}
+                    className="flex w-full items-center gap-3 text-left cursor-pointer"
                   >
                     <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-muted">
                       {c.sellers?.logo_url
@@ -87,7 +92,12 @@ function MessagesPage() {
                         {c.last_message_at ? new Date(c.last_message_at).toLocaleString() : ""}
                       </div>
                     </div>
-                  </button>
+                  </div>
+                  <ConversationRowActions
+                    conversationId={c.id}
+                    status={c.status as "active" | "negotiating" | "price_agreed" | "resolved" | "closed"}
+                    onChanged={() => { void refreshList(); void refreshUnread(); }}
+                  />
                 </li>
               );
             })}

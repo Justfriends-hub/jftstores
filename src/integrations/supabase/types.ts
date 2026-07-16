@@ -890,7 +890,12 @@ export type Database = {
     }
     Enums: {
       app_role: "customer" | "seller" | "admin"
-      conversation_status: "active" | "negotiating" | "price_agreed" | "closed"
+      conversation_status:
+        | "active"
+        | "negotiating"
+        | "price_agreed"
+        | "closed"
+        | "resolved"
       message_type: "text" | "offer" | "system"
       offer_status: "pending" | "accepted" | "declined" | "expired"
       order_status: "pending" | "paid" | "fulfilled" | "cancelled"
@@ -1024,7 +1029,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["customer", "seller", "admin"],
-      conversation_status: ["active", "negotiating", "price_agreed", "closed"],
+      conversation_status: [
+        "active",
+        "negotiating",
+        "price_agreed",
+        "closed",
+        "resolved",
+      ],
       message_type: ["text", "offer", "system"],
       offer_status: ["pending", "accepted", "declined", "expired"],
       order_status: ["pending", "paid", "fulfilled", "cancelled"],
