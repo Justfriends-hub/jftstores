@@ -19,7 +19,9 @@ import {
 export function SiteHeader() {
   const { user, isSeller, isAdmin, signOut } = useAuth();
   const { count } = useCart();
+  const { total: unreadTotal } = useUnreadMessages();
   const [q, setQ] = useState("");
+
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
