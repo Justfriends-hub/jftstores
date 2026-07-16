@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { NotificationBell } from "@/components/notification-bell";
-import { ShoppingBag, Search, Sun, User, LogOut, Store } from "lucide-react";
+import { ShoppingBag, Search, Sun, User, LogOut, Store, MessageSquare } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
+import { useUnreadMessages } from "@/lib/use-unread";
+import { UnreadBadge } from "@/components/unread-badge";
 import { BRAND } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +19,9 @@ import {
 export function SiteHeader() {
   const { user, isSeller, isAdmin, signOut } = useAuth();
   const { count } = useCart();
+  const { total: unreadTotal } = useUnreadMessages();
   const [q, setQ] = useState("");
+
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
@@ -64,7 +68,23 @@ export function SiteHeader() {
           )}
         </Link>
 
+        {user && (
+          <Link
+            to="/messages"
+            className="relative hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted"
+            aria-label="Messages"
+          >
+            <MessageSquare className="h-5 w-5" />
+            {unreadTotal > 0 && (
+              <span className="absolute -right-0.5 -top-0.5">
+                <UnreadBadge count={unreadTotal} />
+              </span>
+            )}
+          </Link>
+        )}
+
         <NotificationBell />
+
 
         {user ? (
           <DropdownMenu>
