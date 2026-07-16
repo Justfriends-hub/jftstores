@@ -69,10 +69,13 @@ function MessagesPage() {
             {rows.map((c) => {
               const unread = byConversation[c.id] ?? 0;
               return (
-                <li key={c.id}>
-                  <button
+                <li key={c.id} className={`px-4 py-3 ${unread ? "bg-muted/30" : ""}`}>
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => { setOpenId(c.id); setTimeout(() => { void refreshUnread(); }, 400); }}
-                    className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted/50 ${unread ? "bg-muted/30" : ""}`}
+                    onKeyDown={(e) => { if (e.key === "Enter") { setOpenId(c.id); setTimeout(() => { void refreshUnread(); }, 400); } }}
+                    className="flex w-full items-center gap-3 text-left cursor-pointer"
                   >
                     <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-muted">
                       {c.sellers?.logo_url
@@ -89,7 +92,12 @@ function MessagesPage() {
                         {c.last_message_at ? new Date(c.last_message_at).toLocaleString() : ""}
                       </div>
                     </div>
-                  </button>
+                  </div>
+                  <ConversationRowActions
+                    conversationId={c.id}
+                    status={c.status as "active" | "negotiating" | "price_agreed" | "resolved" | "closed"}
+                    onChanged={() => { void refreshList(); void refreshUnread(); }}
+                  />
                 </li>
               );
             })}
