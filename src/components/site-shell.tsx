@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { NotificationBell } from "@/components/notification-bell";
-import { ShoppingBag, Search, Sun, User, LogOut, Store } from "lucide-react";
+import { ShoppingBag, Search, Sun, User, LogOut, Store, MessageSquare } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
+import { useUnreadMessages } from "@/lib/use-unread";
+import { UnreadBadge } from "@/components/unread-badge";
 import { BRAND } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import {
