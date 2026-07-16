@@ -9,6 +9,7 @@ import { listMyConversationsForCustomer } from "@/lib/chat.functions";
 import { ChatDrawer } from "@/components/chat/chat-drawer";
 import { useUnreadMessages } from "@/lib/use-unread";
 import { UnreadBadge } from "@/components/unread-badge";
+import { ConversationRowActions } from "@/components/chat/conversation-row-actions";
 
 export const Route = createFileRoute("/messages")({
   head: () => ({ meta: [{ title: "Messages — Just Friends Store" }] }),
