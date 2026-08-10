@@ -34,6 +34,8 @@ export function ConversationRowActions({
   const [reply, setReply] = useState("");
   const [replyOpen, setReplyOpen] = useState(false);
   const [busy, setBusy] = useState<"reply" | "resolve" | "close" | "reopen" | null>(null);
+  const [confirm, setConfirm] = useState<null | { next: "active" | "closed"; key: "close" | "reopen" }>(null);
+
 
   const isClosed = status === "closed";
   const isResolved = status === "resolved";
