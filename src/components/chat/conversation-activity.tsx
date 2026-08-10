@@ -84,6 +84,17 @@ export function ConversationActivity({ conversationId }: { conversationId: strin
       >
         <History className="mr-1 h-3 w-3" /> {open ? "Hide history" : "History"}
       </Button>
+      <Button
+        type="button"
+        size="sm"
+        variant="ghost"
+        className="h-8 rounded-full px-3 text-xs text-muted-foreground"
+        disabled={loading || exporting || (rows !== null && rows.length === 0)}
+        onClick={(e) => { e.stopPropagation(); void exportCsv(); }}
+      >
+        {exporting ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Download className="mr-1 h-3 w-3" />}
+        Export history
+      </Button>
       {open && (
         <div className="mt-1 rounded-md border border-border bg-muted/30 p-3 text-xs">
           {loading && <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="h-3 w-3 animate-spin" /> Loading history…</div>}
