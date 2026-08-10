@@ -442,3 +442,24 @@ export const adminGetAttentionCounts = createServerFn({ method: "POST" })
     return { flagged: flagged ?? 0 };
   });
 
+
+// Action history: system events (status changes, offer outcomes) for a conversation.
+export const listConversationActivity = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ conversationId: uuid }).parse(d))
+  .handler(async ({ data, context }) => {
+    const sb = context.supabase;
+    const { data: rows } = await sb
+      .from("messages")
+      .select("id, content, created_at, sender_id")
+      .eq("conversation_id", data.conversationId)
+      .eq("message_type", "system")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    return (rows ?? []).map((r) => ({
+      id: r.id,
+      content: r.content,
+      createdAt: r.created_at,
+      byMe: r.sender_id === context.userId,
+    }));
+  });
