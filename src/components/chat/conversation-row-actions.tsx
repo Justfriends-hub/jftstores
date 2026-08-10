@@ -103,7 +103,7 @@ export function ConversationRowActions({
           type="button" size="sm" variant="outline"
           className="h-8 rounded-full px-3 text-xs"
           disabled={busy === "close"}
-          onClick={(e) => { stop(e); void change("closed", "close"); }}
+          onClick={(e) => { stop(e); setConfirm({ next: "closed", key: "close" }); }}
         >
           {busy === "close" ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <XCircle className="mr-1 h-3 w-3" />}
           Close
@@ -114,12 +114,14 @@ export function ConversationRowActions({
           type="button" size="sm" variant="outline"
           className="h-8 rounded-full px-3 text-xs"
           disabled={busy === "reopen"}
-          onClick={(e) => { stop(e); void change("active", "reopen"); }}
+          onClick={(e) => { stop(e); setConfirm({ next: "active", key: "reopen" }); }}
         >
           {busy === "reopen" ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <RotateCcw className="mr-1 h-3 w-3" />}
           Reopen
         </Button>
       )}
+
+      <ConversationActivity conversationId={conversationId} />
 
       {replyOpen && !isClosed && (
         <form onSubmit={submitReply} onClick={stop} className="mt-1 flex w-full gap-2">
@@ -136,6 +138,34 @@ export function ConversationRowActions({
           </Button>
         </form>
       )}
+
+      <AlertDialog open={!!confirm} onOpenChange={(o) => { if (!o) setConfirm(null); }}>
+        <AlertDialogContent onClick={stop}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirm?.key === "close" ? "Close this conversation?" : "Reopen this conversation?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirm?.key === "close"
+                ? "No further messages can be sent until it is reopened. Both you and the other party will see this in the history."
+                : "This will set the conversation back to active so messages can be exchanged again."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                const c = confirm;
+                setConfirm(null);
+                if (c) void change(c.next, c.key);
+              }}
+            >
+              {confirm?.key === "close" ? "Yes, close" : "Yes, reopen"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+
   );
 }
