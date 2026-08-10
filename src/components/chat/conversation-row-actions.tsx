@@ -4,7 +4,19 @@ import { toast } from "sonner";
 import { Send, CheckCircle2, XCircle, RotateCcw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { ConversationActivity } from "@/components/chat/conversation-activity";
 import { sendMessage, setConversationStatus } from "@/lib/chat.functions";
+
 
 type Status = "active" | "negotiating" | "price_agreed" | "resolved" | "closed";
 
