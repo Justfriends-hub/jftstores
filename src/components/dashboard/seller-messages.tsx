@@ -9,6 +9,7 @@ import { ChatDrawer } from "@/components/chat/chat-drawer";
 import { useUnreadMessages } from "@/lib/use-unread";
 import { UnreadBadge } from "@/components/unread-badge";
 import { ConversationRowActions } from "@/components/chat/conversation-row-actions";
+import { ConversationFilters, type ConversationFilter } from "@/components/chat/conversation-filters";
 
 type Row = {
   id: string;
@@ -27,6 +28,7 @@ export function SellerMessages({ initialOpen }: { initialOpen?: string | null })
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(initialOpen ?? null);
+  const [filter, setFilter] = useState<ConversationFilter>("all");
 
   async function refresh() {
     try {
@@ -51,14 +53,20 @@ export function SellerMessages({ initialOpen }: { initialOpen?: string | null })
   if (loading) {
     return <Card><CardContent className="p-6 text-sm text-muted-foreground">Loading…</CardContent></Card>;
   }
-  if (rows.length === 0) {
-    return <Card><CardContent className="p-6 text-sm text-muted-foreground text-center">No customer messages yet.</CardContent></Card>;
-  }
+  const counts = rows.reduce<Record<string, number>>((acc, r) => {
+    acc[r.status] = (acc[r.status] ?? 0) + 1;
+    return acc;
+  }, {});
+  const visible = filter === "all" ? rows : rows.filter((r) => r.status === filter);
 
   return (
-    <>
+    <div className="space-y-3">
+      <ConversationFilters value={filter} onChange={setFilter} counts={counts} />
+      {visible.length === 0 ? (
+        <Card><CardContent className="p-6 text-sm text-muted-foreground text-center">No customer messages in this view.</CardContent></Card>
+      ) : (
       <ul className="divide-y divide-border rounded-lg border border-border bg-background">
-        {rows.map((r) => {
+        {visible.map((r) => {
           const unread = byConversation[r.id] ?? 0;
           return (
             <li key={r.id} className={`px-4 py-3 ${unread ? "bg-muted/30" : ""}`}>
@@ -90,8 +98,9 @@ export function SellerMessages({ initialOpen }: { initialOpen?: string | null })
           );
         })}
       </ul>
+      )}
       {openId && <ChatDrawer conversationId={openId} onClose={() => { setOpenId(null); void refreshUnread(); }} />}
-    </>
+    </div>
   );
 }
 

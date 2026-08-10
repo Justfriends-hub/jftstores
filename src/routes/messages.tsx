@@ -10,6 +10,7 @@ import { ChatDrawer } from "@/components/chat/chat-drawer";
 import { useUnreadMessages } from "@/lib/use-unread";
 import { UnreadBadge } from "@/components/unread-badge";
 import { ConversationRowActions } from "@/components/chat/conversation-row-actions";
+import { ConversationFilters, type ConversationFilter } from "@/components/chat/conversation-filters";
 
 export const Route = createFileRoute("/messages")({
   head: () => ({ meta: [{ title: "Messages — Just Friends Store" }] }),
@@ -32,6 +33,7 @@ function MessagesPage() {
   const [ready, setReady] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const { byConversation, customerTotal, refresh: refreshUnread } = useUnreadMessages();
+  const [filter, setFilter] = useState<ConversationFilter>("all");
 
   const refreshList = async () => {
     try { const data = await list(); setRows(data as unknown as Conv[]); }
@@ -55,6 +57,12 @@ function MessagesPage() {
     return <PageShell><div className="mx-auto max-w-3xl px-4 py-12">Loading…</div></PageShell>;
   }
 
+  const counts = rows.reduce<Record<string, number>>((acc, c) => {
+    acc[c.status] = (acc[c.status] ?? 0) + 1;
+    return acc;
+  }, {});
+  const visible = filter === "all" ? rows : rows.filter((c) => c.status === filter);
+
   return (
     <PageShell>
       <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-4">
@@ -62,11 +70,12 @@ function MessagesPage() {
           <h1 className="font-serif text-3xl">Messages</h1>
           <UnreadBadge count={customerTotal} />
         </div>
-        {rows.length === 0 ? (
-          <Card><CardContent className="p-6 text-sm text-muted-foreground text-center">No conversations yet. Start chatting from a store page.</CardContent></Card>
+        <ConversationFilters value={filter} onChange={setFilter} counts={counts} />
+        {visible.length === 0 ? (
+          <Card><CardContent className="p-6 text-sm text-muted-foreground text-center">No conversations in this view.</CardContent></Card>
         ) : (
           <ul className="divide-y divide-border rounded-lg border border-border bg-background">
-            {rows.map((c) => {
+            {visible.map((c) => {
               const unread = byConversation[c.id] ?? 0;
               return (
                 <li key={c.id} className={`px-4 py-3 ${unread ? "bg-muted/30" : ""}`}>
