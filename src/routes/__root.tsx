@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Justfriendstore — Shop small. Live warm." },
       { name: "description", content: "Discover jfts best small businesses in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
-      { name: "author", content: "Son of Sun Greece" },
+      { name: "author", content: "Just Friends Store" },
       { property: "og:title", content: "Justfriendstore — Shop small. Live warm." },
       { property: "og:description", content: "Discover jfts best small businesses in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
       { property: "og:type", content: "website" },
