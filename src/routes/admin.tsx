@@ -4,7 +4,15 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Son of Sun Greece" }] }),
+  head: () => ({
+    meta: [
+      { title: "Admin — Just Friends Store" },
+      { name: "description", content: "Internal admin command center for users, stores, orders, and analytics." },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "Admin — Just Friends Store" },
+      { property: "og:description", content: "Internal admin command center for users, stores, orders, and analytics." },
+    ],
+  }),
   component: AdminLayout,
 });
 

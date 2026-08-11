@@ -10,7 +10,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/sell")({
-  head: () => ({ meta: [{ title: "Open your free shop — Son of Sun Greece" }] }),
+  head: () => ({
+    meta: [
+      { title: "Open your free shop — Just Friends Store" },
+      { name: "description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
+      { property: "og:title", content: "Open your free shop — Just Friends Store" },
+      { property: "og:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://jftstores.lovable.app/sell" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Open your free shop — Just Friends Store" },
+      { name: "twitter:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
+    ],
+    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/sell" }],
+  }),
   component: SellPage,
 });
 

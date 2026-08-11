@@ -14,7 +14,15 @@ import { useUnreadMessages } from "@/lib/use-unread";
 import { UnreadBadge } from "@/components/unread-badge";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Seller dashboard — Just Friends Store" }] }),
+  head: () => ({
+    meta: [
+      { title: "Seller dashboard — Just Friends Store" },
+      { name: "description", content: "Manage your products, store theme, orders, and buyer messages." },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "Seller dashboard — Just Friends Store" },
+      { property: "og:description", content: "Manage your products, store theme, orders, and buyer messages." },
+    ],
+  }),
   component: DashboardPage,
 });
 

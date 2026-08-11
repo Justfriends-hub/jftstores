@@ -8,7 +8,15 @@ import { getOrderSummary } from "@/lib/checkout.functions";
 
 export const Route = createFileRoute("/checkout/success")({
   validateSearch: (s: Record<string, unknown>) => ({ order: typeof s.order === "string" ? s.order : "" }),
-  head: () => ({ meta: [{ title: "Order confirmed — Just Friends Store" }] }),
+  head: () => ({
+    meta: [
+      { title: "Order confirmed — Just Friends Store" },
+      { name: "description", content: "Your order is confirmed. See your order summary and seller details." },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "Order confirmed — Just Friends Store" },
+      { property: "og:description", content: "Your order is confirmed. See your order summary and seller details." },
+    ],
+  }),
   component: SuccessPage,
 });
 

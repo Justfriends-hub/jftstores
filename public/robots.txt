@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /messages
+Disallow: /cart
+Disallow: /checkout
+
+Sitemap: https://jftstores.lovable.app/sitemap.xml
