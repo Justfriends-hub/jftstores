@@ -33,15 +33,28 @@ export const Route = createFileRoute("/store/$slug")({
     if (!seller) throw notFound();
     return { seller: seller as unknown as Seller };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [
-      { title: `${loaderData.seller.business_name} — Son of Sun Greece` },
-      { name: "description", content: loaderData.seller.description ?? `${loaderData.seller.business_name} on Son of Sun Greece` },
-      { property: "og:title", content: loaderData.seller.business_name },
-      { property: "og:description", content: loaderData.seller.description ?? "" },
-      ...(loaderData.seller.banner_url ? [{ property: "og:image", content: loaderData.seller.banner_url }] : []),
-    ] : [{ title: "Store — Son of Sun Greece" }],
-  }),
+  head: ({ params, loaderData }) => {
+    const url = `https://jftstores.lovable.app/store/${params.slug}`;
+    const name = loaderData?.seller.business_name ?? "Store";
+    const title = `${name} — Just Friends Store`;
+    const desc = loaderData?.seller.description ?? `Shop ${name} on Just Friends Store.`;
+    const image = loaderData?.seller.banner_url ?? loaderData?.seller.logo_url ?? null;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(image ? [{ property: "og:image", content: image }, { name: "twitter:image", content: image }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: StorePage,
   notFoundComponent: () => (
     <PageShell>

@@ -13,7 +13,15 @@ import { ConversationRowActions } from "@/components/chat/conversation-row-actio
 import { ConversationFilters, type ConversationFilter } from "@/components/chat/conversation-filters";
 
 export const Route = createFileRoute("/messages")({
-  head: () => ({ meta: [{ title: "Messages — Just Friends Store" }] }),
+  head: () => ({
+    meta: [
+      { title: "Messages — Just Friends Store" },
+      { name: "description", content: "Your conversations and price negotiations with sellers on Just Friends Store." },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "Messages — Just Friends Store" },
+      { property: "og:description", content: "Your conversations and price negotiations with sellers on Just Friends Store." },
+    ],
+  }),
   component: MessagesPage,
 });
 

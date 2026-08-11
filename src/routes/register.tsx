@@ -10,7 +10,20 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({ meta: [{ title: "Create your account — Son of Sun Greece" }] }),
+  head: () => ({
+    meta: [
+      { title: "Create your account — Just Friends Store" },
+      { name: "description", content: "Join Just Friends Store to shop from independent sellers or open your own free storefront." },
+      { property: "og:title", content: "Create your account — Just Friends Store" },
+      { property: "og:description", content: "Join Just Friends Store to shop from independent sellers or open your own free storefront." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://jftstores.lovable.app/register" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Create your account — Just Friends Store" },
+      { name: "twitter:description", content: "Join Just Friends Store to shop from independent sellers or open your own free storefront." },
+    ],
+    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/register" }],
+  }),
   component: RegisterPage,
 });
 

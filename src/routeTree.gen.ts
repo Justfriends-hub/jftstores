@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoresRouteImport } from './routes/stores'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as MessagesRouteImport } from './routes/messages'
@@ -34,6 +35,11 @@ import { Route as AdminStoresIdRouteImport } from './routes/admin.stores.$id'
 const StoresRoute = StoresRouteImport.update({
   id: '/stores',
   path: '/stores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellRoute = SellRouteImport.update({
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/messages': typeof MessagesRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stores': typeof StoresRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/broadcasts': typeof AdminBroadcastsRoute
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/messages': typeof MessagesRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stores': typeof StoresRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/broadcasts': typeof AdminBroadcastsRoute
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/messages': typeof MessagesRoute
   '/register': typeof RegisterRoute
   '/sell': typeof SellRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stores': typeof StoresRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/broadcasts': typeof AdminBroadcastsRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/register'
     | '/sell'
+    | '/sitemap.xml'
     | '/stores'
     | '/admin/analytics'
     | '/admin/broadcasts'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/register'
     | '/sell'
+    | '/sitemap.xml'
     | '/stores'
     | '/admin/analytics'
     | '/admin/broadcasts'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/register'
     | '/sell'
+    | '/sitemap.xml'
     | '/stores'
     | '/admin/analytics'
     | '/admin/broadcasts'
@@ -287,6 +299,7 @@ export interface RootRouteChildren {
   MessagesRoute: typeof MessagesRoute
   RegisterRoute: typeof RegisterRoute
   SellRoute: typeof SellRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StoresRoute: typeof StoresRoute
   StoreSlugRoute: typeof StoreSlugRoute
 }
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/stores'
       fullPath: '/stores'
       preLoaderRoute: typeof StoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sell': {
@@ -511,6 +531,7 @@ const rootRouteChildren: RootRouteChildren = {
   MessagesRoute: MessagesRoute,
   RegisterRoute: RegisterRoute,
   SellRoute: SellRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   StoresRoute: StoresRoute,
   StoreSlugRoute: StoreSlugRoute,
 }

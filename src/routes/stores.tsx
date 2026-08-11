@@ -14,9 +14,17 @@ export const Route = createFileRoute("/stores")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Browse stores — Son of Sun Greece" },
-      { name: "description", content: "Browse independent Greek shops by category. Fashion, ceramics, food, jewelry and more." },
+      { title: "Browse stores — Just Friends Store" },
+      { name: "description", content: "Browse independent shops by category on Just Friends Store: fashion, food, beauty, jewelry and more." },
+      { property: "og:title", content: "Browse stores — Just Friends Store" },
+      { property: "og:description", content: "Browse independent shops by category on Just Friends Store: fashion, food, beauty, jewelry and more." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://jftstores.lovable.app/stores" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Browse stores — Just Friends Store" },
+      { name: "twitter:description", content: "Browse independent shops by category on Just Friends Store: fashion, food, beauty, jewelry and more." },
     ],
+    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/stores" }],
   }),
   component: StoresPage,
 });

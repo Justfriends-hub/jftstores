@@ -9,9 +9,17 @@ import { BRAND, STORE_CATEGORIES } from "@/lib/constants";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Son of Sun Greece — Shop small. Live warm." },
-      { name: "description", content: "Discover independent Greek shops in one place. Free storefronts for makers, one checkout for shoppers." },
+      { title: "Just Friends Store — Shop small. Live warm." },
+      { name: "description", content: "Discover independent small businesses in one place. Browse stores, negotiate with sellers, and check out in one cart." },
+      { property: "og:title", content: "Just Friends Store — Shop small. Live warm." },
+      { property: "og:description", content: "Discover independent small businesses in one place. Browse stores, negotiate with sellers, and check out in one cart." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://jftstores.lovable.app/" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Just Friends Store — Shop small. Live warm." },
+      { name: "twitter:description", content: "Discover independent small businesses in one place. Browse stores, negotiate with sellers, and check out in one cart." },
     ],
+    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/" }],
   }),
   component: HomePage,
 });
