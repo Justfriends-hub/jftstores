@@ -162,7 +162,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">About</h4>
           <p className="mt-3 text-sm text-muted-foreground">
-            Built for the makers of Greece. Discover small shops, message them on WhatsApp,
+            Built for independent store owners. Discover small shops, message them on WhatsApp,
             and check out in one place.
           </p>
         </div>

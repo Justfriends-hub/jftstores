@@ -1,5 +1,5 @@
 export const BRAND = {
-  name: "Son of Sun Greece",
+  name: "Lawal's Marketplace",
   short: "JFTS",
   tagline: "Shop small. Live warm. Discover Greece's best small businesses in one place.",
   domain: "sonofsungreece.com",

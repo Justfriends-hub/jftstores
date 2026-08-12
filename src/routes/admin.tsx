@@ -6,10 +6,10 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Admin — Just Friends Store" },
+      { title: "Admin — Lawal's Marketplace" },
       { name: "description", content: "Internal admin command center for users, stores, orders, and analytics." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Admin — Just Friends Store" },
+      { property: "og:title", content: "Admin — Lawal's Marketplace" },
       { property: "og:description", content: "Internal admin command center for users, stores, orders, and analytics." },
     ],
   }),

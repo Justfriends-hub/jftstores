@@ -14,15 +14,15 @@ export const Route = createFileRoute("/stores")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Browse stores — Just Friends Store" },
-      { name: "description", content: "Browse independent shops by category on Just Friends Store: fashion, food, beauty, jewelry and more." },
-      { property: "og:title", content: "Browse stores — Just Friends Store" },
-      { property: "og:description", content: "Browse independent shops by category on Just Friends Store: fashion, food, beauty, jewelry and more." },
+      { title: "Browse stores — Lawal's Marketplace" },
+      { name: "description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
+      { property: "og:title", content: "Browse stores — Lawal's Marketplace" },
+      { property: "og:description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://jftstores.lovable.app/stores" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Browse stores — Just Friends Store" },
-      { name: "twitter:description", content: "Browse independent shops by category on Just Friends Store: fashion, food, beauty, jewelry and more." },
+      { name: "twitter:title", content: "Browse stores — Lawal's Marketplace" },
+      { name: "twitter:description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
     ],
     links: [{ rel: "canonical", href: "https://jftstores.lovable.app/stores" }],
   }),
@@ -54,7 +54,7 @@ function StoresPage() {
     <PageShell>
       <section className="border-b border-border bg-gradient-to-b from-[var(--sand)] to-background">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-          <h1 className="font-serif text-3xl sm:text-4xl">Browse Greek shops</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl">Browse stores</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             Independent makers, hand-picked and approved. Tap any shop to enter their world.
           </p>

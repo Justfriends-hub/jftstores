@@ -16,10 +16,10 @@ import { UnreadBadge } from "@/components/unread-badge";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Seller dashboard — Just Friends Store" },
+      { title: "Seller dashboard — Lawal's Marketplace" },
       { name: "description", content: "Manage your products, store theme, orders, and buyer messages." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Seller dashboard — Just Friends Store" },
+      { property: "og:title", content: "Seller dashboard — Lawal's Marketplace" },
       { property: "og:description", content: "Manage your products, store theme, orders, and buyer messages." },
     ],
   }),

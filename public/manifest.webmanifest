@@ -1,7 +1,7 @@
 {
-  "name": "Just Friends Store",
-  "short_name": "Just Friends",
-  "description": "Discover small Greek shops, message sellers on WhatsApp, and check out in one place.",
+  "name": "Lawal's Marketplace",
+  "short_name": "Lawal's Marketplace",
+  "description": "Discover independent stores, message sellers on WhatsApp, and check out in one place.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

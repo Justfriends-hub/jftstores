@@ -36,8 +36,8 @@ export const Route = createFileRoute("/store/$slug")({
   head: ({ params, loaderData }) => {
     const url = `https://jftstores.lovable.app/store/${params.slug}`;
     const name = loaderData?.seller.business_name ?? "Store";
-    const title = `${name} — Just Friends Store`;
-    const desc = loaderData?.seller.description ?? `Shop ${name} on Just Friends Store.`;
+    const title = `${name} — Lawal's Marketplace`;
+    const desc = loaderData?.seller.description ?? `Shop ${name} on Lawal's Marketplace.`;
     const image = loaderData?.seller.banner_url ?? loaderData?.seller.logo_url ?? null;
     return {
       meta: [
@@ -193,7 +193,7 @@ function StorePage() {
         <section className="border-t" style={{ borderColor: theme.border ?? undefined, backgroundColor: theme.card ?? theme.surface ?? "#fff", color: theme.text ?? undefined }}>
           <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-12 text-center sm:px-6">
             <h3 className="font-serif text-xl" style={{ fontFamily: theme.fontHead ? `'${theme.fontHead}', serif` : undefined }}>
-              Discover other Greek shops
+              Discover other stores
             </h3>
             <p className="text-sm" style={{ color: theme.muted ?? undefined }}>
               You're inside {seller.business_name}'s world. There's more waiting in the marketplace.

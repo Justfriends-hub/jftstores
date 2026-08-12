@@ -19,7 +19,7 @@ export type RouteExpectation = {
 };
 
 export const CORE_ROUTES: RouteExpectation[] = [
-  { path: "/", canonical: "/", noindex: false, titleIncludes: "Just Friends Store" },
+  { path: "/", canonical: "/", noindex: false, titleIncludes: "Lawal's Marketplace" },
   { path: "/stores", canonical: "/stores", noindex: false, titleIncludes: "Browse stores" },
   { path: "/sell", canonical: "/sell", noindex: false, titleIncludes: "free shop" },
   { path: "/login", canonical: "/login", noindex: false, titleIncludes: "Sign in" },

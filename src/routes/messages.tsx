@@ -15,11 +15,11 @@ import { ConversationFilters, type ConversationFilter } from "@/components/chat/
 export const Route = createFileRoute("/messages")({
   head: () => ({
     meta: [
-      { title: "Messages — Just Friends Store" },
-      { name: "description", content: "Your conversations and price negotiations with sellers on Just Friends Store." },
+      { title: "Messages — Lawal's Marketplace" },
+      { name: "description", content: "Your conversations and price negotiations with sellers on Lawal's Marketplace." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Messages — Just Friends Store" },
-      { property: "og:description", content: "Your conversations and price negotiations with sellers on Just Friends Store." },
+      { property: "og:title", content: "Messages — Lawal's Marketplace" },
+      { property: "og:description", content: "Your conversations and price negotiations with sellers on Lawal's Marketplace." },
     ],
   }),
   component: MessagesPage,

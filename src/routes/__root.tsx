@@ -34,7 +34,7 @@ function NotFoundComponent() {
             to="/"
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
-            Back to Son of Sun Greece
+            Back to Lawal's Marketplace
           </Link>
         </div>
       </div>
@@ -80,15 +80,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Justfriendstore — Shop small. Live warm." },
-      { name: "description", content: "Discover jfts best small businesses in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
-      { name: "author", content: "Just Friends Store" },
-      { property: "og:title", content: "Justfriendstore — Shop small. Live warm." },
-      { property: "og:description", content: "Discover jfts best small businesses in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
+      { title: "Lawal's Marketplace — Shop small. Live warm." },
+      { name: "description", content: "Discover the best independent stores in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
+      { name: "author", content: "Lawal's Marketplace" },
+      { property: "og:title", content: "Lawal's Marketplace — Shop small. Live warm." },
+      { property: "og:description", content: "Discover the best independent stores in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Justfriendstore — Shop small. Live warm." },
-      { name: "twitter:description", content: "Discover jfts best small businesses in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
+      { name: "twitter:title", content: "Lawal's Marketplace — Shop small. Live warm." },
+      { name: "twitter:description", content: "Discover the best independent stores in one place. Browse independent stores, message sellers on WhatsApp, and check out in one cart." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
     ],
