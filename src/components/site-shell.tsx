@@ -168,7 +168,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {BRAND.name}. Crafted with sun & sea.
+        © {new Date().getFullYear()} {BRAND.name}. A marketplace for independent store owners.
       </div>
     </footer>
   );
