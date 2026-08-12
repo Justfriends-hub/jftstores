@@ -73,4 +73,19 @@ describe(`SEO metadata @ ${ORIGIN}`, () => {
       }
     }
   });
+
+  it("sitemap storefronts are live, approved pages", async () => {
+    const xml = await (await fetch(`${ORIGIN}/sitemap.xml`)).text();
+    const storeUrls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+      .map((m) => m[1])
+      .filter((u) => u.includes("/store/"));
+    for (const url of storeUrls) {
+      const path = url.replace(PRODUCTION_ORIGIN, "");
+      const html = await fetchHtml(ORIGIN, path);
+      expect(html, `${path} should not render the not-found page`).not.toContain("Store not found");
+      const meta = parseHead(html);
+      expect(meta.title, `${path} missing title`).toBeTruthy();
+      expect(meta.canonical, `${path} canonical mismatch`).toBe(url);
+    }
+  });
 });
