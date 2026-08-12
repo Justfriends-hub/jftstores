@@ -22,16 +22,23 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/register", changefreq: "yearly", priority: "0.3" },
         ];
 
+        // Storefronts: only approved (published) sellers. Pending and
+        // suspended sellers are excluded automatically by this filter, so a
+        // store disappears from the sitemap the moment admin suspends it.
         try {
-          const { data } = await supabase
+          const { data, error } = await supabase
             .from("sellers")
-            .select("slug")
-            .eq("status", "approved");
+            .select("slug, status")
+            .eq("status", "approved")
+            .order("business_name", { ascending: true });
+          if (error) throw error;
           for (const s of data ?? []) {
-            if (s.slug) entries.push({ path: `/store/${s.slug}`, changefreq: "weekly", priority: "0.7" });
+            if (s.slug && s.status === "approved") {
+              entries.push({ path: `/store/${s.slug}`, changefreq: "weekly", priority: "0.7" });
+            }
           }
-        } catch {
-          // storefront list unavailable — serve static entries only
+        } catch (err) {
+          console.error("[sitemap] storefront list unavailable", err);
         }
 
         const urls = entries.map((e) =>

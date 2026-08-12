@@ -12,15 +12,15 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
-      { title: "Create your account — Just Friends Store" },
-      { name: "description", content: "Join Just Friends Store to shop from independent sellers or open your own free storefront." },
-      { property: "og:title", content: "Create your account — Just Friends Store" },
-      { property: "og:description", content: "Join Just Friends Store to shop from independent sellers or open your own free storefront." },
+      { title: "Create your account — Lawal's Marketplace" },
+      { name: "description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
+      { property: "og:title", content: "Create your account — Lawal's Marketplace" },
+      { property: "og:description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://jftstores.lovable.app/register" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Create your account — Just Friends Store" },
-      { name: "twitter:description", content: "Join Just Friends Store to shop from independent sellers or open your own free storefront." },
+      { name: "twitter:title", content: "Create your account — Lawal's Marketplace" },
+      { name: "twitter:description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
     ],
     links: [{ rel: "canonical", href: "https://jftstores.lovable.app/register" }],
   }),
@@ -63,7 +63,7 @@ function RegisterPage() {
   return (
     <PageShell>
       <section className="mx-auto max-w-md px-4 py-16 sm:px-6">
-        <h1 className="font-serif text-3xl">Join Son of Sun Greece</h1>
+        <h1 className="font-serif text-3xl">Join Lawal's Marketplace</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           One free account to shop and (if you want) to open your own storefront.
         </p>

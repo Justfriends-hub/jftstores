@@ -12,14 +12,14 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/sell")({
   head: () => ({
     meta: [
-      { title: "Open your free shop — Just Friends Store" },
+      { title: "Open your free shop — Lawal's Marketplace" },
       { name: "description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
-      { property: "og:title", content: "Open your free shop — Just Friends Store" },
+      { property: "og:title", content: "Open your free shop — Lawal's Marketplace" },
       { property: "og:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://jftstores.lovable.app/sell" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Open your free shop — Just Friends Store" },
+      { name: "twitter:title", content: "Open your free shop — Lawal's Marketplace" },
       { name: "twitter:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
     ],
     links: [{ rel: "canonical", href: "https://jftstores.lovable.app/sell" }],

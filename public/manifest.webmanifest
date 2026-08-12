@@ -1,7 +1,7 @@
 {
-  "name": "Just Friends Store",
-  "short_name": "Just Friends",
-  "description": "Discover small Greek shops, message sellers on WhatsApp, and check out in one place.",
+  "name": "Lawal's Marketplace",
+  "short_name": "Lawal's",
+  "description": "A marketplace for independent store owners. Browse stores, negotiate with sellers, and check out in one cart.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -9,8 +9,23 @@
   "background_color": "#ffffff",
   "theme_color": "#c2410c",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

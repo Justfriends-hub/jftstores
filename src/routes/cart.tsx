@@ -9,10 +9,10 @@ import { NegotiateButton } from "@/components/chat/chat-drawer";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: "Your cart — Just Friends Store" },
+      { title: "Your cart — Lawal's Marketplace" },
       { name: "description", content: "Review your selections from independent shops and check out in one place." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Your cart — Just Friends Store" },
+      { property: "og:title", content: "Your cart — Lawal's Marketplace" },
       { property: "og:description", content: "Review your selections from independent shops and check out in one place." },
     ],
   }),

@@ -16,11 +16,11 @@ import { NegotiateButton } from "@/components/chat/chat-drawer";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout — Just Friends Store" },
-      { name: "description", content: "Securely pay for your order from independent sellers on Just Friends Store." },
+      { title: "Checkout — Lawal's Marketplace" },
+      { name: "description", content: "Securely pay for your order from independent sellers on Lawal's Marketplace." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Checkout — Just Friends Store" },
-      { property: "og:description", content: "Securely pay for your order from independent sellers on Just Friends Store." },
+      { property: "og:title", content: "Checkout — Lawal's Marketplace" },
+      { property: "og:description", content: "Securely pay for your order from independent sellers on Lawal's Marketplace." },
     ],
   }),
   component: CheckoutPage,

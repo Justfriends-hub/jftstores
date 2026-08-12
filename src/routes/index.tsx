@@ -9,15 +9,15 @@ import { BRAND, STORE_CATEGORIES } from "@/lib/constants";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Just Friends Store — Shop small. Live warm." },
-      { name: "description", content: "Discover independent small businesses in one place. Browse stores, negotiate with sellers, and check out in one cart." },
-      { property: "og:title", content: "Just Friends Store — Shop small. Live warm." },
-      { property: "og:description", content: "Discover independent small businesses in one place. Browse stores, negotiate with sellers, and check out in one cart." },
+      { title: "Lawal's Marketplace — Many stores, one cart" },
+      { name: "description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
+      { property: "og:title", content: "Lawal's Marketplace — Many stores, one cart" },
+      { property: "og:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://jftstores.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Just Friends Store — Shop small. Live warm." },
-      { name: "twitter:description", content: "Discover independent small businesses in one place. Browse stores, negotiate with sellers, and check out in one cart." },
+      { name: "twitter:title", content: "Lawal's Marketplace — Many stores, one cart" },
+      { name: "twitter:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
     ],
     links: [{ rel: "canonical", href: "https://jftstores.lovable.app/" }],
   }),
@@ -48,7 +48,7 @@ function HomePage() {
           <div className="flex flex-col justify-center">
             <span className="inline-flex w-fit items-center gap-2 rounded-full bg-card px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
               <Sparkles className="h-3.5 w-3.5 text-[var(--terracotta)]" />
-              A home for Greek makers
+              A marketplace for independent store owners
             </span>
             <h1 className="mt-5 font-serif text-4xl leading-tight text-balance text-foreground sm:text-5xl md:text-6xl">
               Shop small. <span className="text-[var(--terracotta)]">Live warm.</span>
@@ -88,7 +88,7 @@ function HomePage() {
                 >
                   <div className="h-2/3 rounded-2xl" style={{ background: `linear-gradient(135deg, ${c.tone}, oklch(0.92 0.06 80))` }} />
                   <p className="mt-3 font-serif text-lg">{c.label}</p>
-                  <p className="text-xs text-muted-foreground">From small Greek shops</p>
+                  <p className="text-xs text-muted-foreground">From independent stores</p>
                 </div>
               ))}
             </div>

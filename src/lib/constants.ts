@@ -1,8 +1,8 @@
 export const BRAND = {
-  name: "Son of Sun Greece",
-  short: "JFTS",
-  tagline: "Shop small. Live warm. Discover Greece's best small businesses in one place.",
-  domain: "sonofsungreece.com",
+  name: "Lawal's Marketplace",
+  short: "Lawal's",
+  tagline: "One marketplace for independent store owners. Open a store, or shop from many in one cart.",
+  domain: "jftstores.lovable.app",
 } as const;
 
 export const STORE_CATEGORIES = [

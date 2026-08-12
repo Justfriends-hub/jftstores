@@ -162,13 +162,13 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">About</h4>
           <p className="mt-3 text-sm text-muted-foreground">
-            Built for the makers of Greece. Discover small shops, message them on WhatsApp,
+            Built for independent store owners. Discover small shops, message them on WhatsApp,
             and check out in one place.
           </p>
         </div>
       </div>
       <div className="border-t border-border py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {BRAND.name}. Crafted with sun & sea.
+        © {new Date().getFullYear()} {BRAND.name}. A marketplace for independent store owners.
       </div>
     </footer>
   );

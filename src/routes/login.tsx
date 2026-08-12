@@ -12,15 +12,15 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign in — Just Friends Store" },
-      { name: "description", content: "Sign in to Just Friends Store to track orders, message sellers, and manage your shop." },
-      { property: "og:title", content: "Sign in — Just Friends Store" },
-      { property: "og:description", content: "Sign in to Just Friends Store to track orders, message sellers, and manage your shop." },
+      { title: "Sign in — Lawal's Marketplace" },
+      { name: "description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
+      { property: "og:title", content: "Sign in — Lawal's Marketplace" },
+      { property: "og:description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://jftstores.lovable.app/login" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Sign in — Just Friends Store" },
-      { name: "twitter:description", content: "Sign in to Just Friends Store to track orders, message sellers, and manage your shop." },
+      { name: "twitter:title", content: "Sign in — Lawal's Marketplace" },
+      { name: "twitter:description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
     ],
     links: [{ rel: "canonical", href: "https://jftstores.lovable.app/login" }],
   }),

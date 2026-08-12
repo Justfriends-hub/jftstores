@@ -29,7 +29,10 @@ describe(`SEO metadata @ ${ORIGIN}`, () => {
   it("titles and descriptions are unique across indexable routes", async () => {
     const indexable = CORE_ROUTES.filter((r) => !r.noindex);
     const metas = await Promise.all(
-      indexable.map(async (r) => ({ path: r.path, meta: parseHead(await fetchHtml(ORIGIN, r.path)) })),
+      indexable.map(async (r) => ({
+        path: r.path,
+        meta: parseHead(await fetchHtml(ORIGIN, r.path)),
+      })),
     );
     const titles = metas.map((m) => m.meta.title);
     const descriptions = metas.map((m) => m.meta.description);
@@ -71,6 +74,21 @@ describe(`SEO metadata @ ${ORIGIN}`, () => {
       } else {
         expect(locs, `${route.path} missing from sitemap`).toContain(url);
       }
+    }
+  });
+
+  it("sitemap storefronts are live, approved pages", async () => {
+    const xml = await (await fetch(`${ORIGIN}/sitemap.xml`)).text();
+    const storeUrls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+      .map((m) => m[1])
+      .filter((u) => u.includes("/store/"));
+    for (const url of storeUrls) {
+      const path = url.replace(PRODUCTION_ORIGIN, "");
+      const html = await fetchHtml(ORIGIN, path);
+      expect(html, `${path} should not render the not-found page`).not.toContain("Store not found");
+      const meta = parseHead(html);
+      expect(meta.title, `${path} missing title`).toBeTruthy();
+      expect(meta.canonical, `${path} canonical mismatch`).toBe(url);
     }
   });
 });

@@ -91,14 +91,14 @@ export function InstallBanner() {
         <div className="flex-1 min-w-0 text-sm">
           {ios ? (
             <>
-              <p className="font-medium">Add Just Friends to your home screen</p>
+              <p className="font-medium">Add Lawal's Marketplace to your home screen</p>
               <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
                 Tap <Share className="inline h-3 w-3" /> then "Add to Home Screen" to get deal alerts.
               </p>
             </>
           ) : (
             <>
-              <p className="font-medium">Add Just Friends Store to your home screen</p>
+              <p className="font-medium">Add Lawal's Marketplace to your home screen</p>
               <p className="text-xs text-muted-foreground mt-0.5">Get notified when your favourite stores post new deals.</p>
             </>
           )}
