@@ -29,7 +29,10 @@ describe(`SEO metadata @ ${ORIGIN}`, () => {
   it("titles and descriptions are unique across indexable routes", async () => {
     const indexable = CORE_ROUTES.filter((r) => !r.noindex);
     const metas = await Promise.all(
-      indexable.map(async (r) => ({ path: r.path, meta: parseHead(await fetchHtml(ORIGIN, r.path)) })),
+      indexable.map(async (r) => ({
+        path: r.path,
+        meta: parseHead(await fetchHtml(ORIGIN, r.path)),
+      })),
     );
     const titles = metas.map((m) => m.meta.title);
     const descriptions = metas.map((m) => m.meta.description);

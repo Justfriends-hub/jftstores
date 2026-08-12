@@ -41,7 +41,6 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("[sitemap] storefront list unavailable", err);
         }
 
-
         const urls = entries.map((e) =>
           [
             `  <url>`,

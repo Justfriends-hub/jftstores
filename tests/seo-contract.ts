@@ -23,7 +23,12 @@ export const CORE_ROUTES: RouteExpectation[] = [
   { path: "/stores", canonical: "/stores", noindex: false, titleIncludes: "Browse stores" },
   { path: "/sell", canonical: "/sell", noindex: false, titleIncludes: "free shop" },
   { path: "/login", canonical: "/login", noindex: false, titleIncludes: "Sign in" },
-  { path: "/register", canonical: "/register", noindex: false, titleIncludes: "Create your account" },
+  {
+    path: "/register",
+    canonical: "/register",
+    noindex: false,
+    titleIncludes: "Create your account",
+  },
   { path: "/cart", noindex: true, titleIncludes: "cart" },
   { path: "/checkout", noindex: true, titleIncludes: "Checkout" },
   { path: "/messages", noindex: true, titleIncludes: "Messages" },
@@ -89,16 +94,14 @@ export function parseHead(html: string): PageMeta {
 export type Failure = { path: string; problem: string };
 
 /** Run the SEO contract against one page's parsed head. Returns failures. */
-export function checkPage(
-  route: RouteExpectation,
-  meta: PageMeta,
-  origin: string,
-): Failure[] {
+export function checkPage(route: RouteExpectation, meta: PageMeta, origin: string): Failure[] {
   const fail: Failure[] = [];
   const add = (problem: string) => fail.push({ path: route.path, problem });
 
-  if (!meta.title || meta.title.length < 10) add(`missing or too-short <title> (${meta.title ?? "none"})`);
-  if (meta.title && meta.title.length > 70) add(`<title> longer than 70 chars (${meta.title.length})`);
+  if (!meta.title || meta.title.length < 10)
+    add(`missing or too-short <title> (${meta.title ?? "none"})`);
+  if (meta.title && meta.title.length > 70)
+    add(`<title> longer than 70 chars (${meta.title.length})`);
   if (route.titleIncludes && !meta.title?.toLowerCase().includes(route.titleIncludes.toLowerCase()))
     add(`<title> should mention "${route.titleIncludes}" (got "${meta.title}")`);
 
@@ -111,14 +114,18 @@ export function checkPage(
   if (!meta.ogDescription) add("missing og:description");
 
   const noindexed = /noindex/i.test(meta.robots ?? "");
-  if (route.noindex && !noindexed) add(`private route must be noindex (robots="${meta.robots ?? "none"}")`);
-  if (!route.noindex && noindexed) add(`public route must not be noindex (robots="${meta.robots}")`);
+  if (route.noindex && !noindexed)
+    add(`private route must be noindex (robots="${meta.robots ?? "none"}")`);
+  if (!route.noindex && noindexed)
+    add(`public route must not be noindex (robots="${meta.robots}")`);
 
   if (route.canonical) {
     const expected = `${PRODUCTION_ORIGIN}${route.canonical}`;
     if (!meta.canonical) add("missing <link rel=canonical>");
-    else if (meta.canonical !== expected) add(`canonical should be ${expected}, got ${meta.canonical}`);
-    if (meta.ogUrl && meta.ogUrl !== expected) add(`og:url should be ${expected}, got ${meta.ogUrl}`);
+    else if (meta.canonical !== expected)
+      add(`canonical should be ${expected}, got ${meta.canonical}`);
+    if (meta.ogUrl && meta.ogUrl !== expected)
+      add(`og:url should be ${expected}, got ${meta.ogUrl}`);
   } else if (meta.canonical) {
     add(`noindex route should not advertise a canonical (${meta.canonical})`);
   }
