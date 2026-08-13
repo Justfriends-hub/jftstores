@@ -90,8 +90,15 @@ function AdminConversationsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-2xl">Conversations</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Monitor negotiations and customer/seller chats.</p>
+        <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <span>Monitor negotiations and customer/seller chats.</span>
+          <span className="inline-flex items-center gap-1.5 text-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            Live{liveAt ? ` · updated ${liveAt.toLocaleTimeString()}` : ""}
+          </span>
+        </p>
       </div>
+
 
       <div className="flex flex-wrap gap-2">
         {(["all", "negotiating", "price_agreed", "flagged"] as const).map((f) => (
