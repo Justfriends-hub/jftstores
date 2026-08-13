@@ -13,7 +13,13 @@ import {
 import { ChatDrawer } from "@/components/chat/chat-drawer";
 
 export const Route = createFileRoute("/admin/conversations")({
-  head: () => ({ meta: [{ title: "Conversations — Admin" }] }),
+  head: () => ({
+    meta: [
+      { title: "Conversations — Admin" },
+      { name: "description", content: "Admin oversight of buyer and seller negotiation conversations on Lawal's Marketplace, with flagging and status controls." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: AdminConversationsPage,
 });
 
