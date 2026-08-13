@@ -33,29 +33,52 @@ function AdminConversationsPage() {
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "flagged" | "negotiating" | "price_agreed">("all");
+  const [liveAt, setLiveAt] = useState<Date | null>(null);
 
-  async function refresh() {
-    setLoading(true);
+  async function refresh(opts: { silent?: boolean } = {}) {
+    if (!opts.silent) setLoading(true);
     try {
       const data = await list();
       setRows(data as unknown as Row[]);
+      setLiveAt(new Date());
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not load");
+      if (!opts.silent) toast.error(e instanceof Error ? e.message : "Could not load");
     } finally {
-      setLoading(false);
+      if (!opts.silent) setLoading(false);
     }
   }
 
   useEffect(() => { void refresh(); }, []);
 
+  // Admins bypass RLS through the server function, so realtime can't push to
+  // them directly. Poll on a short interval instead, and only while the tab is
+  // visible so background tabs don't hammer the backend.
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const start = () => {
+      if (timer) return;
+      timer = setInterval(() => { void refresh({ silent: true }); }, 5000);
+    };
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") { void refresh({ silent: true }); start(); }
+      else stop();
+    };
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => { stop(); document.removeEventListener("visibilitychange", onVisibility); };
+  }, []);
+
   async function toggleFlag(r: Row) {
     try {
       await flag({ data: { conversationId: r.id, flagged: !r.flagged } });
       setRows((prev) => prev.map((x) => x.id === r.id ? { ...x, flagged: !r.flagged } : x));
+      void refresh({ silent: true });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not flag");
     }
   }
+
 
   const filtered = rows.filter((r) => {
     if (filter === "all") return true;
@@ -67,8 +90,15 @@ function AdminConversationsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-2xl">Conversations</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Monitor negotiations and customer/seller chats.</p>
+        <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <span>Monitor negotiations and customer/seller chats.</span>
+          <span className="inline-flex items-center gap-1.5 text-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            Live{liveAt ? ` · updated ${liveAt.toLocaleTimeString()}` : ""}
+          </span>
+        </p>
       </div>
+
 
       <div className="flex flex-wrap gap-2">
         {(["all", "negotiating", "price_agreed", "flagged"] as const).map((f) => (
@@ -117,7 +147,7 @@ function AdminConversationsPage() {
         </ul>
       )}
 
-      {openId && <ChatDrawer conversationId={openId} onClose={() => setOpenId(null)} readOnly />}
+      {openId && <ChatDrawer conversationId={openId} onClose={() => { setOpenId(null); void refresh({ silent: true }); }} readOnly />}
     </div>
   );
 }

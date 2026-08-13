@@ -91,6 +91,45 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
+      { property: "og:site_name", content: "Lawal's Marketplace" },
+      { property: "og:url", content: "https://jftstores.lovable.app/" },
+      { property: "og:locale", content: "en_US" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Lawal's Marketplace",
+          alternateName: ["Lawals Marketplace", "Lawal Marketplace", "Lawal's Market", "Just Friends Store"],
+          url: "https://jftstores.lovable.app/",
+          description:
+            "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart.",
+          inLanguage: "en",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate: "https://jftstores.lovable.app/stores?q={search_term_string}",
+            },
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Lawal's Marketplace",
+          alternateName: "Lawals Marketplace",
+          url: "https://jftstores.lovable.app/",
+          logo: "https://jftstores.lovable.app/icon-512.png",
+          description:
+            "Online marketplace for independent Nigerian store owners to host storefronts, negotiate prices and sell in one shared cart.",
+        }),
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -104,6 +143,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
