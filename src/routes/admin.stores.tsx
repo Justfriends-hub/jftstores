@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { setSellerStatus, updateSeller } from "@/lib/admin.functions";
+import { sanitizeSearchTerm } from "@/lib/search";
 
 export const Route = createFileRoute("/admin/stores")({
   component: StoresPage,
@@ -45,7 +46,8 @@ function StoresPage() {
     let qb = supabase
       .from("sellers")
       .select("id, business_name, slug, category, status, is_featured, rank, total_revenue, total_orders, created_at, user_id", { count: "exact" });
-    if (q) qb = qb.or(`business_name.ilike.%${q}%,slug.ilike.%${q}%,category.ilike.%${q}%`);
+    const term = sanitizeSearchTerm(q);
+    if (term) qb = qb.or(`business_name.ilike.%${term}%,slug.ilike.%${term}%,category.ilike.%${term}%`);
     if (sort === "newest") qb = qb.order("created_at", { ascending: false });
     if (sort === "revenue") qb = qb.order("total_revenue", { ascending: false });
     qb = qb.range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
