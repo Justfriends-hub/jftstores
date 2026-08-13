@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { deleteUser, setUserBlocked, promoteToSeller } from "@/lib/admin.functions";
+import { sanitizeSearchTerm } from "@/lib/search";
 
 export const Route = createFileRoute("/admin/users")({
   component: UsersPage,
@@ -57,7 +58,8 @@ function UsersPage() {
       .select("id, email, full_name, is_blocked, referral_store_slug, ip_country, ip_city, created_at, last_active_at", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
-    if (q) qb = qb.or(`email.ilike.%${q}%,full_name.ilike.%${q}%`);
+    const term = sanitizeSearchTerm(q);
+    if (term) qb = qb.or(`email.ilike.%${term}%,full_name.ilike.%${term}%`);
     if (country) qb = qb.eq("ip_country", country);
 
     const { data, count } = await qb;

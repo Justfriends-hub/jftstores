@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/lib/auth";
 
 type Theme = { slug: string; css_config: Record<string, string> };
 type Seller = {
   id: string; slug: string; business_name: string; description: string | null;
   logo_url: string | null; banner_url: string | null; category: string | null;
-  whatsapp_number: string | null; status: string;
+  status: string;
   themes: Theme | null;
 };
 type Product = {
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/store/$slug")({
   loader: async ({ params }) => {
     const { data: seller, error } = await supabase
       .from("sellers")
-      .select("id, slug, business_name, description, logo_url, banner_url, category, whatsapp_number, status, themes(slug, css_config)")
+      .select("id, slug, business_name, description, logo_url, banner_url, category, status, themes(slug, css_config)")
       .eq("slug", params.slug)
       .eq("status", "approved")
       .maybeSingle();
@@ -77,6 +78,22 @@ export const Route = createFileRoute("/store/$slug")({
 
 function StorePage() {
   const { seller } = Route.useLoaderData();
+  const { user } = useAuth();
+
+  // WhatsApp numbers are not readable by anonymous visitors (anti-scraping);
+  // fetch them only for signed-in users.
+  const { data: whatsapp } = useQuery({
+    queryKey: ["seller-contact", seller.id, user?.id ?? null],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("sellers")
+        .select("whatsapp_number")
+        .eq("id", seller.id)
+        .maybeSingle();
+      return data?.whatsapp_number ?? null;
+    },
+  });
   const theme = seller.themes?.css_config ?? {};
 
   const themeStyle = useMemo<React.CSSProperties>(() => ({
@@ -147,9 +164,9 @@ function StorePage() {
             {seller.description && (
               <p className="mt-6 max-w-2xl text-sm opacity-95 sm:text-base">{seller.description}</p>
             )}
-            {seller.whatsapp_number && (
+            {whatsapp && (
               <a
-                href={buildWhatsAppLink({ phone: seller.whatsapp_number, storeSlug: seller.slug })}
+                href={buildWhatsAppLink({ phone: whatsapp, storeSlug: seller.slug })}
                 target="_blank" rel="noreferrer"
                 className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:opacity-95"
               >
@@ -178,11 +195,11 @@ function StorePage() {
                 ))}
               </div>
             ) : products.length === 0 ? (
-              <EmptyProducts whatsapp={seller.whatsapp_number} slug={seller.slug} />
+              <EmptyProducts whatsapp={whatsapp ?? null} slug={seller.slug} />
             ) : (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {products.map((p) => (
-                  <ProductCard key={p.id} product={p} seller={seller} theme={theme} />
+                  <ProductCard key={p.id} product={p} seller={seller} theme={theme} whatsapp={whatsapp ?? null} />
                 ))}
               </div>
             )}
@@ -208,7 +225,7 @@ function StorePage() {
   );
 }
 
-function ProductCard({ product, seller, theme }: { product: Product; seller: Seller; theme: Record<string, string> }) {
+function ProductCard({ product, seller, theme, whatsapp }: { product: Product; seller: Seller; theme: Record<string, string>; whatsapp: string | null }) {
   const { items, add, setQty } = useCart();
   const inCart = items.find((i) => i.productId === product.id);
   const [qty, setLocalQty] = useState(1);
@@ -220,7 +237,7 @@ function ProductCard({ product, seller, theme }: { product: Product; seller: Sel
         sellerId: seller.id,
         sellerSlug: seller.slug,
         sellerName: seller.business_name,
-        sellerWhatsApp: seller.whatsapp_number,
+        sellerWhatsApp: whatsapp,
         productName: product.name,
         price: Number(product.price),
         image: product.images?.[0] ?? null,
@@ -269,9 +286,9 @@ function ProductCard({ product, seller, theme }: { product: Product; seller: Sel
               {product.stock <= 0 ? "Sold out" : "Add to cart"}
             </button>
           )}
-          {seller.whatsapp_number && (
+          {whatsapp && (
             <a
-              href={buildWhatsAppLink({ phone: seller.whatsapp_number, productName: product.name, storeSlug: seller.slug })}
+              href={buildWhatsAppLink({ phone: whatsapp, productName: product.name, storeSlug: seller.slug })}
               target="_blank" rel="noreferrer"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#25D366] text-white hover:opacity-95"
               aria-label="WhatsApp seller about this product"

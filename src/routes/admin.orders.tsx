@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeSearchTerm } from "@/lib/search";
 
 export const Route = createFileRoute("/admin/orders")({ component: OrdersPage });
 
@@ -34,7 +35,8 @@ function OrdersPage() {
       .order("created_at", { ascending: false })
       .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
     if (status) qb = qb.eq("status", status as "pending");
-    if (q) qb = qb.or(`customer_email.ilike.%${q}%,customer_name.ilike.%${q}%`);
+    const term = sanitizeSearchTerm(q);
+    if (term) qb = qb.or(`customer_email.ilike.%${term}%,customer_name.ilike.%${term}%`);
     const { data, count } = await qb;
     setRows((data ?? []) as Order[]);
     setTotal(count ?? 0);

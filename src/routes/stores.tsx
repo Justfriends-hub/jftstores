@@ -4,6 +4,7 @@ import { z } from "zod";
 import { PageShell } from "@/components/site-shell";
 import { supabase } from "@/integrations/supabase/client";
 import { STORE_CATEGORIES } from "@/lib/constants";
+import { sanitizeSearchTerm } from "@/lib/search";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -43,7 +44,8 @@ function StoresPage() {
         .order("is_featured", { ascending: false })
         .order("created_at", { ascending: false });
       if (category) query = query.eq("category", category);
-      if (q) query = query.or(`business_name.ilike.%${q}%,description.ilike.%${q}%`);
+      const term = q ? sanitizeSearchTerm(q) : "";
+      if (term) query = query.or(`business_name.ilike.%${term}%,description.ilike.%${term}%`);
       const { data, error } = await query;
       if (error) throw error;
       return data ?? [];
