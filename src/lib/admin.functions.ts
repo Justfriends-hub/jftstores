@@ -93,8 +93,12 @@ export const setSellerStatus = createServerFn({ method: "POST" })
       .eq("id", data.sellerId);
     if (error) throw new Error(error.message);
     await log(context.userId, `seller_${data.status}`, "seller", data.sellerId);
+    // Approve/suspend changes which storefronts are public: refresh the sitemap now.
+    const { revalidateSitemap } = await import("@/lib/sitemap-revalidate.server");
+    await revalidateSitemap("https://jftstores.lovable.app").catch(() => {});
     return { ok: true };
   });
+
 
 export const updateSeller = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
