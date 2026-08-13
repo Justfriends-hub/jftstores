@@ -6,6 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/")({
+  head: () => ({
+    meta: [
+      { title: "Overview — Admin" },
+      { name: "description", content: "Admin command center for Lawal's Marketplace: live visits, stores, orders and revenue at a glance." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: OverviewPage,
 });
 
