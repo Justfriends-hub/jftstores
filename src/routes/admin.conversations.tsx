@@ -147,7 +147,7 @@ function AdminConversationsPage() {
         </ul>
       )}
 
-      {openId && <ChatDrawer conversationId={openId} onClose={() => setOpenId(null)} readOnly />}
+      {openId && <ChatDrawer conversationId={openId} onClose={() => { setOpenId(null); void refresh({ silent: true }); }} readOnly />}
     </div>
   );
 }
