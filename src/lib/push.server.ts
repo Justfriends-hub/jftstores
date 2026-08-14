@@ -1,7 +1,5 @@
-// Server-only Web Push delivery using VAPID.
-// Implementation note: web-push npm package depends on Node crypto.
-// For Cloudflare Workers we use the Web Crypto API directly to sign VAPID JWTs.
-// This is a best-effort implementation — falls back to no-op if keys missing.
+// Server-only Web Push delivery using VAPID + aes128gcm payload encryption.
+// Implemented with Web Crypto so it runs on Cloudflare Workers (no node crypto).
 
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
@@ -27,15 +25,27 @@ function b64UrlDecode(s: string): Uint8Array {
   return out;
 }
 
+function concat(...parts: Uint8Array[]): Uint8Array {
+  const len = parts.reduce((n, p) => n + p.length, 0);
+  const out = new Uint8Array(len);
+  let o = 0;
+  for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+}
+
+function toArrayBuffer(u8: Uint8Array): ArrayBuffer {
+  return u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength) as ArrayBuffer;
+}
+
 async function importVapidPrivateKey(): Promise<CryptoKey> {
   const d = b64UrlDecode(VAPID_PRIVATE);
   const pub = b64UrlDecode(VAPID_PUBLIC);
   // P-256 public key is 65 bytes: 0x04 || X(32) || Y(32)
-  const x = b64UrlEncode(pub.slice(1, 33));
-  const y = b64UrlEncode(pub.slice(33, 65));
   const jwk: JsonWebKey = {
     kty: "EC", crv: "P-256",
-    d: b64UrlEncode(d), x, y,
+    d: b64UrlEncode(d),
+    x: b64UrlEncode(pub.slice(1, 33)),
+    y: b64UrlEncode(pub.slice(33, 65)),
     ext: true,
   };
   return crypto.subtle.importKey("jwk", jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
@@ -56,7 +66,86 @@ async function vapidAuthHeader(audience: string): Promise<string> {
   return `vapid t=${unsigned}.${b64UrlEncode(sig)}, k=${VAPID_PUBLIC}`;
 }
 
-type PushPayload = { title: string; body: string; url?: string };
+async function hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array> {
+  const key = await crypto.subtle.importKey("raw", toArrayBuffer(ikm), "HKDF", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits(
+    { name: "HKDF", hash: "SHA-256", salt: toArrayBuffer(salt), info: toArrayBuffer(info) },
+    key,
+    length * 8,
+  );
+  return new Uint8Array(bits);
+}
+
+/** RFC 8291 aes128gcm encryption of a push payload. */
+async function encryptPayload(
+  plaintext: Uint8Array,
+  uaPublicRaw: Uint8Array,
+  authSecret: Uint8Array,
+): Promise<Uint8Array> {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+
+  const asKeys = await crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+  const asPublicRaw = new Uint8Array(await crypto.subtle.exportKey("raw", asKeys.publicKey));
+
+  const uaPublicKey = await crypto.subtle.importKey(
+    "raw", toArrayBuffer(uaPublicRaw), { name: "ECDH", namedCurve: "P-256" }, false, [],
+  );
+  const sharedBits = await crypto.subtle.deriveBits({ name: "ECDH", public: uaPublicKey }, asKeys.privateKey, 256);
+  const ecdhSecret = new Uint8Array(sharedBits);
+
+  const enc = new TextEncoder();
+  const keyInfo = concat(enc.encode("WebPush: info\0"), uaPublicRaw, asPublicRaw);
+  const prk = await hkdf(authSecret, ecdhSecret, keyInfo, 32);
+
+  const cek = await hkdf(salt, prk, enc.encode("Content-Encoding: aes128gcm\0"), 16);
+  const nonce = await hkdf(salt, prk, enc.encode("Content-Encoding: nonce\0"), 12);
+
+  const aesKey = await crypto.subtle.importKey("raw", toArrayBuffer(cek), "AES-GCM", false, ["encrypt"]);
+  const record = concat(plaintext, new Uint8Array([0x02])); // final record padding delimiter
+  const ciphertext = new Uint8Array(
+    await crypto.subtle.encrypt({ name: "AES-GCM", iv: toArrayBuffer(nonce) }, aesKey, toArrayBuffer(record)),
+  );
+
+  // header: salt(16) | rs(4) | idlen(1) | keyid(as public, 65)
+  const rs = new Uint8Array(4);
+  new DataView(rs.buffer).setUint32(0, 4096);
+  return concat(salt, rs, new Uint8Array([asPublicRaw.length]), asPublicRaw, ciphertext);
+}
+
+type PushPayload = { title: string; body: string; url?: string; tag?: string; icon?: string };
+
+type SubRow = { id: string; endpoint: string; p256dh: string | null; auth: string | null };
+
+async function deliver(sub: SubRow, payload: PushPayload): Promise<void> {
+  const audience = new URL(sub.endpoint).origin;
+  const authHeader = await vapidAuthHeader(audience);
+  const headers: Record<string, string> = {
+    Authorization: authHeader,
+    TTL: "86400",
+    Urgency: "normal",
+  };
+
+  let body: BodyInit | undefined;
+  if (sub.p256dh && sub.auth) {
+    const encrypted = await encryptPayload(
+      new TextEncoder().encode(JSON.stringify(payload)),
+      b64UrlDecode(sub.p256dh),
+      b64UrlDecode(sub.auth),
+    );
+    headers["Content-Encoding"] = "aes128gcm";
+    headers["Content-Type"] = "application/octet-stream";
+    body = toArrayBuffer(encrypted);
+  } else {
+    headers["Content-Length"] = "0";
+  }
+
+  const res = await fetch(sub.endpoint, { method: "POST", headers, body });
+  if (res.status === 404 || res.status === 410) {
+    await supabaseAdmin.from("push_subscriptions").delete().eq("id", sub.id);
+  } else if (!res.ok) {
+    console.error(`[push] delivery failed [${res.status}]: ${await res.text()}`);
+  }
+}
 
 export async function sendPushToUsers(userIds: string[], payload: PushPayload): Promise<void> {
   if (!VAPID_PUBLIC || !VAPID_PRIVATE) return;
@@ -69,31 +158,9 @@ export async function sendPushToUsers(userIds: string[], payload: PushPayload): 
 
   if (!subs || subs.length === 0) return;
 
-  // For each subscription, send unencrypted notification (some browsers accept this).
-  // Full payload encryption (aes128gcm) requires more crypto work; we send
-  // header-only push and the SW shows a generic notification — fallback for now.
   await Promise.allSettled(
-    subs.map(async (sub) => {
-      try {
-        const audience = new URL(sub.endpoint as string).origin;
-        const auth = await vapidAuthHeader(audience);
-        const res = await fetch(sub.endpoint as string, {
-          method: "POST",
-          headers: {
-            Authorization: auth,
-            "TTL": "86400",
-            "Content-Length": "0",
-          },
-        });
-        if (res.status === 404 || res.status === 410) {
-          await supabaseAdmin.from("push_subscriptions").delete().eq("id", sub.id);
-        }
-      } catch (e) {
-        console.error("push delivery error", e);
-      }
-    })
+    (subs as SubRow[]).map((sub) =>
+      deliver(sub, payload).catch((e) => console.error("push delivery error", e)),
+    ),
   );
-  // Note: payload is delivered via in-app notification (already inserted into notifications table).
-  // SW shows generic title on push event when payload is empty.
-  void payload;
 }
