@@ -127,7 +127,7 @@ export const Route = createFileRoute("/store/$slug")({
 });
 
 function StorePage() {
-  const { seller } = Route.useLoaderData();
+  const { seller, products: initialProducts } = Route.useLoaderData();
   const { user } = useAuth();
 
   // WhatsApp numbers are not readable by anonymous visitors (anti-scraping);
