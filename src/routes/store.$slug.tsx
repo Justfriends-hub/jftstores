@@ -61,7 +61,7 @@ export const Route = createFileRoute("/store/$slug")({
         "@type": "Store",
         name,
         url,
-        ...(loanSafe(loaderData?.seller.category) ? { category: loaderData?.seller.category } : {}),
+        ...(loaderData?.seller.category ? { category: loaderData.seller.category } : {}),
         ...(loaderData?.seller.logo_url ? { logo: loaderData.seller.logo_url } : {}),
       },
       mainEntity: {
