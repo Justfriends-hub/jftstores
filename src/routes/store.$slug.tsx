@@ -177,7 +177,9 @@ function StorePage() {
       if (error) throw error;
       return (data ?? []) as Product[];
     },
+    initialData: initialProducts,
   });
+
 
   return (
     <PageShell>
