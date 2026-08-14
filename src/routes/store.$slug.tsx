@@ -32,7 +32,13 @@ export const Route = createFileRoute("/store/$slug")({
       .maybeSingle();
     if (error) throw error;
     if (!seller) throw notFound();
-    return { seller: seller as unknown as Seller };
+    const { data: products } = await supabase
+      .from("products")
+      .select("id, name, description, price, images, stock, category")
+      .eq("seller_id", seller.id)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
+    return { seller: seller as unknown as Seller, products: (products ?? []) as Product[] };
   },
   head: ({ params, loaderData }) => {
     const url = `https://jftstores.lovable.app/store/${params.slug}`;
@@ -40,6 +46,48 @@ export const Route = createFileRoute("/store/$slug")({
     const title = `${name} — Lawal's Marketplace`;
     const desc = loaderData?.seller.description ?? `Shop ${name} on Lawal's Marketplace.`;
     const image = loaderData?.seller.banner_url ?? loaderData?.seller.logo_url ?? null;
+    const products = loaderData?.products ?? [];
+    const theme = loaderData?.seller.themes?.slug ?? null;
+    const collectionLd = {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: title,
+      description: desc,
+      url,
+      ...(image ? { primaryImageOfPage: image } : {}),
+      ...(theme ? { cssSelector: `.store-theme-${theme}` } : {}),
+      isPartOf: { "@type": "WebSite", name: "Lawal's Marketplace", url: "https://jftstores.lovable.app" },
+      about: {
+        "@type": "Store",
+        name,
+        url,
+        ...(loaderData?.seller.category ? { category: loaderData.seller.category } : {}),
+        ...(loaderData?.seller.logo_url ? { logo: loaderData.seller.logo_url } : {}),
+      },
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: products.length,
+        itemListElement: products.slice(0, 50).map((p, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          item: {
+            "@type": "Product",
+            name: p.name,
+            ...(p.description ? { description: p.description } : {}),
+            ...(p.images?.[0] ? { image: p.images[0] } : {}),
+            ...(p.category ? { category: p.category } : {}),
+            brand: { "@type": "Brand", name },
+            offers: {
+              "@type": "Offer",
+              price: p.price,
+              priceCurrency: "NGN",
+              availability: p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+              url,
+            },
+          },
+        })),
+      },
+    };
     return {
       meta: [
         { title },
@@ -54,8 +102,10 @@ export const Route = createFileRoute("/store/$slug")({
         ...(image ? [{ property: "og:image", content: image }, { name: "twitter:image", content: image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [{ type: "application/ld+json", children: JSON.stringify(collectionLd) }],
     };
   },
+
   component: StorePage,
   notFoundComponent: () => (
     <PageShell>
@@ -77,7 +127,7 @@ export const Route = createFileRoute("/store/$slug")({
 });
 
 function StorePage() {
-  const { seller } = Route.useLoaderData();
+  const { seller, products: initialProducts } = Route.useLoaderData();
   const { user } = useAuth();
 
   // WhatsApp numbers are not readable by anonymous visitors (anti-scraping);
@@ -127,7 +177,9 @@ function StorePage() {
       if (error) throw error;
       return (data ?? []) as Product[];
     },
+    initialData: initialProducts,
   });
+
 
   return (
     <PageShell>
@@ -271,9 +323,9 @@ function ProductCard({ product, seller, theme, whatsapp }: { product: Product; s
         <div className="mt-4 flex items-center gap-2">
           {inCart ? (
             <div className="flex items-center gap-1 rounded-full border" style={{ borderColor: theme.border ?? undefined }}>
-              <button onClick={() => setQty(product.id, inCart.quantity - 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Minus className="h-3.5 w-3.5" /></button>
+              <button aria-label={`Decrease quantity of ${product.name}`} onClick={() => setQty(product.id, inCart.quantity - 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Minus className="h-3.5 w-3.5" /></button>
               <span className="w-6 text-center text-sm font-semibold">{inCart.quantity}</span>
-              <button onClick={() => setQty(product.id, inCart.quantity + 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Plus className="h-3.5 w-3.5" /></button>
+              <button aria-label={`Increase quantity of ${product.name}`} onClick={() => setQty(product.id, inCart.quantity + 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Plus className="h-3.5 w-3.5" /></button>
             </div>
           ) : (
             <button

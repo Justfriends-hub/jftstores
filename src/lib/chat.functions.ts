@@ -78,8 +78,34 @@ export const sendMessage = createServerFn({ method: "POST" })
       content: clean(data.content),
     });
     if (error) throw new Error(error.message);
+
+    // Notify the other party in-app + via push so they get it while offline.
+    const recipient = isCustomer ? sellerUser : conv.customer_id;
+    if (recipient) {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const url = isCustomer ? "/dashboard" : "/messages";
+      await supabaseAdmin.from("notifications").insert({
+        user_id: recipient,
+        title: "New message",
+        body: clean(data.content).slice(0, 140),
+        url,
+        type: "message",
+      });
+      try {
+        const { sendPushToUsers } = await import("./push.server");
+        await sendPushToUsers([recipient], {
+          title: "New message",
+          body: clean(data.content).slice(0, 140),
+          url,
+          tag: `chat-${data.conversationId}`,
+        });
+      } catch (e) {
+        console.error("push send failed", e);
+      }
+    }
     return { ok: true };
   });
+
 
 export const sendOffer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

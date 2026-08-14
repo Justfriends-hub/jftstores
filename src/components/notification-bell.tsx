@@ -34,6 +34,31 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const markRead = useServerFn(markNotificationRead);
   const markAll = useServerFn(markAllNotificationsRead);
+  const [pushState, setPushState] = useState<"unsupported" | "off" | "on" | "blocked">("unsupported");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!user || !pushSupported()) return;
+    if (Notification.permission === "denied") { setPushState("blocked"); return; }
+    let cancelled = false;
+    void (async () => {
+      const reg = await ensureServiceWorker();
+      const sub = reg ? await reg.pushManager.getSubscription() : null;
+      if (!cancelled) setPushState(sub && Notification.permission === "granted" ? "on" : "off");
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  async function onEnablePush() {
+    setBusy(true);
+    try {
+      const ok = await subscribeToPush();
+      setPushState(ok ? "on" : Notification.permission === "denied" ? "blocked" : "off");
+    } finally {
+      setBusy(false);
+    }
+  }
+
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -61,6 +86,7 @@ export function NotificationBell() {
   if (!user) return null;
 
   const unread = items.filter((i) => !i.is_read).length;
+
 
   async function onClick(n: N) {
     if (!n.is_read) {
@@ -97,6 +123,20 @@ export function NotificationBell() {
             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={onMarkAll}>Mark all read</Button>
           )}
         </div>
+        {pushState === "off" && (
+          <div className="flex items-center justify-between gap-2 border-b bg-muted/30 px-3 py-2">
+            <p className="text-xs text-muted-foreground">Get alerts even when the app is closed.</p>
+            <Button size="sm" className="h-7 rounded-full text-xs" disabled={busy} onClick={onEnablePush}>
+              {busy ? "Enabling…" : "Turn on"}
+            </Button>
+          </div>
+        )}
+        {pushState === "blocked" && (
+          <p className="border-b bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
+            Push is blocked in your browser settings. Allow notifications for this site to get offline alerts.
+          </p>
+        )}
+
         <div className="max-h-96 overflow-y-auto">
           {items.length === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-muted-foreground">No notifications yet — stay tuned for deals.</p>
