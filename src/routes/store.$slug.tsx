@@ -323,9 +323,9 @@ function ProductCard({ product, seller, theme, whatsapp }: { product: Product; s
         <div className="mt-4 flex items-center gap-2">
           {inCart ? (
             <div className="flex items-center gap-1 rounded-full border" style={{ borderColor: theme.border ?? undefined }}>
-              <button onClick={() => setQty(product.id, inCart.quantity - 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Minus className="h-3.5 w-3.5" /></button>
+              <button aria-label={`Decrease quantity of ${product.name}`} onClick={() => setQty(product.id, inCart.quantity - 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Minus className="h-3.5 w-3.5" /></button>
               <span className="w-6 text-center text-sm font-semibold">{inCart.quantity}</span>
-              <button onClick={() => setQty(product.id, inCart.quantity + 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Plus className="h-3.5 w-3.5" /></button>
+              <button aria-label={`Increase quantity of ${product.name}`} onClick={() => setQty(product.id, inCart.quantity + 1)} className="grid h-8 w-8 place-items-center hover:opacity-70"><Plus className="h-3.5 w-3.5" /></button>
             </div>
           ) : (
             <button

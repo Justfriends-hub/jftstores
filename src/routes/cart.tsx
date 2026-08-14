@@ -93,9 +93,9 @@ function CartPage() {
                             </div>
                             <div className="mt-3 flex items-center justify-between gap-2">
                               <div className="flex items-center gap-1 rounded-full border border-border">
-                                <button onClick={() => setQty(it.productId, it.quantity - 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Minus className="h-3.5 w-3.5" /></button>
+                                <button aria-label={`Decrease quantity of ${it.productName}`} onClick={() => setQty(it.productId, it.quantity - 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Minus className="h-3.5 w-3.5" /></button>
                                 <span className="w-7 text-center text-sm font-semibold">{it.quantity}</span>
-                                <button onClick={() => setQty(it.productId, it.quantity + 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Plus className="h-3.5 w-3.5" /></button>
+                                <button aria-label={`Increase quantity of ${it.productName}`} onClick={() => setQty(it.productId, it.quantity + 1)} className="grid h-8 w-8 place-items-center hover:bg-muted"><Plus className="h-3.5 w-3.5" /></button>
                               </div>
                               <div className="text-sm font-semibold">₦{(unit * it.quantity).toLocaleString()}</div>
                             </div>
