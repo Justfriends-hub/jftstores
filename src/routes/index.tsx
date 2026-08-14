@@ -51,8 +51,9 @@ function HomePage() {
               A marketplace for independent store owners
             </span>
             <h1 className="mt-5 font-serif text-4xl leading-tight text-balance text-foreground sm:text-5xl md:text-6xl">
-              Shop small. <span className="text-[var(--terracotta)]">Live warm.</span>
+              Lawal's Marketplace — shop small. <span className="text-[var(--terracotta)]">Live warm.</span>
             </h1>
+
             <p className="mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
               {BRAND.tagline} Free storefronts for sellers, one cart for shoppers, and WhatsApp built in.
             </p>
