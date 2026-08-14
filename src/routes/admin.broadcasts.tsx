@@ -17,8 +17,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { sendBroadcast } from "@/lib/notifications.functions";
 
 export const Route = createFileRoute("/admin/broadcasts")({
+  head: () => ({
+    meta: [
+      { title: "Broadcasts — Admin" },
+      { name: "description", content: "Admin broadcast center for Lawal's Marketplace: send targeted push and in-app notifications to customers and store owners." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: BroadcastsPage,
 });
+
 
 type Target = "everyone" | "customers" | "sellers" | "store";
 
