@@ -34,6 +34,31 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const markRead = useServerFn(markNotificationRead);
   const markAll = useServerFn(markAllNotificationsRead);
+  const [pushState, setPushState] = useState<"unsupported" | "off" | "on" | "blocked">("unsupported");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!user || !pushSupported()) return;
+    if (Notification.permission === "denied") { setPushState("blocked"); return; }
+    let cancelled = false;
+    void (async () => {
+      const reg = await ensureServiceWorker();
+      const sub = reg ? await reg.pushManager.getSubscription() : null;
+      if (!cancelled) setPushState(sub && Notification.permission === "granted" ? "on" : "off");
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  async function onEnablePush() {
+    setBusy(true);
+    try {
+      const ok = await subscribeToPush();
+      setPushState(ok ? "on" : Notification.permission === "denied" ? "blocked" : "off");
+    } finally {
+      setBusy(false);
+    }
+  }
+
 
   const load = useCallback(async () => {
     if (!user) return;
