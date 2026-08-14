@@ -62,6 +62,7 @@ export function NotificationBell() {
 
   const unread = items.filter((i) => !i.is_read).length;
 
+
   async function onClick(n: N) {
     if (!n.is_read) {
       setItems((prev) => prev.map((x) => x.id === n.id ? { ...x, is_read: true } : x));
