@@ -165,7 +165,18 @@ export const verifyPaystackAndCreateOrder = createServerFn({ method: "POST" })
         type: "order",
       }));
       await supabaseAdmin.from("notifications").insert(notifs);
+      try {
+        const { sendPushToUsers } = await import("./push.server");
+        await Promise.all(
+          notifs.map((n) =>
+            sendPushToUsers([n.user_id], { title: n.title, body: n.body, url: n.url, tag: "order" }),
+          ),
+        );
+      } catch (e) {
+        console.error("push send failed", e);
+      }
     }
+
 
     return { ok: true, orderId: order.id, duplicate: false };
   });
