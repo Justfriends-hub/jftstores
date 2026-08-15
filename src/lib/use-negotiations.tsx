@@ -37,7 +37,8 @@ export function NegotiationsSync() {
     void refresh();
 
     const ch = supabase
-      .channel(`neg-${user.id}`)
+      .channel(`neg-${user.id}-${Math.random().toString(36).slice(2)}`)
+
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "negotiated_prices", filter: `customer_id=eq.${user.id}` },

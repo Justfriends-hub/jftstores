@@ -75,13 +75,14 @@ export function NotificationBell() {
     if (!user) { setItems([]); return; }
     void load();
     const ch = supabase
-      .channel("notifications-" + user.id)
+      .channel(`notifications-${user.id}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
         (payload) => setItems((prev) => [payload.new as N, ...prev].slice(0, 30))
       )
       .subscribe();
     return () => { void supabase.removeChannel(ch); };
+
   }, [user, load]);
 
   if (!user) return null;
