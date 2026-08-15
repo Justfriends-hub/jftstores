@@ -41,14 +41,21 @@ export function SellerMessages({ initialOpen }: { initialOpen?: string | null })
 
   useEffect(() => {
     if (!user) return;
-    const ch = supabase
-      .channel(`seller-convs-${user.id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => { void refresh(); })
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => { void refresh(); })
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    const topic = `seller-convs-${user.id}-${Math.random().toString(36).slice(2)}`;
+    let ch: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      ch = supabase
+        .channel(topic)
+        .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => { void refresh(); })
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => { void refresh(); })
+        .subscribe();
+    } catch (e) {
+      console.warn("seller conversations realtime unavailable", e);
+    }
+    return () => { if (ch) supabase.removeChannel(ch); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
+
 
   if (loading) {
     return <Card><CardContent className="p-6 text-sm text-muted-foreground">Loading…</CardContent></Card>;

@@ -85,7 +85,8 @@ export function ChatDrawer({
 
   useEffect(() => {
     const ch = supabase
-      .channel(`conv-${conversationId}`)
+      .channel(`conv-${conversationId}-${Math.random().toString(36).slice(2)}`)
+
       .on("postgres_changes",
         { event: "*", schema: "public", table: "messages", filter: `conversation_id=eq.${conversationId}` },
         () => { void refresh(); })
