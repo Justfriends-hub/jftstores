@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { markNotificationRead, markAllNotificationsRead } from "@/lib/notifications.functions";
+import { pushSupported, ensureServiceWorker, subscribeToPush } from "@/lib/push";
 
 type N = {
   id: string;
