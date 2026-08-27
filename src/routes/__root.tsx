@@ -76,7 +76,25 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  head: () => {
+    // Dual-domain: self-canonicalizes to whatever host served the request
+    // (jftstores.shop OR jftstores.lovable.app) so BOTH can be indexed in GSC.
+    // Lovable stays active, Google still handled by Lovable.
+    const origin = (() => {
+      try {
+        if (typeof window !== "undefined" && window.location?.origin) return window.location.origin.replace(/\/$/, "");
+      } catch {}
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { getRequest } = require("@tanstack/react-start/server") as { getRequest: () => Request | undefined };
+        const req = getRequest?.();
+        const host = req?.headers.get("host");
+        if (host) return `https://${host}`.replace(/\/$/, "");
+        if (req?.url) return new URL(req.url).origin.replace(/\/$/, "");
+      } catch {}
+      return "https://jftstores.shop";
+    })();
+    return {
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -92,7 +110,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
       { property: "og:site_name", content: "Lawal's Marketplace" },
-      { property: "og:url", content: "https://jftstores.lovable.app/" },
+      { property: "og:url", content: `${origin}/` },
       { property: "og:locale", content: "en_US" },
     ],
     scripts: [
@@ -111,7 +129,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "WebSite",
           name: "Lawal's Marketplace",
           alternateName: ["Lawals Marketplace", "Lawal Marketplace", "Lawal's Market", "Just Friends Store"],
-          url: "https://jftstores.lovable.app/",
+          url: `${origin}/`,
           description:
             "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart.",
           inLanguage: "en",
@@ -119,7 +137,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             "@type": "SearchAction",
             target: {
               "@type": "EntryPoint",
-              urlTemplate: "https://jftstores.lovable.app/stores?q={search_term_string}",
+              urlTemplate: `${origin}/stores?q={search_term_string}`,
             },
             "query-input": "required name=search_term_string",
           },
@@ -132,8 +150,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "Organization",
           name: "Lawal's Marketplace",
           alternateName: "Lawals Marketplace",
-          url: "https://jftstores.lovable.app/",
-          logo: "https://jftstores.lovable.app/icon-512.png",
+          url: `${origin}/`,
+          logo: `${origin}/icon-512.png`,
           description:
             "Online marketplace for independent Nigerian store owners to host storefronts, negotiate prices and sell in one shared cart.",
         }),
@@ -150,7 +168,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Lora:wght@500;600;700&family=DM+Serif+Display&family=Work+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Nunito:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap",
       },
     ],
-  }),
+  };
+  },
 
   shellComponent: RootShell,
   component: RootComponent,

@@ -3,7 +3,11 @@ import type {} from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { readSitemapCache, writeSitemapCache } from "@/lib/sitemap-revalidate.server";
 
-const BASE_URL = "https://jftstores.lovable.app";
+// The sitemap is served from both live domains (jftstores.shop and
+// jftstores.lovable.app). Sitemap URLs must match the host serving the file,
+// so the base URL is resolved from the incoming request, with the custom
+// domain as the fallback.
+const DEFAULT_BASE_URL = "https://jftstores.shop";
 
 interface SitemapEntry {
   path: string;
@@ -11,7 +15,16 @@ interface SitemapEntry {
   priority?: string;
 }
 
-async function buildSitemap(): Promise<string> {
+function resolveBaseUrl(request: Request): string {
+  const host = request.headers.get("host") ?? new URL(request.url).host;
+  if (!host) return DEFAULT_BASE_URL;
+  if (/^localhost(:|$)/i.test(host) || /^127\.0\.0\.1(:|$)/.test(host)) {
+    return `http://${host}`;
+  }
+  return `https://${host}`;
+}
+
+async function buildSitemap(baseUrl: string): Promise<string> {
   const entries: SitemapEntry[] = [
     { path: "/", changefreq: "daily", priority: "1.0" },
     { path: "/stores", changefreq: "daily", priority: "0.9" },
@@ -42,7 +55,7 @@ async function buildSitemap(): Promise<string> {
   const urls = entries.map((e) =>
     [
       `  <url>`,
-      `    <loc>${BASE_URL}${e.path}</loc>`,
+      `    <loc>${baseUrl}${e.path}</loc>`,
       e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
       e.priority ? `    <priority>${e.priority}</priority>` : null,
       `  </url>`,
@@ -63,11 +76,12 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async ({ request }) => {
+        const baseUrl = resolveBaseUrl(request);
         const noCache = /no-cache/i.test(request.headers.get("cache-control") ?? "");
-        let xml = noCache ? null : readSitemapCache();
+        let xml = noCache ? null : readSitemapCache(baseUrl);
         if (!xml) {
-          xml = await buildSitemap();
-          writeSitemapCache(xml);
+          xml = await buildSitemap(baseUrl);
+          writeSitemapCache(baseUrl, xml);
         }
 
         return new Response(xml, {

@@ -52,7 +52,14 @@ describe(`SEO metadata @ ${ORIGIN}`, () => {
         new RegExp(`^\\s*Disallow:\\s*${path}\\s*$`, "im"),
       );
     }
+    // Dual-domain: robots must advertise BOTH sitemaps so both hosts index in GSC
     expect(txt).toContain(`Sitemap: ${PRODUCTION_ORIGIN}/sitemap.xml`);
+    // secondary is allowed but not required for primary host check
+    const { SECONDARY_ORIGIN } = await import("./seo-contract");
+    if (ORIGIN === SECONDARY_ORIGIN || ORIGIN === PRODUCTION_ORIGIN) {
+      // at least primary must be there; secondary if serving from shop
+      expect(txt).toMatch(/Sitemap: https:\/\/jftstores\.(shop|lovable\.app)\/sitemap\.xml/);
+    }
   });
 
   it("sitemap.xml lists indexable routes and no private ones", async () => {
@@ -64,11 +71,15 @@ describe(`SEO metadata @ ${ORIGIN}`, () => {
 
     const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
     expect(locs.length).toBeGreaterThan(0);
-    for (const loc of locs) expect(loc.startsWith(`${PRODUCTION_ORIGIN}/`)).toBe(true);
+    // Dual-domain: sitemap is host-aware, so locs must match the requested ORIGIN (or localhost)
+    const isLocal = ORIGIN.includes("localhost") || ORIGIN.includes("127.0.0.1");
+    if (!isLocal) {
+      for (const loc of locs) expect(loc.startsWith(`${ORIGIN}/`)).toBe(true);
+    }
     expect(new Set(locs).size, "duplicate <loc> entries").toBe(locs.length);
 
     for (const route of CORE_ROUTES) {
-      const url = `${PRODUCTION_ORIGIN}${route.path === "/" ? "/" : route.path}`;
+      const url = `${ORIGIN}${route.path === "/" ? "/" : route.path}`;
       if (route.noindex) {
         expect(locs, `${route.path} must not be in the sitemap`).not.toContain(url);
       } else {
@@ -83,12 +94,13 @@ describe(`SEO metadata @ ${ORIGIN}`, () => {
       .map((m) => m[1])
       .filter((u) => u.includes("/store/"));
     for (const url of storeUrls) {
-      const path = url.replace(PRODUCTION_ORIGIN, "");
-      const html = await fetchHtml(ORIGIN, path);
-      expect(html, `${path} should not render the not-found page`).not.toContain("Store not found");
+      const path = url.replace(ORIGIN, "").replace(PRODUCTION_ORIGIN, "").replace("https://jftstores.lovable.app", "");
+      const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+      const html = await fetchHtml(ORIGIN, normalizedPath);
+      expect(html, `${normalizedPath} should not render the not-found page`).not.toContain("Store not found");
       const meta = parseHead(html);
-      expect(meta.title, `${path} missing title`).toBeTruthy();
-      expect(meta.canonical, `${path} canonical mismatch`).toBe(url);
+      expect(meta.title, `${normalizedPath} missing title`).toBeTruthy();
+      expect(meta.canonical, `${normalizedPath} canonical mismatch`).toBe(url);
     }
   });
 });

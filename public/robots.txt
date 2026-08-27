@@ -6,4 +6,5 @@ Disallow: /messages
 Disallow: /cart
 Disallow: /checkout
 
+Sitemap: https://jftstores.shop/sitemap.xml
 Sitemap: https://jftstores.lovable.app/sitemap.xml

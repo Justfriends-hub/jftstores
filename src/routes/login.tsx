@@ -8,22 +8,26 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth";
+import { getSeoOrigin } from "@/lib/seo";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({
+  head: () => {
+    const origin = getSeoOrigin();
+    return {
     meta: [
       { title: "Sign in — Lawal's Marketplace" },
       { name: "description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
       { property: "og:title", content: "Sign in — Lawal's Marketplace" },
       { property: "og:description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://jftstores.lovable.app/login" },
+      { property: "og:url", content: `${origin}/login` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Sign in — Lawal's Marketplace" },
       { name: "twitter:description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
     ],
-    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/login" }],
-  }),
+    links: [{ rel: "canonical", href: `${origin}/login` }],
+  };
+  },
   component: LoginPage,
 });
 
@@ -48,8 +52,13 @@ function LoginPage() {
   };
 
   const onGoogle = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (error) toast.error(error instanceof Error ? error.message : "Google sign-in failed");
+    // Dual-domain: use exact current origin so Google returns to same host (.shop or .lovable.app)
+    const origin = window.location.origin;
+    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
+    if (error) {
+      // Fallback already handled inside lovable wrapper, but surface any final error
+      toast.error(error instanceof Error ? error.message : "Google sign-in failed — check Supabase redirect URLs include both https://jftstores.shop/** and https://jftstores.lovable.app/**");
+    }
   };
 
   return (

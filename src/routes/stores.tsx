@@ -5,6 +5,7 @@ import { PageShell } from "@/components/site-shell";
 import { supabase } from "@/integrations/supabase/client";
 import { STORE_CATEGORIES } from "@/lib/constants";
 import { sanitizeSearchTerm } from "@/lib/search";
+import { getSeoOrigin } from "@/lib/seo";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -13,20 +14,23 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/stores")({
   validateSearch: searchSchema,
-  head: () => ({
+  head: () => {
+    const origin = getSeoOrigin();
+    return {
     meta: [
       { title: "Browse stores — Lawal's Marketplace" },
       { name: "description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
       { property: "og:title", content: "Browse stores — Lawal's Marketplace" },
       { property: "og:description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://jftstores.lovable.app/stores" },
+      { property: "og:url", content: `${origin}/stores` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Browse stores — Lawal's Marketplace" },
       { name: "twitter:description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
     ],
-    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/stores" }],
-  }),
+    links: [{ rel: "canonical", href: `${origin}/stores` }],
+  };
+  },
   component: StoresPage,
 });
 

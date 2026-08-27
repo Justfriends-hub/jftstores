@@ -41,7 +41,21 @@ export const Route = createFileRoute("/store/$slug")({
     return { seller: seller as unknown as Seller, products: (products ?? []) as Product[] };
   },
   head: ({ params, loaderData }) => {
-    const url = `https://jftstores.lovable.app/store/${params.slug}`;
+    // Dual-domain: self-canonicalize to current host (shop OR lovable) for GSC
+    const getOrigin = () => {
+      try { if (typeof window !== "undefined" && window.location?.origin) return window.location.origin.replace(/\/$/, ""); } catch {}
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { getRequest } = require("@tanstack/react-start/server") as { getRequest: () => Request | undefined };
+        const req = getRequest?.();
+        const host = req?.headers.get("host");
+        if (host) return `https://${host}`.replace(/\/$/, "");
+        if (req?.url) return new URL(req.url).origin.replace(/\/$/, "");
+      } catch {}
+      return "https://jftstores.shop";
+    };
+    const origin = getOrigin();
+    const url = `${origin}/store/${params.slug}`;
     const name = loaderData?.seller.business_name ?? "Store";
     const title = `${name} — Lawal's Marketplace`;
     const desc = loaderData?.seller.description ?? `Shop ${name} on Lawal's Marketplace.`;
@@ -56,7 +70,7 @@ export const Route = createFileRoute("/store/$slug")({
       url,
       ...(image ? { primaryImageOfPage: image } : {}),
       ...(theme ? { cssSelector: `.store-theme-${theme}` } : {}),
-      isPartOf: { "@type": "WebSite", name: "Lawal's Marketplace", url: "https://jftstores.lovable.app" },
+      isPartOf: { "@type": "WebSite", name: "Lawal's Marketplace", url: origin },
       about: {
         "@type": "Store",
         name,

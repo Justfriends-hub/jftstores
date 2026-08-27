@@ -95,7 +95,7 @@ export const setSellerStatus = createServerFn({ method: "POST" })
     await log(context.userId, `seller_${data.status}`, "seller", data.sellerId);
     // Approve/suspend changes which storefronts are public: refresh the sitemap now.
     const { revalidateSitemap } = await import("@/lib/sitemap-revalidate.server");
-    await revalidateSitemap("https://jftstores.lovable.app").catch(() => {});
+    await revalidateSitemap(["https://jftstores.shop", "https://jftstores.lovable.app"]).catch(() => {});
     return { ok: true };
   });
 

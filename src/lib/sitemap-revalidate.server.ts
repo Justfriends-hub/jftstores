@@ -12,43 +12,49 @@ const TTL_MS = 60_000;
 
 type CacheEntry = { xml: string; at: number };
 
-let cache: CacheEntry | null = null;
+// One cache entry per serving host: jftstores.shop and jftstores.lovable.app
+// each get their own rendered XML (the <loc> URLs differ per domain).
+const caches = new Map<string, CacheEntry>();
 let revision = 0;
 
 export function getSitemapRevision(): number {
   return revision;
 }
 
-export function readSitemapCache(): string | null {
-  if (!cache) return null;
-  if (Date.now() - cache.at > TTL_MS) {
-    cache = null;
+export function readSitemapCache(baseUrl: string): string | null {
+  const entry = caches.get(baseUrl);
+  if (!entry) return null;
+  if (Date.now() - entry.at > TTL_MS) {
+    caches.delete(baseUrl);
     return null;
   }
-  return cache.xml;
+  return entry.xml;
 }
 
-export function writeSitemapCache(xml: string): void {
-  cache = { xml, at: Date.now() };
+export function writeSitemapCache(baseUrl: string, xml: string): void {
+  caches.set(baseUrl, { xml, at: Date.now() });
 }
 
 export function clearSitemapCache(): void {
-  cache = null;
+  caches.clear();
   revision += 1;
 }
 
 /**
  * Called after any seller status change. Clears the cache in this isolate and
  * pings the search engines with the sitemap URL so the change is picked up
- * quickly rather than on the next scheduled crawl.
+ * quickly rather than on the next scheduled crawl. Both live domains are
+ * pinged so each host's sitemap stays fresh.
  */
-export async function revalidateSitemap(baseUrl: string): Promise<void> {
+export async function revalidateSitemap(baseUrls: string | string[]): Promise<void> {
   clearSitemapCache();
-  const sitemapUrl = `${baseUrl.replace(/\/$/, "")}/sitemap.xml`;
-  const pings = [
+  const urls = (Array.isArray(baseUrls) ? baseUrls : [baseUrls]).map(
+    (b) => `${b.replace(/\/$/, "")}/sitemap.xml`,
+  );
+  const pings = urls.flatMap((sitemapUrl) => [
     `https://www.bing.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
     `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
-  ];
+  ]);
   await Promise.allSettled(
     pings.map((url) =>
       fetch(url, { method: "GET" }).catch((err) => {
@@ -58,9 +64,11 @@ export async function revalidateSitemap(baseUrl: string): Promise<void> {
   );
   // Warm the cache again so the very next crawler request is instant and
   // already reflects the new seller set.
-  try {
-    await fetch(sitemapUrl, { headers: { "cache-control": "no-cache" } });
-  } catch (err) {
-    console.warn("[sitemap] warm-up fetch failed", err);
-  }
+  await Promise.allSettled(
+    urls.map((sitemapUrl) =>
+      fetch(sitemapUrl, { headers: { "cache-control": "no-cache" } }).catch((err) => {
+        console.warn("[sitemap] warm-up fetch failed", sitemapUrl, err);
+      }),
+    ),
+  );
 }

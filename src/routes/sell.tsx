@@ -8,22 +8,26 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { getSeoOrigin } from "@/lib/seo";
 
 export const Route = createFileRoute("/sell")({
-  head: () => ({
+  head: () => {
+    const origin = getSeoOrigin();
+    return {
     meta: [
       { title: "Open your free shop — Lawal's Marketplace" },
       { name: "description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
       { property: "og:title", content: "Open your free shop — Lawal's Marketplace" },
       { property: "og:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://jftstores.lovable.app/sell" },
+      { property: "og:url", content: `${origin}/sell` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Open your free shop — Lawal's Marketplace" },
       { name: "twitter:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
     ],
-    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/sell" }],
-  }),
+    links: [{ rel: "canonical", href: `${origin}/sell` }],
+  };
+  },
   component: SellPage,
 });
 

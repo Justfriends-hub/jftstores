@@ -5,22 +5,26 @@ import { PageShell } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { BRAND, STORE_CATEGORIES } from "@/lib/constants";
+import { getSeoOrigin } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  head: () => {
+    const origin = getSeoOrigin();
+    return {
     meta: [
       { title: "Lawal's Marketplace — Many stores, one cart" },
       { name: "description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
       { property: "og:title", content: "Lawal's Marketplace — Many stores, one cart" },
       { property: "og:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://jftstores.lovable.app/" },
+      { property: "og:url", content: `${origin}/` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Lawal's Marketplace — Many stores, one cart" },
       { name: "twitter:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
     ],
-    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/" }],
-  }),
+    links: [{ rel: "canonical", href: `${origin}/` }],
+  };
+  },
   component: HomePage,
 });
 

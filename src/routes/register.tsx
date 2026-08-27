@@ -8,22 +8,26 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth";
+import { getSeoOrigin } from "@/lib/seo";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({
+  head: () => {
+    const origin = getSeoOrigin();
+    return {
     meta: [
       { title: "Create your account — Lawal's Marketplace" },
       { name: "description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
       { property: "og:title", content: "Create your account — Lawal's Marketplace" },
       { property: "og:description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://jftstores.lovable.app/register" },
+      { property: "og:url", content: `${origin}/register` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Create your account — Lawal's Marketplace" },
       { name: "twitter:description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
     ],
-    links: [{ rel: "canonical", href: "https://jftstores.lovable.app/register" }],
-  }),
+    links: [{ rel: "canonical", href: `${origin}/register` }],
+  };
+  },
   component: RegisterPage,
 });
 
@@ -56,8 +60,9 @@ function RegisterPage() {
   };
 
   const onGoogle = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (error) toast.error(error instanceof Error ? error.message : "Google sign-in failed");
+    const origin = window.location.origin;
+    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
+    if (error) toast.error(error instanceof Error ? error.message : "Google sign-in failed — check Supabase redirect URLs include both https://jftstores.shop/** and https://jftstores.lovable.app/**");
   };
 
   return (
