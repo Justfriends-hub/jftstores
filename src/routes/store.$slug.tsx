@@ -41,20 +41,7 @@ export const Route = createFileRoute("/store/$slug")({
     return { seller: seller as unknown as Seller, products: (products ?? []) as Product[] };
   },
   head: ({ params, loaderData }) => {
-    // Dual-domain: self-canonicalize to current host (shop OR lovable) for GSC
-    const getOrigin = () => {
-      try { if (typeof window !== "undefined" && window.location?.origin) return window.location.origin.replace(/\/$/, ""); } catch {}
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { getRequest } = require("@tanstack/react-start/server") as { getRequest: () => Request | undefined };
-        const req = getRequest?.();
-        const host = req?.headers.get("host");
-        if (host) return `https://${host}`.replace(/\/$/, "");
-        if (req?.url) return new URL(req.url).origin.replace(/\/$/, "");
-      } catch {}
-      return "https://jftstores.shop";
-    };
-    const origin = getOrigin();
+    const origin = typeof window !== "undefined" && window.location?.origin ? window.location.origin.replace(/\/$/, "") : "https://jftstores.shop";
     const url = `${origin}/store/${params.slug}`;
     const name = loaderData?.seller.business_name ?? "Store";
     const title = `${name} — Lawal's Marketplace`;

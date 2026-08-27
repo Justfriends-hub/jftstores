@@ -77,23 +77,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => {
-    // Dual-domain: self-canonicalizes to whatever host served the request
-    // (jftstores.shop OR jftstores.lovable.app) so BOTH can be indexed in GSC.
-    // Lovable stays active, Google still handled by Lovable.
-    const origin = (() => {
-      try {
-        if (typeof window !== "undefined" && window.location?.origin) return window.location.origin.replace(/\/$/, "");
-      } catch {}
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { getRequest } = require("@tanstack/react-start/server") as { getRequest: () => Request | undefined };
-        const req = getRequest?.();
-        const host = req?.headers.get("host");
-        if (host) return `https://${host}`.replace(/\/$/, "");
-        if (req?.url) return new URL(req.url).origin.replace(/\/$/, "");
-      } catch {}
-      return "https://jftstores.shop";
-    })();
+    // Dual-domain: browser self-canonicalizes to current host (.shop or .lovable.app)
+    // so BOTH can be indexed in GSC. Lovable stays active, Google handled by Lovable.
+    // SSR fallback is PRIMARY (jftstores.shop). Sitemap is already host-aware per-request.
+    const origin = typeof window !== "undefined" && window.location?.origin ? window.location.origin.replace(/\/$/, "") : "https://jftstores.shop";
     return {
     meta: [
       { charSet: "utf-8" },
