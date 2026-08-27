@@ -51,28 +51,45 @@ function LoginPage() {
 
   useEffect(() => {
     if (!user) return;
+    const host = window.location.hostname;
+    const isLovableHost = host.includes("lovable.app") || host.includes("lovableproject.com");
     const handoffOrigin = sessionStorage.getItem("oauth_handoff_origin");
+    const handoffNext = sessionStorage.getItem("oauth_handoff_next") || "/";
+    // Case 1: bounced from shop — return to shop with tokens
     if (handoffOrigin && handoffOrigin.includes("jftstores.shop")) {
-      const next = sessionStorage.getItem("oauth_handoff_next") || "/";
-      // We are on lovable.app after Google success — throw back to shop with tokens
       supabase.auth.getSession().then(({ data }) => {
         const at = data.session?.access_token;
         const rt = data.session?.refresh_token;
         if (at && rt) {
-          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}&next=${encodeURIComponent(next)}`;
+          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}&next=${encodeURIComponent(handoffNext)}`;
           sessionStorage.removeItem("oauth_handoff_origin");
           sessionStorage.removeItem("oauth_handoff_next");
           window.location.href = target;
         } else {
-          // No tokens yet (PKCE flow) — still bounce, shop will try getSession
-          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#next=${encodeURIComponent(next)}`;
+          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#next=${encodeURIComponent(handoffNext)}`;
           window.location.href = target;
         }
       });
       return;
     }
-    // Normal login without handoff
-    if (user) navigate({ to: "/", replace: true });
+    // Case 2: direct visit to lovable.app — kill watermark, always throw to .shop after any signin (Google or email)
+    if (isLovableHost) {
+      const SHOP = "https://jftstores.shop";
+      const next = handoffNext !== "/" ? handoffNext : "/";
+      supabase.auth.getSession().then(({ data }) => {
+        const at = data.session?.access_token;
+        const rt = data.session?.refresh_token;
+        if (at && rt) {
+          window.location.href = `${SHOP}/auth/handoff#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}&next=${encodeURIComponent(next)}`;
+        } else {
+          // still bounce — shop will pick up via cookie/session if available, or show login
+          window.location.href = `${SHOP}${next}`;
+        }
+      });
+      return;
+    }
+    // Normal shop login
+    navigate({ to: "/", replace: true });
   }, [user, navigate]);
 
   const onEmailLogin = async (e: React.FormEvent) => {

@@ -52,34 +52,54 @@ function RegisterPage() {
 
   useEffect(() => {
     if (!user) return;
+    const host = window.location.hostname;
+    const isLovableHost = host.includes("lovable.app") || host.includes("lovableproject.com");
     const handoffOrigin = sessionStorage.getItem("oauth_handoff_origin");
+    const handoffNext = sessionStorage.getItem("oauth_handoff_next") || "/sell";
     if (handoffOrigin && handoffOrigin.includes("jftstores.shop")) {
-      const next = sessionStorage.getItem("oauth_handoff_next") || "/sell";
       supabase.auth.getSession().then(({ data }) => {
         const at = data.session?.access_token;
         const rt = data.session?.refresh_token;
         if (at && rt) {
-          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}&next=${encodeURIComponent(next)}`;
+          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}&next=${encodeURIComponent(handoffNext)}`;
           sessionStorage.removeItem("oauth_handoff_origin");
           sessionStorage.removeItem("oauth_handoff_next");
           window.location.href = target;
         } else {
-          window.location.href = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#next=${encodeURIComponent(next)}`;
+          window.location.href = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#next=${encodeURIComponent(handoffNext)}`;
         }
       });
       return;
     }
-    if (user) navigate({ to: "/sell", replace: true });
+    // Direct lovable visit — always throw to shop to kill watermark
+    if (isLovableHost) {
+      const SHOP = "https://jftstores.shop";
+      supabase.auth.getSession().then(({ data }) => {
+        const at = data.session?.access_token;
+        const rt = data.session?.refresh_token;
+        if (at && rt) {
+          window.location.href = `${SHOP}/auth/handoff#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}&next=${encodeURIComponent(handoffNext)}`;
+        } else {
+          window.location.href = `${SHOP}${handoffNext}`;
+        }
+      });
+      return;
+    }
+    navigate({ to: "/sell", replace: true });
   }, [user, navigate]);
 
   const onRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    const host = window.location.hostname;
+    const isLovableHost = host.includes("lovable.app") || host.includes("lovableproject.com");
+    // Always land on shop to avoid watermark, even if they registered on lovable
+    const redirectOrigin = isLovableHost ? "https://jftstores.shop" : window.location.origin;
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/sell`,
+        emailRedirectTo: `${redirectOrigin}/sell`,
         data: { full_name: fullName },
       },
     });
