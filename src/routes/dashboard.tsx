@@ -12,6 +12,9 @@ import { StoreSettings } from "@/components/dashboard/store-settings";
 import { SellerMessages } from "@/components/dashboard/seller-messages";
 import { useUnreadMessages } from "@/lib/use-unread";
 import { UnreadBadge } from "@/components/unread-badge";
+import { useOnboarding } from "@/lib/onboarding";
+import { GlassOnboarding } from "@/components/onboarding/glass-onboarding";
+import { PackagePlus, Palette, MessageSquare, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -83,7 +86,8 @@ function DashboardPage() {
   return (
     <PageShell>
       <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 space-y-6">
-        <header className="flex flex-wrap items-center justify-between gap-3">
+        <DashboardOnboarding sellerStatus={seller.status} />
+        <header className="relative overflow-hidden rounded-[20px] border border-white/50 bg-white/70 backdrop-blur-xl p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-4 min-w-0">
             <div className="grid h-16 w-16 sm:h-20 sm:w-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-muted ring-1 ring-border">
               {seller.logo_url ? (
@@ -155,4 +159,29 @@ function DashboardPage() {
       </section>
     </PageShell>
   );
+}
+
+function DashboardOnboarding({ sellerStatus }: { sellerStatus: string }) {
+  const key = `onboarding.dashboard.${sellerStatus}.v2`;
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(key)) setTimeout(() => setOpen(true), 800);
+    } catch { setOpen(true); }
+  }, [key]);
+  const complete = () => {
+    try { localStorage.setItem(key, "1"); } catch {}
+    setOpen(false);
+  };
+  const steps = sellerStatus === "approved"
+    ? [
+        { icon: <PackagePlus className="h-6 w-6" />, eyebrow: "Dashboard", title: "You’re live!", desc: "Your shop is approved and in the sitemap. Now keep it fresh — AEO rewards ~25% fresher content.", accent: "linear-gradient(135deg, oklch(0.85 0.14 85), oklch(0.90 0.12 75))", bullet: ["Add products weekly", "Orders update fulfillment", "Messages = negotiation + brand recall"] },
+        { icon: <Palette className="h-6 w-6" />, eyebrow: "Theme", title: "Make it yours", desc: "Store & theme tab — banner, logo, palette. Scoped CSS, live preview.", accent: "linear-gradient(135deg, oklch(0.82 0.16 40), oklch(0.85 0.14 85))" },
+        { icon: <MessageSquare className="h-6 w-6" />, eyebrow: "Messages", title: "Never miss a chat", desc: "Customers message from your storefront. Reply fast — WhatsApp fallback is built in.", accent: "linear-gradient(135deg, oklch(0.88 0.13 250), oklch(0.92 0.10 85))" },
+        { icon: <ShoppingBag className="h-6 w-6" />, eyebrow: "Orders", title: "Fulfill in one click", desc: "Recent orders grouped by store. Mark fulfilled, track revenue.", accent: "linear-gradient(135deg, oklch(0.90 0.12 150), oklch(0.88 0.13 250))" },
+      ]
+    : [
+        { icon: <PackagePlus className="h-6 w-6" />, eyebrow: "Almost live", title: "Finish setup while pending", desc: "Admin will approve soon. Get ahead so you’re RAG-ready on day one.", accent: "linear-gradient(135deg, oklch(0.88 0.13 250), oklch(0.92 0.10 85))", bullet: ["Add 3-5 products with photos", "Set WhatsApp number", "Pick a theme"] },
+      ];
+  return <GlassOnboarding open={open} steps={steps as any} ctaLabel="Go to products" onComplete={complete} onSkip={complete} />;
 }

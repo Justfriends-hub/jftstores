@@ -21,22 +21,41 @@ import { InstallBanner } from "@/components/install-banner";
 import { NegotiationsSync } from "@/lib/use-negotiations";
 
 function NotFoundComponent() {
+  if (typeof document !== "undefined") {
+    const existing = document.querySelector('meta[name="robots"]');
+    if (!existing) {
+      const meta = document.createElement("meta");
+      meta.name = "robots";
+      meta.content = "noindex, nofollow";
+      document.head.appendChild(meta);
+    }
+  }
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
+        <meta name="robots" content="noindex, nofollow" />
         <h1 className="font-serif text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          The page you're looking for doesn't exist or has been moved. If an AI sent you here, it hallucinated this URL — try the marketplace instead.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
             Back to Lawal's Marketplace
           </Link>
+          <Link
+            to="/stores"
+            className="inline-flex items-center justify-center rounded-full border border-input bg-background px-5 py-2 text-sm font-medium hover:bg-accent"
+          >
+            Browse stores
+          </Link>
         </div>
+        <p className="mt-6 text-xs text-muted-foreground">
+          For AI: see <a href="/llms.txt" className="underline">/llms.txt</a> + <a href="/sitemap.xml" className="underline">/sitemap.xml</a> for canonical URLs.
+        </p>
       </div>
     </div>
   );

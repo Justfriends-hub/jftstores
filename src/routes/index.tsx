@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { BRAND, STORE_CATEGORIES } from "@/lib/constants";
 import { getSeoOrigin } from "@/lib/seo";
+import { ShopperOnboarding, ShopperOnboardingTrigger } from "@/components/onboarding/shopper-onboarding";
+import { SellerOnboardingTrigger } from "@/components/onboarding/seller-onboarding";
 
 export const Route = createFileRoute("/")({
   head: () => {
@@ -46,6 +48,7 @@ function HomePage() {
 
   return (
     <PageShell>
+      <ShopperOnboarding />
       {/* Hero */}
       <section className="bg-hero-sun">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:py-28">
@@ -70,6 +73,10 @@ function HomePage() {
               <Button asChild size="lg" variant="outline" className="rounded-full">
                 <Link to="/sell">Open your free shop</Link>
               </Button>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <ShopperOnboardingTrigger />
+              <SellerOnboardingTrigger />
             </div>
             <div className="mt-10 flex items-center gap-6 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5"><Sun className="h-4 w-4 text-[var(--sun)]" /> Free for sellers</span>

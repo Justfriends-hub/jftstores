@@ -118,7 +118,29 @@
       linear-gradient(180deg, oklch(0.985 0.012 85), oklch(0.965 0.025 85));
   }
   .text-balance { text-wrap: balance; }
+  .glass {
+    background: oklch(1 0 0 / 0.65);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid oklch(1 0 0 / 0.35);
+  }
+  .glass-strong {
+    background: oklch(1 0 0 / 0.78);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  }
 }
+
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(14px, -10px) scale(1.03); }
+}
+@keyframes float-slower {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-16px, 12px) scale(1.04); }
+}
+.animate-float-slow { animation: float-slow 9s ease-in-out infinite; }
+.animate-float-slower { animation: float-slower 12s ease-in-out infinite; }
 
 /* Per-store theme scope: when a .store-theme container is present,
    inline CSS vars (set via style attribute) override the base palette

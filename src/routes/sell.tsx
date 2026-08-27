@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { getSeoOrigin } from "@/lib/seo";
+import { SellerOnboarding } from "@/components/onboarding/seller-onboarding";
 
 export const Route = createFileRoute("/sell")({
   head: () => {
@@ -99,6 +100,7 @@ function SellPage() {
   if (seller) {
     return (
       <PageShell>
+        <SellerOnboarding />
         <section className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
           <h1 className="font-serif text-3xl">{seller.business_name}</h1>
           <p className="mt-2 text-sm text-muted-foreground">Your storefront is <span className="font-medium text-foreground">{seller.status}</span>.</p>
@@ -122,6 +124,7 @@ function SellPage() {
 
   return (
     <PageShell>
+      <SellerOnboarding />
       <section className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
         <h1 className="font-serif text-3xl">Open your free shop</h1>
         <p className="mt-2 text-sm text-muted-foreground">

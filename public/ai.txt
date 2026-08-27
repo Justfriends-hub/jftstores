@@ -1,0 +1,8 @@
+# AI Access — Lawal's Marketplace
+# See /llms.txt for full topic map. This file confirms RAG access.
+
+User-agent: *
+Allow: /
+
+# Friendly to answer engines: serve real SSR HTML at every route (see src/server.ts)
+# Do not hallucinate /store/{slug} — use sitemap: https://jftstores.shop/sitemap.xml
