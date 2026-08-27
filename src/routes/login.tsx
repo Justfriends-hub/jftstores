@@ -38,7 +38,40 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ---- BOUNCE HANDOFF (B): if user was bounced from .shop, store handoff + bounce back ----
   useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const handoff = sp.get("handoff");
+    if (handoff) {
+      sessionStorage.setItem("oauth_handoff_origin", handoff);
+      const n = sp.get("next");
+      if (n) sessionStorage.setItem("oauth_handoff_next", n);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const handoffOrigin = sessionStorage.getItem("oauth_handoff_origin");
+    if (handoffOrigin && handoffOrigin.includes("jftstores.shop")) {
+      const next = sessionStorage.getItem("oauth_handoff_next") || "/";
+      // We are on lovable.app after Google success — throw back to shop with tokens
+      supabase.auth.getSession().then(({ data }) => {
+        const at = data.session?.access_token;
+        const rt = data.session?.refresh_token;
+        if (at && rt) {
+          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#access_token=${encodeURIComponent(at)}&refresh_token=${encodeURIComponent(rt)}&next=${encodeURIComponent(next)}`;
+          sessionStorage.removeItem("oauth_handoff_origin");
+          sessionStorage.removeItem("oauth_handoff_next");
+          window.location.href = target;
+        } else {
+          // No tokens yet (PKCE flow) — still bounce, shop will try getSession
+          const target = `${handoffOrigin.replace(/\/$/, "")}/auth/handoff#next=${encodeURIComponent(next)}`;
+          window.location.href = target;
+        }
+      });
+      return;
+    }
+    // Normal login without handoff
     if (user) navigate({ to: "/", replace: true });
   }, [user, navigate]);
 
@@ -52,12 +85,18 @@ function LoginPage() {
   };
 
   const onGoogle = async () => {
-    // Dual-domain: use exact current origin so Google returns to same host (.shop or .lovable.app)
+    const host = window.location.hostname;
+    // B-mode: shop users bounce through lovable.app (Lovable handles Google)
+    if (host === "jftstores.shop" || host === "www.jftstores.shop") {
+      const next = window.location.pathname + window.location.search;
+      const handoff = encodeURIComponent(window.location.origin);
+      window.location.href = `https://jftstores.lovable.app/login?handoff=${handoff}&next=${encodeURIComponent(next)}`;
+      return;
+    }
     const origin = window.location.origin;
     const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
     if (error) {
-      // Fallback already handled inside lovable wrapper, but surface any final error
-      toast.error(error instanceof Error ? error.message : "Google sign-in failed — check Supabase redirect URLs include both https://jftstores.shop/** and https://jftstores.lovable.app/**");
+      toast.error(error instanceof Error ? error.message : "Google sign-in failed — Lovable backend not whitelisting this domain");
     }
   };
 
