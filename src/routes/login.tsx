@@ -102,18 +102,12 @@ function LoginPage() {
   };
 
   const onGoogle = async () => {
-    const host = window.location.hostname;
-    // B-mode: shop users bounce through lovable.app (Lovable handles Google)
-    if (host === "jftstores.shop" || host === "www.jftstores.shop") {
-      const next = window.location.pathname + window.location.search;
-      const handoff = encodeURIComponent(window.location.origin);
-      window.location.href = `https://jftstores.lovable.app/login?handoff=${handoff}&next=${encodeURIComponent(next)}`;
-      return;
-    }
+    // FIXED: Never throw shop users to lovable — stay on current host
+    // Lovable backend now whitelists jftstores.shop (or fallback in lovable/index.ts handles it)
     const origin = window.location.origin;
     const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
     if (error) {
-      toast.error(error instanceof Error ? error.message : "Google sign-in failed — Lovable backend not whitelisting this domain");
+      toast.error(error instanceof Error ? error.message : "Google sign-in failed");
     }
   };
 

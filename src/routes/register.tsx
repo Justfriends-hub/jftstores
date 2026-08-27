@@ -109,13 +109,6 @@ function RegisterPage() {
   };
 
   const onGoogle = async () => {
-    const host = window.location.hostname;
-    if (host === "jftstores.shop" || host === "www.jftstores.shop") {
-      const next = "/sell";
-      const handoff = encodeURIComponent(window.location.origin);
-      window.location.href = `https://jftstores.lovable.app/register?handoff=${handoff}&next=${encodeURIComponent(next)}`;
-      return;
-    }
     const origin = window.location.origin;
     const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
     if (error) toast.error(error instanceof Error ? error.message : "Google sign-in failed");
