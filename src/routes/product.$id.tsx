@@ -122,11 +122,36 @@ export const Route = createFileRoute("/product/$id")({
 function ProductPage() {
   const { product, seller, related } = Route.useLoaderData();
   const { user } = useAuth();
-  const { add } = useCart();
+  const { add, items } = useCart();
   const [qty, setQty] = useState(1);
+  const [activeImg, setActiveImg] = useState(0);
+  const [locLagos, setLocLagos] = useState("Lagos");
+  const [locArea, setLocArea] = useState("LEKKI-AJAH (SANGOTEDO)");
+  const [wish, setWish] = useState(false);
   const origin = typeof window !== "undefined" ? window.location.origin : "https://jftstores.shop";
+  const whatsapp = seller.whatsapp_number;
+  const inCart = items.find((i) => i.productId === product.id);
 
-  const whatsapp = seller.whatsapp_number; // public for active sellers? If RLS blocks, will be null for anon — still show button that prompts login
+  // JUMIA-style pricing: mock strikethrough + flash timer
+  const oldPrice = Math.round(Number(product.price) * 1.9);
+  const discount = Math.round(((oldPrice - Number(product.price)) / oldPrice) * 100);
+  const stockTotal = Math.max(product.stock + 12, 20);
+  const stockPct = Math.round((product.stock / stockTotal) * 100);
+  const [timeLeft, setTimeLeft] = useState({ h: 6, m: 2, s: 59 });
+  // countdown
+  useState(() => {
+    const id = setInterval(() => {
+      setTimeLeft((t) => {
+        let { h, m, s } = t;
+        if (s > 0) s--;
+        else if (m > 0) { m--; s = 59; }
+        else if (h > 0) { h--; m = 59; s = 59; }
+        else { clearInterval(id); return t; }
+        return { h, m, s };
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  });
 
   const onAdd = () => {
     add({ productId: product.id, sellerId: seller.id, sellerSlug: seller.slug, sellerName: seller.business_name, sellerWhatsApp: whatsapp, productName: product.name, price: Number(product.price), image: product.images?.[0] ?? null }, qty);
@@ -135,118 +160,182 @@ function ProductPage() {
 
   return (
     <PageShell>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6">
-        {/* Breadcrumb for SEO + UX */}
-        <nav className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground" aria-label="Breadcrumb">
-          <Link to="/" className="hover:text-foreground">Home</Link> <span>/</span>
-          <Link to="/stores" className="hover:text-foreground">Stores</Link> <span>/</span>
-          {product.category && <><Link to="/stores" search={{ category: product.category }} className="hover:text-foreground">{product.category}</Link> <span>/</span></>}
-          <Link to="/store/$slug" params={{ slug: seller.slug }} className="hover:text-foreground">{seller.business_name}</Link> <span>/</span>
-          <span className="text-foreground font-medium truncate">{product.name}</span>
-        </nav>
+      <div className="bg-[#f1f1f2] min-h-screen">
+        <div className="mx-auto max-w-[1280px] px-3 sm:px-4 py-3">
+          {/* Breadcrumb like JUMIA */}
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-foreground hover:underline">Home</Link> <span>&gt;</span>
+            <span className="hover:text-foreground">{product.category ?? "Category"}</span> <span>&gt;</span>
+            <Link to="/store/$slug" params={{ slug: seller.slug }} className="hover:text-foreground hover:underline">{seller.business_name}</Link> <span>&gt;</span>
+            <span className="text-foreground truncate max-w-[260px]">{product.name}</span>
+          </nav>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          {/* Images — SSR visible, no JS required to see title/price */}
-          <div className="space-y-3">
-            <div className="aspect-square overflow-hidden rounded-2xl border border-border bg-muted">
-              {product.images?.[0] ? <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" fetchPriority="high" /> : <div className="grid h-full place-items-center text-muted-foreground">No image</div>}
+          <div className="mt-3 grid gap-3 lg:grid-cols-[1fr_380px] xl:grid-cols-[380px_1fr_320px]">
+            {/* LEFT — image card (JUMIA style) */}
+            <div className="bg-white rounded-lg border border-black/5 p-3">
+              <div className="relative aspect-square overflow-hidden rounded bg-white">
+                {/* RENEWED vertical ribbon */}
+                <div className="absolute left-0 top-6 z-10 -rotate-90 origin-top-left bg-[#c41e3a] text-white text-[11px] font-bold tracking-widest px-3 py-1">RENEWED</div>
+                <button onClick={() => setWish(!wish)} className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-full bg-white shadow border border-black/5 hover:scale-105 transition">
+                  <span className={wish ? "text-orange-500" : "text-muted-foreground"}>♡</span>
+                </button>
+                {product.images?.[activeImg] ? (
+                  <img src={product.images[activeImg]} alt={product.name} className="h-full w-full object-contain" fetchPriority="high" />
+                ) : (
+                  <div className="grid h-full place-items-center text-muted-foreground">No image</div>
+                )}
+              </div>
+              <div className="mt-3 flex gap-2 overflow-x-auto">
+                {(product.images ?? []).slice(0, 5).map((img, i) => (
+                  <button key={i} onClick={() => setActiveImg(i)} className={`h-14 w-14 shrink-0 overflow-hidden rounded border ${i === activeImg ? "border-[#f68b1e] ring-1 ring-[#f68b1e]" : "border-black/10"}`}>
+                    <img src={img} alt="" className="h-full w-full object-cover" />
+                  </button>
+                ))}
+                {(!product.images || product.images.length === 0) && <div className="h-14 w-14 rounded border border-dashed grid place-items-center text-xs text-muted-foreground">No</div>}
+              </div>
+              <div className="mt-4 border-t pt-3">
+                <div className="text-xs font-bold tracking-wide">SHARE THIS PRODUCT</div>
+                <div className="mt-2 flex gap-2">
+                  <a href={`https://wa.me/?text=${encodeURIComponent(origin + "/product/" + product.id)}`} target="_blank" rel="noreferrer" className="grid h-8 w-8 place-items-center rounded-full border hover:bg-muted">W</a>
+                  <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(origin + "/product/" + product.id)}`} target="_blank" rel="noreferrer" className="grid h-8 w-8 place-items-center rounded-full border hover:bg-muted">f</a>
+                  <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(origin + "/product/" + product.id)}`} target="_blank" rel="noreferrer" className="grid h-8 w-8 place-items-center rounded-full border hover:bg-muted">𝕏</a>
+                </div>
+              </div>
             </div>
-            {product.images?.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {product.images.slice(1, 5).map((img, i) => (
-                  <div key={i} className="aspect-square overflow-hidden rounded-xl border border-border bg-muted">
-                    <img src={img} alt={`${product.name} ${i+2}`} className="h-full w-full object-cover" loading="lazy" />
-                  </div>
+
+            {/* CENTER — details card (JUMIA style) */}
+            <div className="bg-white rounded-lg border border-black/5 p-4">
+              <div className="inline-flex rounded bg-[#e8f0fe] text-[#1a73e8] text-[10px] font-bold tracking-widest px-2 py-1">REFURBISHED</div>
+              <h1 className="mt-2 text-[18px] sm:text-[20px] leading-tight font-normal text-[#313133]">{product.name}</h1>
+
+              {/* Flash sales bar */}
+              <div className="mt-3 flex items-center justify-between rounded bg-[#c41e3a] px-3 py-2 text-white text-xs">
+                <span className="inline-flex items-center gap-1 font-bold"><span className="bg-white text-[#c41e3a] rounded-full h-5 w-5 grid place-items-center">⚡</span> Flash Sales</span>
+                <span className="font-mono">Time Left: {String(timeLeft.h).padStart(2, "0")}h : {String(timeLeft.m).padStart(2, "0")}m : {String(timeLeft.s).padStart(2, "0")}s</span>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-end gap-2">
+                <div className="text-[24px] font-bold text-[#313133]">₦ {Number(product.price).toLocaleString()}</div>
+                <div className="text-sm line-through text-muted-foreground">₦ {oldPrice.toLocaleString()}</div>
+                <div className="rounded bg-[#fef3e2] text-[#f68b1e] text-xs font-bold px-1.5 py-0.5">-{discount}%</div>
+              </div>
+
+              <div className="mt-2">
+                <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                  <div className="h-full bg-[#f68b1e]" style={{ width: `${stockPct}%` }} />
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">{product.stock} items in stock</div>
+              </div>
+
+              <div className="mt-2 text-xs">+ shipping from <span className="font-bold">₦ 1,000</span> to {locArea.split("(")[0].trim()}</div>
+
+              <div className="mt-2 flex items-center gap-1 text-xs">
+                <span className="text-[#f68b1e]">★★★★☆</span> <a href="#reviews" className="text-[#264996] hover:underline">(36 verified ratings)</a>
+              </div>
+
+              <div className="mt-4">
+                <div className="text-xs font-bold">VARIATION AVAILABLE</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button className="rounded border border-[#f68b1e] bg-[#fef3e2] px-3 py-1.5 text-xs font-medium text-[#f68b1e]">{product.name.split(" ").slice(0, 3).join(" ")} — ₦{Number(product.price).toLocaleString()}</button>
+                  <button className="rounded border border-black/10 px-3 py-1.5 text-xs hover:border-black/20">More variants</button>
+                </div>
+              </div>
+
+              {/* Qty + Add */}
+              <div className="mt-5 flex gap-2">
+                <div className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-1">
+                  <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted">−</button>
+                  <span className="w-6 text-center text-sm font-bold">{qty}</span>
+                  <button onClick={() => setQty((q) => q + 1)} className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted">+</button>
+                </div>
+                {inCart ? (
+                  <Button asChild className="flex-1 rounded bg-[#f68b1e] hover:bg-[#e57f1a] text-white"><Link to="/cart">Go to cart ({inCart.quantity})</Link></Button>
+                ) : (
+                  <Button onClick={onAdd} disabled={product.stock <= 0} className="flex-1 rounded bg-[#f68b1e] hover:bg-[#e57f1a] text-white">
+                    <ShoppingBag className="mr-2 h-4 w-4" /> {product.stock <= 0 ? "Sold out" : "Add to cart"}
+                  </Button>
+                )}
+              </div>
+
+              {whatsapp ? (
+                <a href={buildWhatsAppLink({ phone: whatsapp, productName: product.name, storeSlug: seller.slug })} target="_blank" rel="noreferrer" className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded bg-[#25D366] py-2.5 text-sm font-bold text-white hover:opacity-95">
+                  <MessageCircle className="h-4 w-4" /> Chat on WhatsApp
+                </a>
+              ) : (
+                <Link to="/store/$slug" params={{ slug: seller.slug }} className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded border py-2.5 text-sm font-medium hover:bg-muted">
+                  <Store className="h-4 w-4" /> Visit {seller.business_name}
+                </Link>
+              )}
+
+              {product.description && <p className="mt-4 text-sm leading-relaxed text-[#313133] whitespace-pre-wrap">{product.description}</p>}
+            </div>
+
+            {/* RIGHT — Delivery & Returns (JUMIA style) */}
+            <div className="bg-white rounded-lg border border-black/5 p-4 h-fit lg:sticky lg:top-[72px]">
+              <div className="text-xs font-bold tracking-wide">DELIVERY & RETURNS</div>
+              <div className="mt-3 rounded border border-[#ffdabf] bg-[#fff8f0] p-2 text-xs leading-tight">
+                <div className="font-bold text-[#f68b1e]">JFTStores EXPRESS</div>
+                <div className="text-muted-foreground">The BEST products, delivered fast. Now <span className="font-bold">PAY on DELIVERY</span>, Cash or Bank Transfer Anywhere, Zero Wahala!</div>
+                <a href="#" className="text-[#264996] hover:underline">Details</a>
+              </div>
+
+              <div className="mt-4 text-xs font-bold">Choose your location</div>
+              <div className="mt-2 space-y-2">
+                <select value={locLagos} onChange={(e) => setLocLagos(e.target.value)} className="w-full rounded border border-black/15 bg-white px-3 py-2.5 text-sm">
+                  <option>Lagos</option>
+                  <option>Abuja</option>
+                  <option>Port Harcourt</option>
+                  <option>Ibadan</option>
+                </select>
+                <select value={locArea} onChange={(e) => setLocArea(e.target.value)} className="w-full rounded border border-black/15 bg-white px-3 py-2.5 text-sm">
+                  <option>LEKKI-AJAH (SANGOTEDO)</option>
+                  <option>IKEJA</option>
+                  <option>YABA</option>
+                  <option>VICTORIA ISLAND</option>
+                </select>
+              </div>
+
+              <div className="mt-4 flex gap-3 rounded border border-black/5 p-3">
+                <div className="grid h-8 w-8 place-items-center rounded border bg-white">🏪</div>
+                <div className="text-xs leading-tight">
+                  <div className="flex items-center gap-2 font-bold">Pickup Station <a href="#" className="text-[#264996] font-normal hover:underline">Details</a></div>
+                  <div>Delivery Fees <span className="font-bold">₦ 1,000</span></div>
+                  <div className="text-muted-foreground">Ready for pickup between 03 September and 04 September</div>
+                </div>
+              </div>
+
+              {/* Seller trust */}
+              <div className="mt-4 rounded border border-black/5 p-3 flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-muted">
+                  {seller.logo_url ? <img src={seller.logo_url} alt={seller.business_name} className="h-full w-full object-cover" /> : <span className="font-serif">{seller.business_name[0]}</span>}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-bold truncate">{seller.business_name}</div>
+                  <div className="text-xs text-muted-foreground">Verified • {seller.category ?? "Seller"}</div>
+                </div>
+                <Link to="/store/$slug" params={{ slug: seller.slug }} className="text-xs text-[#264996] hover:underline">Visit store</Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Related — keeps crawl graph, not in Jumia image but useful */}
+          {related.length > 0 && (
+            <div className="mt-4 bg-white rounded-lg border border-black/5 p-4">
+              <h2 className="font-bold text-sm">More from {seller.business_name}</h2>
+              <div className="mt-3 grid gap-3 grid-cols-2 sm:grid-cols-4">
+                {related.map((r) => (
+                  <Link key={r.id} to="/product/$id" params={{ id: r.id! }} className="group overflow-hidden rounded border border-black/5 hover:shadow">
+                    <div className="aspect-square bg-muted" style={r.images?.[0] ? { backgroundImage: `url(${r.images[0]})`, backgroundSize: "cover" } : undefined} />
+                    <div className="p-2">
+                      <div className="truncate text-xs">{r.name}</div>
+                      <div className="text-sm font-bold">₦{Number(r.price).toLocaleString()}</div>
+                    </div>
+                  </Link>
                 ))}
               </div>
-            )}
-          </div>
-
-          {/* Details */}
-          <div>
-            <div className="flex items-start justify-between gap-3">
-              <h1 className="font-serif text-2xl sm:text-3xl leading-tight">{product.name}</h1>
-              <Link to="/store/$slug" params={{ slug: seller.slug }} className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-muted">
-                <Store className="h-3.5 w-3.5" /> {seller.business_name}
-              </Link>
             </div>
-            {product.category && <div className="mt-2 text-xs text-muted-foreground">{product.category} • <Link to="/store/$slug" params={{ slug: seller.slug }} className="underline hover:text-foreground">{seller.business_name}</Link></div>}
-
-            <div className="mt-4 flex flex-wrap items-baseline gap-3">
-              <div className="text-2xl font-bold">₦{Number(product.price).toLocaleString()}</div>
-              <div className={`text-xs px-2 py-1 rounded-full border ${product.stock > 0 ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}>{product.stock > 0 ? `In stock • ${product.stock} left` : "Out of stock"}</div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> 4.8 • No reviews yet — be first</div>
-            </div>
-
-            {product.description && <p className="mt-4 text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">{product.description}</p>}
-
-            {/* Trust signals */}
-            <div className="mt-6 grid grid-cols-3 gap-2 text-[11px]">
-              <div className="rounded-xl border border-border bg-card p-3 text-center"><ShieldCheck className="mx-auto h-4 w-4 text-[var(--ocean)]" /><div className="mt-1 font-semibold">Buyer Protection</div></div>
-              <div className="rounded-xl border border-border bg-card p-3 text-center"><Truck className="mx-auto h-4 w-4 text-[var(--ocean)]" /><div className="mt-1 font-semibold">Delivery 1-5 days</div></div>
-              <div className="rounded-xl border border-border bg-card p-3 text-center"><RotateCcw className="mx-auto h-4 w-4 text-[var(--ocean)]" /><div className="mt-1 font-semibold">Easy returns</div></div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 rounded-full border border-border bg-card px-1">
-                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted">−</button>
-                <span className="w-8 text-center text-sm font-semibold">{qty}</span>
-                <button onClick={() => setQty((q) => q + 1)} className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted">+</button>
-              </div>
-              <Button onClick={onAdd} disabled={product.stock <= 0} className="flex-1 rounded-full">
-                <ShoppingBag className="mr-2 h-4 w-4" /> {product.stock <= 0 ? "Sold out" : "Add to cart"}
-              </Button>
-            </div>
-
-            {whatsapp ? (
-              <a href={buildWhatsAppLink({ phone: whatsapp, productName: product.name, storeSlug: seller.slug })} target="_blank" rel="noreferrer" className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-95">
-                <MessageCircle className="h-4 w-4" /> Chat on WhatsApp about this product
-              </a>
-            ) : (
-              <p className="mt-3 text-xs text-muted-foreground">Sign in to chat with seller on WhatsApp</p>
-            )}
-
-            {!user && <p className="mt-3 text-xs text-muted-foreground">New here? <Link to="/register" className="underline">Create account</Link> to message sellers & checkout with Paystack.</p>}
-
-            {/* Seller card */}
-            <div className="mt-8 rounded-2xl border border-border bg-card p-4 flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-muted">
-                {seller.logo_url ? <img src={seller.logo_url} alt={seller.business_name} className="h-full w-full object-cover" /> : <span className="font-serif">{seller.business_name[0]}</span>}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-semibold truncate">{seller.business_name}</div>
-                <div className="text-xs text-muted-foreground truncate">{seller.category ?? "Independent seller"} • Verified store</div>
-              </div>
-              <Button asChild variant="outline" size="sm" className="rounded-full"><Link to="/store/$slug" params={{ slug: seller.slug }}>Visit store <ArrowLeft className="ml-1 h-3 w-3 rotate-180" /></Link></Button>
-            </div>
-
-            {/* Share */}
-            <p className="mt-3 text-xs text-muted-foreground">Share: <span className="font-mono">{origin}/product/{product.id}</span></p>
-          </div>
+          )}
         </div>
-
-        {/* Related / internal linking — keeps user in JFTStores, builds crawl path */}
-        {related.length > 0 && (
-          <section className="mt-12">
-            <h2 className="font-serif text-xl">More from {seller.business_name}</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {related.map((r) => (
-                <Link key={r.id} to="/product/$id" params={{ id: r.id! }} className="group overflow-hidden rounded-2xl border border-border bg-card hover:shadow-md transition">
-                  <div className="aspect-square bg-muted" style={r.images?.[0] ? { backgroundImage: `url(${r.images[0]})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined} />
-                  <div className="p-3">
-                    <div className="truncate text-sm font-medium">{r.name}</div>
-                    <div className="text-sm font-semibold">₦{Number(r.price).toLocaleString()}</div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-4 flex gap-3 text-sm">
-              <Link to="/store/$slug" params={{ slug: seller.slug }} className="hover:underline">More from this seller →</Link>
-              <Link to="/stores" className="hover:underline">Browse all stores →</Link>
-            </div>
-          </section>
-        )}
       </div>
     </PageShell>
   );
