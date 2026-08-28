@@ -129,21 +129,24 @@ export function GlassOnboarding({
           <Button
             variant="ghost"
             onClick={() => (idx === 0 ? onSkip() : setIdx((v) => v - 1))}
-            className="rounded-full bg-white/60 backdrop-blur border border-white/50 hover:bg-white"
+            className="rounded-full bg-white/60 backdrop-blur border border-white/50 hover:bg-white transition-all duration-200 active:scale-[0.97] [&_svg]:transition-transform [&_svg]:duration-200 hover:[&_svg]:-translate-x-0.5"
           >
-            {idx === 0 ? "Skip" : <><ArrowLeft className="mr-1 h-4 w-4" /> Back</>}
+            {idx === 0 ? "Skip" : <><ArrowLeft className="mr-1 h-4 w-4 shrink-0" /> Back</>}
           </Button>
 
           {!isLast ? (
-            <Button onClick={() => setIdx((v) => v + 1)} className="rounded-full px-6 shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
-              Next <ArrowRight className="ml-1 h-4 w-4" />
+            <Button
+              onClick={() => setIdx((v) => v + 1)}
+              className="rounded-full px-6 shadow-[0_8px_20px_rgba(0,0,0,0.15)] transition-all duration-300 active:scale-[0.96] [&_svg]:transition-transform [&_svg]:duration-500 active:[&_svg]:rotate-[360deg] hover:[&_svg]:rotate-12"
+            >
+              Next <ArrowRight className="ml-1 h-4 w-4 shrink-0" />
             </Button>
           ) : (
             <Button
               onClick={() => { onComplete(); onCta?.(); }}
-              className="rounded-full px-6 bg-[var(--ocean)] text-white hover:opacity-90 shadow-[0_10px_24px_rgba(19,49,92,0.25)]"
+              className="rounded-full px-6 bg-[var(--ocean)] text-white hover:opacity-90 shadow-[0_10px_24px_rgba(19,49,92,0.25)] transition-all duration-300 active:scale-[0.96] [&_svg]:transition-transform [&_svg]:duration-500 active:[&_svg]:rotate-[360deg] hover:[&_svg]:rotate-12"
             >
-              {ctaLabel} <ArrowRight className="ml-1 h-4 w-4" />
+              {ctaLabel} <ArrowRight className="ml-1 h-4 w-4 shrink-0" />
             </Button>
           )}
         </div>

@@ -39,8 +39,21 @@ type Seller = {
   status: "pending" | "approved" | "rejected";
 };
 
+const RESERVED_SLUGS = new Set(["s","store","stores","admin","api","auth","cart","checkout","dashboard","login","register","sell","product","products","category","search","about","contact"]);
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 60);
+}
+function isBadSlug(input: string): boolean {
+  const low = input.toLowerCase();
+  return low.includes("http") || low.includes("wa.me") || low.includes("whatsapp") || low.includes("://") || low.includes("/") || low.length < 3 || RESERVED_SLUGS.has(low);
+}
+function buildSeoSlug(businessName: string, fallback?: string): string {
+  // Prefer business name; never derive from WhatsApp URL. Ensure 3-60 chars, SEO-friendly
+  let base = slugify(businessName);
+  if (!base || isBadSlug(base)) base = fallback ? slugify(fallback) : "";
+  if (!base || base.length < 3) base = `store-${Math.random().toString(36).slice(2, 6)}`;
+  if (RESERVED_SLUGS.has(base) || base.length < 3) base = `${base}-shop`;
+  return base.slice(0, 60);
 }
 
 function SellPage() {
@@ -74,8 +87,23 @@ function SellPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    // Never use WhatsApp URL as slug — always derive from business name
+    if (isBadSlug(slug) && slug) {
+      toast.error("Store URL can't be a link. Using your business name instead.");
+    }
+    const candidate = isBadSlug(slug) ? "" : slug;
+    const finalSlugBase = buildSeoSlug(businessName, candidate || slug);
+    // ensure uniqueness — if taken, append -2, -3
+    let finalSlug = finalSlugBase;
+    let counter = 2;
+    while (true) {
+      const { data: exists } = await supabase.from("sellers").select("id").eq("slug", finalSlug).maybeSingle();
+      if (!exists) break;
+      finalSlug = `${finalSlugBase}-${counter}`.slice(0, 60);
+      counter++;
+      if (counter > 20) break;
+    }
     setSubmitting(true);
-    const finalSlug = slug ? slugify(slug) : slugify(businessName);
     const { data, error } = await supabase
       .from("sellers")
       .insert({
@@ -88,9 +116,9 @@ function SellPage() {
       .select("id,business_name,slug,status")
       .single();
     setSubmitting(false);
-    if (error) return toast.error(error.message);
+    if (error) return toast.error(error.message.includes("duplicate") ? `URL /store/${finalSlug} taken, try another` : error.message);
     setSeller(data as Seller);
-    toast.success("Storefront submitted! We'll review it shortly.");
+    toast.success(`Storefront submitted! Your URL is /store/${finalSlug} — add products to get indexed.`);
   };
 
   if (loading || checking) {
@@ -140,8 +168,13 @@ function SellPage() {
             <Label htmlFor="sl">Storefront URL</Label>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">/store/</span>
-              <Input id="sl" required value={slug} onChange={(e) => setSlug(slugify(e.target.value))} />
+              <Input id="sl" required value={slug} onChange={(e) => {
+                const v = slugify(e.target.value);
+                if (v.includes("http") || v.includes("wa-me")) return; // block WhatsApp URLs
+                setSlug(v);
+              }} placeholder="e.g. skrii-treads" />
             </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">3–60 chars, letters/numbers/hyphens only. Derived from business name if left empty. This is your permanent SEO URL.</p>
           </div>
           <div>
             <Label htmlFor="desc">Short description</Label>

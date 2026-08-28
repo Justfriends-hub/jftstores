@@ -104,20 +104,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lawal's Marketplace — Many stores, one cart" },
-      { name: "description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
+      { title: "JFTStores — Nigeria's Marketplace for Independent Stores" },
+      { name: "description", content: "Nigeria's marketplace for independent stores — discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one cart. Built for Lagos, Abuja, Port Harcourt & nationwide." },
       { name: "author", content: "Lawal's Marketplace" },
-      { property: "og:title", content: "Lawal's Marketplace — Many stores, one cart" },
-      { property: "og:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
+      { property: "og:title", content: "JFTStores — Nigeria's Marketplace for Independent Stores" },
+      { property: "og:description", content: "Discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Lawal's Marketplace — Many stores, one cart" },
-      { name: "twitter:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
+      { name: "twitter:title", content: "JFTStores — Nigeria's Marketplace for Independent Stores" },
+      { name: "twitter:description", content: "Discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one place." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
-      { property: "og:site_name", content: "Lawal's Marketplace" },
+      { property: "og:site_name", content: "JFTStores — Lawal's Marketplace" },
       { property: "og:url", content: `${origin}/` },
-      { property: "og:locale", content: "en_US" },
+      { property: "og:locale", content: "en_NG" },
     ],
     scripts: [
       {
@@ -133,12 +133,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "Lawal's Marketplace",
-          alternateName: ["Lawals Marketplace", "Lawal Marketplace", "Lawal's Market", "Just Friends Store"],
+          name: "JFTStores — Lawal's Marketplace",
+          alternateName: ["Lawals Marketplace", "Lawal Marketplace", "Lawal's Market", "Just Friends Store", "JFTStores", "JFT Stores"],
           url: `${origin}/`,
           description:
-            "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart.",
-          inLanguage: "en",
+            "Nigeria's marketplace for independent stores — discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one cart.",
+          inLanguage: "en-NG",
           potentialAction: {
             "@type": "SearchAction",
             target: {
@@ -154,12 +154,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "Lawal's Marketplace",
+          name: "JFTStores — Lawal's Marketplace",
           alternateName: "Lawals Marketplace",
           url: `${origin}/`,
           logo: `${origin}/icon-512.png`,
           description:
-            "Online marketplace for independent Nigerian store owners to host storefronts, negotiate prices and sell in one shared cart.",
+            "Nigeria's marketplace for independent store owners — discover businesses, shop products from multiple stores, chat on WhatsApp, pay with Paystack, delivery nationwide.",
+          areaServed: { "@type": "Country", name: "Nigeria" },
+          slogan: "Many stores, one cart — with WhatsApp built in",
         }),
       },
     ],

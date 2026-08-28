@@ -33,24 +33,37 @@ async function buildSitemap(baseUrl: string): Promise<string> {
     { path: "/register", changefreq: "yearly", priority: "0.3" },
   ];
 
-  // Storefronts: only approved (published) sellers. Pending and suspended
-  // sellers are excluded automatically, so a store leaves the sitemap the
-  // moment an admin suspends it (the admin action also clears the cache).
+  // Storefronts: only approved sellers WITH at least one active product (no thin empty pages in sitemap)
   try {
-    const { data, error } = await supabase
-      .from("sellers")
-      .select("slug, status")
-      .eq("status", "approved")
-      .order("business_name", { ascending: true });
+    const { data: sellers, error } = await supabase.from("sellers").select("id, slug, status").eq("status", "approved");
     if (error) throw error;
-    for (const s of data ?? []) {
-      if (s.slug && s.status === "approved") {
-        entries.push({ path: `/store/${s.slug}`, changefreq: "weekly", priority: "0.7" });
-      }
+    const ids = (sellers ?? []).map((s: any) => s.id);
+    const productsBySeller = new Set<string>();
+    if (ids.length) {
+      const { data: prods } = await supabase.from("products").select("seller_id").eq("is_active", true).in("seller_id", ids);
+      for (const p of prods ?? []) productsBySeller.add((p as any).seller_id);
     }
-  } catch (err) {
-    console.error("[sitemap] storefront list unavailable", err);
-  }
+    for (const s of sellers ?? []) if (s.slug && s.status === "approved" && productsBySeller.has(s.id)) entries.push({ path: `/store/${s.slug}`, changefreq: "weekly", priority: "0.7" });
+  } catch (err) { console.error("[sitemap] storefront list unavailable", err); }
+
+  // PRODUCTS: biggest SEO surface — each product gets its own indexable URL
+  // Only active products from approved sellers. This is what makes ChatGPT find "buy X in Nigeria"
+  try {
+    const { data: sellers } = await supabase.from("sellers").select("id").eq("status", "approved");
+    const ids = (sellers ?? []).map((s: any) => s.id);
+    if (ids.length) {
+      const { data: products, error: pErr } = await supabase.from("products").select("id, updated_at").eq("is_active", true).in("seller_id", ids).order("updated_at", { ascending: false }).limit(5000);
+      if (pErr) throw pErr;
+      for (const p of products ?? []) entries.push({ path: `/product/${p.id}`, changefreq: "weekly", priority: "0.8" });
+    }
+  } catch (err) { console.error("[sitemap] product list unavailable", err); }
+
+  // CATEGORY dedicated SEO pages (preferred over query params for indexing)
+  const catSlugs = ["fashion-apparel","beauty-skincare","home-decor","food-drink","art-crafts","jewelry","kids-baby","wellness"];
+  for (const slug of catSlugs) entries.push({ path: `/category/${slug}`, changefreq: "weekly", priority: "0.7" });
+  // keep query variant as fallback but lower priority
+  const categories = ["Fashion & Apparel","Beauty & Skincare","Home & Decor","Food & Drink","Art & Crafts","Jewelry","Kids & Baby","Wellness"];
+  for (const c of categories) entries.push({ path: `/stores?category=${encodeURIComponent(c)}`, changefreq: "weekly", priority: "0.4" });
 
   const urls = entries.map((e) =>
     [

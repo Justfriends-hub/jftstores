@@ -89,10 +89,13 @@ export const Route = createFileRoute("/store/$slug")({
         })),
       },
     };
+    // CRITICAL: empty stores are thin content — noindex but follow so Google doesn't waste crawl on 60k empty pages
+    const isEmpty = products.length === 0;
     return {
       meta: [
         { title },
         { name: "description", content: desc },
+        ...(isEmpty ? [{ name: "robots", content: "noindex, follow" }] : []),
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "website" },
@@ -330,14 +333,13 @@ function ProductCard({ product, seller, theme, whatsapp }: { product: Product; s
       className="store-card overflow-hidden border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
       style={{ borderRadius: radius }}
     >
-      <div
-        className="aspect-square w-full bg-black/5"
+      <Link to="/product/$id" params={{ id: product.id }} className="block aspect-square w-full bg-black/5 hover:opacity-95"
         style={product.images?.[0] ? { backgroundImage: `url(${product.images[0]})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
       />
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="truncate text-base font-semibold">{product.name}</h3>
+            <Link to="/product/$id" params={{ id: product.id }} className="truncate text-base font-semibold hover:underline block">{product.name}</Link>
             {product.category && <div className="text-xs opacity-70">{product.category}</div>}
           </div>
           <div className="shrink-0 text-base font-semibold">₦{Number(product.price).toLocaleString()}</div>
