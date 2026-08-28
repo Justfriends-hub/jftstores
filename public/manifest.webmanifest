@@ -1,7 +1,7 @@
-{
-  "name": "Lawal's Marketplace",
-  "short_name": "Lawal's",
-  "description": "A marketplace for independent store owners. Browse stores, negotiate with sellers, and check out in one cart.",
+﻿{
+  "name": "JFT STORES — MARKETPLACE",
+  "short_name": "JFT STORES",
+  "description": "Highly recommended active marketplace for independent store owners. Join the active community — browse verified stores, chat on WhatsApp, and check out in one cart.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

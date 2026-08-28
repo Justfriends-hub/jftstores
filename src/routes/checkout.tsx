@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -16,11 +16,11 @@ import { NegotiateButton } from "@/components/chat/chat-drawer";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout — Lawal's Marketplace" },
-      { name: "description", content: "Securely pay for your order from independent sellers on Lawal's Marketplace." },
+      { title: "Checkout — JFT STORES — MARKETPLACE" },
+      { name: "description", content: "Securely pay for your order from independent sellers on JFT STORES — MARKETPLACE." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Checkout — Lawal's Marketplace" },
-      { property: "og:description", content: "Securely pay for your order from independent sellers on Lawal's Marketplace." },
+      { property: "og:title", content: "Checkout — JFT STORES — MARKETPLACE" },
+      { property: "og:description", content: "Securely pay for your order from independent sellers on JFT STORES — MARKETPLACE." },
     ],
   }),
   component: CheckoutPage,
@@ -164,7 +164,7 @@ function CheckoutPage() {
                             )}
                             {!negotiated && (
                               <div className="mt-1.5">
-                                <NegotiateButton sellerId={it.sellerId} productId={it.productId} className="h-8 text-xs px-3" label="Negotiate Price 💬" />
+                                <NegotiateButton sellerId={it.sellerId} productId={it.productId} className="h-8 text-xs px-3" label="Negotiate Price ðŸ’¬" />
                               </div>
                             )}
                           </div>
@@ -178,7 +178,7 @@ function CheckoutPage() {
                   </div>
                   {g.savings > 0 && (
                     <div className="mt-1 text-[11px] text-emerald-700 dark:text-emerald-400">
-                      You saved ₦{g.savings.toLocaleString()} here 🎉
+                      You saved ₦{g.savings.toLocaleString()} here ðŸŽ‰
                     </div>
                   )}
                 </div>
@@ -186,7 +186,7 @@ function CheckoutPage() {
             </div>
             {savings > 0 && (
               <div className="mt-3 text-xs text-emerald-700 dark:text-emerald-400 text-right">
-                Total savings: -₦{savings.toLocaleString()} 🎉
+                Total savings: -₦{savings.toLocaleString()} ðŸŽ‰
               </div>
             )}
             <div className="mt-2 flex items-baseline justify-between border-t border-border pt-3">

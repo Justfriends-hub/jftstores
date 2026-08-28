@@ -41,9 +41,9 @@ const steps: Step[] = [
     icon: <LayoutDashboard className="h-6 w-6" />,
     eyebrow: "Step 4 — Grow",
     title: "Dashboard: orders, messages, settings",
-    desc: "Admin approves you once, then you’re public and in the sitemap. Manage everything from /dashboard.",
+    desc: "Your store goes live instantly — join the highly recommended, active community and manage everything from /dashboard.",
     accent: "linear-gradient(135deg, oklch(0.88 0.12 250), oklch(0.92 0.10 85))",
-    bullet: ["Pending → approved → live", "Orders + fulfillment toggles", "Buyer messages with unread badges"],
+    bullet: ["Create → live instantly — highly recommended", "Orders + fulfillment toggles", "Buyer messages with unread badges"],
   },
 ];
 

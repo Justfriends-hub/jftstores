@@ -1,4 +1,4 @@
-/* Lawal's Marketplace — service worker
+﻿/* JFT STORES — MARKETPLACE — service worker
  * Implements:
  *  ✓ Push notification receiving
  *  ✓ Notification click handling
@@ -58,7 +58,7 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  let payload = { title: "Lawal's Marketplace", body: "You have a new update.", url: "/" };
+  let payload = { title: "JFT STORES — MARKETPLACE", body: "You have a new update.", url: "/" };
   try {
     if (event.data) payload = { ...payload, ...event.data.json() };
   } catch {

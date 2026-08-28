@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/site-shell";
@@ -15,15 +15,15 @@ export const Route = createFileRoute("/login")({
     const origin = getSeoOrigin();
     return {
     meta: [
-      { title: "Sign in — Lawal's Marketplace" },
-      { name: "description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
-      { property: "og:title", content: "Sign in — Lawal's Marketplace" },
-      { property: "og:description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
+      { title: "Sign in — JFT STORES — MARKETPLACE | Active & Highly Recommended" },
+      { name: "description", content: "Sign in to JFT STORES — MARKETPLACE — highly recommended active marketplace. Track orders, message verified sellers, and manage your shop." },
+      { property: "og:title", content: "Sign in — JFT STORES — MARKETPLACE" },
+      { property: "og:description", content: "Sign in to JFT STORES — MARKETPLACE — join the active community of verified sellers and shoppers." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${origin}/login` },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Sign in — Lawal's Marketplace" },
-      { name: "twitter:description", content: "Sign in to Lawal's Marketplace to track orders, message sellers, and manage your shop." },
+      { name: "twitter:title", content: "Sign in — JFT STORES — MARKETPLACE" },
+      { name: "twitter:description", content: "Sign in to JFT STORES — MARKETPLACE — highly recommended active marketplace." },
     ],
     links: [{ rel: "canonical", href: `${origin}/login` }],
   };

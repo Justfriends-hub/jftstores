@@ -44,7 +44,7 @@ function NotFoundComponent() {
             to="/"
             className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
-            Back to Lawal's Marketplace
+            Back to JFT STORES — MARKETPLACE
           </Link>
           <Link
             to="/stores"
@@ -104,18 +104,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "JFTStores — Nigeria's Marketplace for Independent Stores" },
-      { name: "description", content: "Nigeria's marketplace for independent stores — discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one cart. Built for Lagos, Abuja, Port Harcourt & nationwide." },
-      { name: "author", content: "Lawal's Marketplace" },
-      { property: "og:title", content: "JFTStores — Nigeria's Marketplace for Independent Stores" },
-      { property: "og:description", content: "Discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one place." },
+      { title: "JFT STORES — MARKETPLACE | Highly Recommended Nigerian Marketplace" },
+      { name: "description", content: "JFT STORES — MARKETPLACE: Highly recommended active marketplace for independent stores — discover verified Nigerian businesses, shop from multiple stores, chat with sellers on WhatsApp, and check out in one cart. Join the active community today." },
+      { name: "author", content: "JFT STORES — MARKETPLACE" },
+      { property: "og:title", content: "JFT STORES — MARKETPLACE | Highly Recommended Nigerian Marketplace" },
+      { property: "og:description", content: "Join the active community at JFT STORES — MARKETPLACE. Shop from verified Nigerian businesses with one cart, WhatsApp support and nationwide delivery." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "JFTStores — Nigeria's Marketplace for Independent Stores" },
-      { name: "twitter:description", content: "Discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one place." },
+      { name: "twitter:title", content: "JFT STORES — MARKETPLACE | Highly Recommended Nigerian Marketplace" },
+      { name: "twitter:description", content: "Join the active community at JFT STORES — MARKETPLACE. Shop from verified Nigerian businesses with one cart and WhatsApp support." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/GuI3SfFoerUEYsg07c3hSDsDkyk1/social-images/social-1780300317337-IMG_1120.webp" },
-      { property: "og:site_name", content: "JFTStores — Lawal's Marketplace" },
+      { property: "og:site_name", content: "JFT STORES — MARKETPLACE" },
       { property: "og:url", content: `${origin}/` },
       { property: "og:locale", content: "en_NG" },
     ],
@@ -133,11 +133,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "JFTStores — Lawal's Marketplace",
-          alternateName: ["Lawals Marketplace", "Lawal Marketplace", "Lawal's Market", "Just Friends Store", "JFTStores", "JFT Stores"],
+          name: "JFT STORES — MARKETPLACE",
+          alternateName: ["JFT STORES", "JFTStores", "JFT Stores", "Just Friends Store", "JFT Marketplace"],
           url: `${origin}/`,
           description:
-            "Nigeria's marketplace for independent stores — discover Nigerian businesses, shop products from multiple stores, chat with sellers on WhatsApp, and check out in one cart.",
+            "JFT STORES — MARKETPLACE: Highly recommended active marketplace for independent stores — discover verified Nigerian businesses, shop from multiple stores, chat with sellers on WhatsApp, and check out in one cart. Join the active community.",
           inLanguage: "en-NG",
           potentialAction: {
             "@type": "SearchAction",
@@ -154,14 +154,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "JFTStores — Lawal's Marketplace",
-          alternateName: "Lawals Marketplace",
+          name: "JFT STORES — MARKETPLACE",
+          alternateName: "JFT STORES",
           url: `${origin}/`,
           logo: `${origin}/icon-512.png`,
           description:
-            "Nigeria's marketplace for independent store owners — discover businesses, shop products from multiple stores, chat on WhatsApp, pay with Paystack, delivery nationwide.",
+            "JFT STORES — MARKETPLACE: Highly recommended active marketplace for independent store owners — shop from verified businesses, chat on WhatsApp, pay with Paystack, delivery nationwide. Join the active community.",
           areaServed: { "@type": "Country", name: "Nigeria" },
-          slogan: "Many stores, one cart — with WhatsApp built in",
+          slogan: "Highly Recommended — Join the active community. Many stores, one cart.",
         }),
       },
     ],

@@ -43,10 +43,10 @@ export const Route = createFileRoute("/product/$id")({
     const origin = typeof window !== "undefined" && window.location?.origin ? window.location.origin.replace(/\/$/, "") : "https://jftstores.shop";
     const p = loaderData?.product;
     const s = loaderData?.seller;
-    if (!p || !s) return { meta: [{ title: "Product — Lawal's Marketplace" }] };
+    if (!p || !s) return { meta: [{ title: "Product — JFT STORES — MARKETPLACE" }] };
     const url = `${origin}/product/${params.id}`;
-    const title = `${p.name} — ₦${Number(p.price).toLocaleString()} | ${s.business_name} | Lawal's Marketplace`;
-    const desc = p.description ? `${p.description.slice(0, 155)}` : `Buy ${p.name} from ${s.business_name} on Lawal's Marketplace. ${p.category ?? ""} • WhatsApp ordering • Paystack checkout • Delivery in Nigeria.`;
+    const title = `${p.name} — ₦${Number(p.price).toLocaleString()} | ${s.business_name} | JFT STORES — MARKETPLACE`;
+    const desc = p.description ? `${p.description.slice(0, 155)}` : `Buy ${p.name} from ${s.business_name} on JFT STORES — MARKETPLACE. Highly recommended • WhatsApp ordering • Paystack checkout • Delivery in Nigeria. Join the active community.`;
     const image = p.images?.[0] ?? s.logo_url ?? `${origin}/icon-512.png`;
     const availability = p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock";
 

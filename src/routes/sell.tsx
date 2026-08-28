@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/site-shell";
@@ -16,15 +16,15 @@ export const Route = createFileRoute("/sell")({
     const origin = getSeoOrigin();
     return {
     meta: [
-      { title: "Open your free shop — Lawal's Marketplace" },
-      { name: "description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
-      { property: "og:title", content: "Open your free shop — Lawal's Marketplace" },
-      { property: "og:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
+      { title: "Open your free shop — JFT STORES — MARKETPLACE | Highly Recommended" },
+      { name: "description", content: "Join the highly recommended active community at JFT STORES — MARKETPLACE. Create a free online storefront in minutes — fully live, verified and ready to sell. WhatsApp + Paystack built in." },
+      { property: "og:title", content: "Open your free shop — JFT STORES — MARKETPLACE | Highly Recommended" },
+      { property: "og:description", content: "Join the active community — open your free storefront on JFT STORES — MARKETPLACE. Live, verified and highly recommended." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${origin}/sell` },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Open your free shop — Lawal's Marketplace" },
-      { name: "twitter:description", content: "Create a free online storefront in minutes. Add products, share your link, and sell on WhatsApp with one cart and checkout." },
+      { name: "twitter:title", content: "Open your free shop — JFT STORES — MARKETPLACE" },
+      { name: "twitter:description", content: "Join the highly recommended active marketplace — open your free shop on JFT STORES — MARKETPLACE." },
     ],
     links: [{ rel: "canonical", href: `${origin}/sell` }],
   };
@@ -174,7 +174,7 @@ function SellPage() {
                 setSlug(v);
               }} placeholder="e.g. skrii-treads" />
             </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">3–60 chars, letters/numbers/hyphens only. Derived from business name if left empty. This is your permanent SEO URL.</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">3â€“60 chars, letters/numbers/hyphens only. Derived from business name if left empty. This is your permanent SEO URL.</p>
           </div>
           <div>
             <Label htmlFor="desc">Short description</Label>

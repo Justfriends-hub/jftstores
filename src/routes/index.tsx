@@ -14,15 +14,15 @@ export const Route = createFileRoute("/")({
     const origin = getSeoOrigin();
     return {
     meta: [
-      { title: "Lawal's Marketplace — Many stores, one cart" },
-      { name: "description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
-      { property: "og:title", content: "Lawal's Marketplace — Many stores, one cart" },
-      { property: "og:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
+      { title: "JFT STORES — MARKETPLACE — Many stores, one cart | Highly Recommended" },
+      { name: "description", content: "JFT STORES — MARKETPLACE is a highly recommended active marketplace. Browse verified independent stores, negotiate with sellers, and check out in one cart. Join the active community and shop today." },
+      { property: "og:title", content: "JFT STORES — MARKETPLACE — Many stores, one cart | Highly Recommended" },
+      { property: "og:description", content: "Join the active community at JFT STORES — MARKETPLACE. Shop from verified independent stores and check out in one cart. Highly recommended, fully active and live." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${origin}/` },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Lawal's Marketplace — Many stores, one cart" },
-      { name: "twitter:description", content: "A marketplace where independent store owners host their own storefronts. Browse stores, negotiate with sellers, and check out in one cart." },
+      { name: "twitter:title", content: "JFT STORES — MARKETPLACE — Many stores, one cart | Highly Recommended" },
+      { name: "twitter:description", content: "Join the active community at JFT STORES — MARKETPLACE. Shop from verified independent stores and check out in one cart." },
     ],
     links: [{ rel: "canonical", href: `${origin}/` }],
   };
@@ -58,7 +58,7 @@ function HomePage() {
               A marketplace for independent store owners
             </span>
             <h1 className="mt-5 font-serif text-4xl leading-tight text-balance text-foreground sm:text-5xl md:text-6xl">
-              Lawal's Marketplace — shop small. <span className="text-[var(--terracotta)]">Live warm.</span>
+              JFT STORES — MARKETPLACE — shop small. <span className="text-[var(--terracotta)]">Live warm.</span>
             </h1>
 
             <p className="mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
@@ -204,14 +204,20 @@ function HomePage() {
 
 function EmptyMakersCallout() {
   return (
-    <div className="rounded-3xl border border-dashed border-border bg-card p-10 text-center">
-      <h3 className="font-serif text-xl">The makers are warming up</h3>
+    <div className="rounded-3xl border border-border bg-card p-10 text-center shadow-sm">
+      <div className="mx-auto w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-200">● Active & Live — Highly Recommended</div>
+      <h3 className="mt-3 font-serif text-xl">Join our active community</h3>
       <p className="mt-2 text-sm text-muted-foreground">
-        Shops are being approved as we speak. Be one of the first to open yours.
+        JFT STORES — MARKETPLACE is fully functional and active. Shop from verified live stores today, or open your own free shop and start selling instantly.
       </p>
-      <Button asChild className="mt-5 rounded-full">
-        <Link to="/sell">Open your free shop</Link>
-      </Button>
+      <div className="mt-5 flex flex-wrap justify-center gap-3">
+        <Button asChild className="rounded-full">
+          <Link to="/stores">Shop live stores</Link>
+        </Button>
+        <Button asChild variant="outline" className="rounded-full">
+          <Link to="/sell">Open your free shop</Link>
+        </Button>
+      </div>
     </div>
   );
 }

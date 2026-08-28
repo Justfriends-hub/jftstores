@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/admin/")({
   head: () => ({
     meta: [
       { title: "Overview — Admin" },
-      { name: "description", content: "Admin command center for Lawal's Marketplace: live visits, stores, orders and revenue at a glance." },
+      { name: "description", content: "Admin command center for JFT STORES — MARKETPLACE: live visits, stores, orders and revenue at a glance." },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -123,7 +123,7 @@ function OverviewPage() {
       feed.push({ type: "signup", text: `New signup: ${u.full_name || u.email}`, at: u.created_at }),
     );
     (recentOrders ?? []).forEach((o) =>
-      feed.push({ type: "order", text: `Order €${Number(o.total_amount).toFixed(2)} by ${o.customer_email}`, at: o.created_at }),
+      feed.push({ type: "order", text: `Order â‚¬${Number(o.total_amount).toFixed(2)} by ${o.customer_email}`, at: o.created_at }),
     );
     (recentVisits ?? []).forEach((v) =>
       feed.push({
@@ -165,11 +165,11 @@ function OverviewPage() {
         <Stat label="Registered users" value={kpis.users.toLocaleString()} />
         <Stat label="Active stores" value={kpis.stores.toLocaleString()} />
         <Stat label="Orders placed" value={kpis.orders.toLocaleString()} />
-        <Stat label="Revenue processed" value={`€${kpis.revenue.toFixed(2)}`} />
+        <Stat label="Revenue processed" value={`â‚¬${kpis.revenue.toFixed(2)}`} />
         <Stat
           label="Top selling store"
           value={kpis.topStore?.name ?? "—"}
-          sub={kpis.topStore ? `€${kpis.topStore.revenue.toFixed(2)}` : undefined}
+          sub={kpis.topStore ? `â‚¬${kpis.topStore.revenue.toFixed(2)}` : undefined}
         />
         <Stat
           label="Most visited today"

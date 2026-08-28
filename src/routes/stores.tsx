@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { PageShell } from "@/components/site-shell";
@@ -18,15 +18,15 @@ export const Route = createFileRoute("/stores")({
     const origin = getSeoOrigin();
     return {
     meta: [
-      { title: "Browse stores — Lawal's Marketplace" },
-      { name: "description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
-      { property: "og:title", content: "Browse stores — Lawal's Marketplace" },
-      { property: "og:description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
+      { title: "Browse stores — JFT STORES — MARKETPLACE | Highly Recommended & Active" },
+      { name: "description", content: "Join the active community at JFT STORES — MARKETPLACE — highly recommended. Browse verified independent shops by category: fashion, food, beauty, jewelry and more. Fully live and ready to shop." },
+      { property: "og:title", content: "Browse stores — JFT STORES — MARKETPLACE | Highly Recommended & Active" },
+      { property: "og:description", content: "Join the active community — shop verified live stores on JFT STORES — MARKETPLACE. Fashion, food, beauty, jewelry and more — highly recommended marketplace, fully functional." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${origin}/stores` },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Browse stores — Lawal's Marketplace" },
-      { name: "twitter:description", content: "Browse independent shops by category on Lawal's Marketplace: fashion, food, beauty, jewelry and more." },
+      { name: "twitter:title", content: "Browse stores — JFT STORES — MARKETPLACE" },
+      { name: "twitter:description", content: "Join the active community — shop verified live stores on JFT STORES — MARKETPLACE." },
     ],
     links: [{ rel: "canonical", href: `${origin}/stores` }],
   };
@@ -62,7 +62,8 @@ function StoresPage() {
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
           <h1 className="font-serif text-3xl sm:text-4xl">Browse stores</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Independent makers, hand-picked and approved. Tap any shop to enter their world.
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 ring-1 ring-green-200">● Active & Live — Highly Recommended</span>{" "}
+            Join the active community — shop from verified independent sellers. Tap any shop to enter their world.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2">
@@ -97,10 +98,11 @@ function StoresPage() {
             ))}
           </div>
         ) : !stores || stores.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-border bg-card p-12 text-center">
-            <h3 className="font-serif text-xl">No shops match yet</h3>
+          <div className="rounded-3xl border border-border bg-card p-12 text-center shadow-sm">
+            <div className="mx-auto w-fit rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-200">● Live & Verified — Highly Recommended</div>
+            <h3 className="mt-3 font-serif text-xl">No shops match yet</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              {q || category ? "Try clearing your filters." : "Check back soon — new makers join every week."}
+              {q || category ? "Try clearing your filters." : "JFT STORES — MARKETPLACE is fully active — explore live stores, or join the community and open your shop today."}
             </p>
           </div>
         ) : (

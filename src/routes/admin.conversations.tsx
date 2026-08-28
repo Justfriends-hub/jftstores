@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/admin/conversations")({
   head: () => ({
     meta: [
       { title: "Conversations — Admin" },
-      { name: "description", content: "Admin oversight of buyer and seller negotiation conversations on Lawal's Marketplace, with flagging and status controls." },
+      { name: "description", content: "Admin oversight of buyer and seller negotiation conversations on JFT STORES — MARKETPLACE, with flagging and status controls." },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -131,7 +131,7 @@ function AdminConversationsPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-medium truncate">{r.sellers?.business_name ?? "Store"}</span>
-                  <span className="text-muted-foreground">↔</span>
+                  <span className="text-muted-foreground">â†”</span>
                   <span className="truncate">{r.profiles?.full_name || r.profiles?.email || "Customer"}</span>
                   <Badge variant="secondary" className="capitalize">{r.status.replace("_", " ")}</Badge>
                   {r.flagged && <Badge variant="destructive">Flagged</Badge>}

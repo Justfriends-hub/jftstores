@@ -44,8 +44,8 @@ export const Route = createFileRoute("/store/$slug")({
     const origin = typeof window !== "undefined" && window.location?.origin ? window.location.origin.replace(/\/$/, "") : "https://jftstores.shop";
     const url = `${origin}/store/${params.slug}`;
     const name = loaderData?.seller.business_name ?? "Store";
-    const title = `${name} — Lawal's Marketplace`;
-    const desc = loaderData?.seller.description ?? `Shop ${name} on Lawal's Marketplace.`;
+    const title = `${name} — JFT STORES — MARKETPLACE | Highly Recommended`;
+    const desc = loaderData?.seller.description ?? `Shop ${name} on JFT STORES — MARKETPLACE — highly recommended active marketplace. Join the community and shop now.`;
     const image = loaderData?.seller.banner_url ?? loaderData?.seller.logo_url ?? null;
     const products = loaderData?.products ?? [];
     const theme = loaderData?.seller.themes?.slug ?? null;
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/store/$slug")({
       url,
       ...(image ? { primaryImageOfPage: image } : {}),
       ...(theme ? { cssSelector: `.store-theme-${theme}` } : {}),
-      isPartOf: { "@type": "WebSite", name: "Lawal's Marketplace", url: origin },
+      isPartOf: { "@type": "WebSite", name: "JFT STORES — MARKETPLACE", url: origin },
       about: {
         "@type": "Store",
         name,
@@ -130,7 +130,7 @@ export const Route = createFileRoute("/store/$slug")({
           <meta name="robots" content="noindex, nofollow" />
           <h1 className="font-serif text-3xl">This shop isn't here</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            The AI may have hallucinated this URL. This shop doesn't exist or isn't approved yet. Try these instead — they are live, approved, and in the sitemap.
+            The AI may have hallucinated this URL. This shop doesn't exist. Try these instead — they are live, verified and active in our marketplace.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Button asChild className="rounded-full"><Link to="/stores">Browse live shops</Link></Button>

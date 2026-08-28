@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, ArrowRight } from "lucide-react";
@@ -10,10 +10,10 @@ export const Route = createFileRoute("/checkout/success")({
   validateSearch: (s: Record<string, unknown>) => ({ order: typeof s.order === "string" ? s.order : "" }),
   head: () => ({
     meta: [
-      { title: "Order confirmed — Lawal's Marketplace" },
+      { title: "Order confirmed — JFT STORES — MARKETPLACE" },
       { name: "description", content: "Your order is confirmed. See your order summary and seller details." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Order confirmed — Lawal's Marketplace" },
+      { property: "og:title", content: "Order confirmed — JFT STORES — MARKETPLACE" },
       { property: "og:description", content: "Your order is confirmed. See your order summary and seller details." },
     ],
   }),

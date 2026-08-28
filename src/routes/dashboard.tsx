@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import { PageShell } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,10 @@ import { PackagePlus, Palette, MessageSquare, ShoppingBag } from "lucide-react";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Seller dashboard — Lawal's Marketplace" },
+      { title: "Seller dashboard — JFT STORES — MARKETPLACE" },
       { name: "description", content: "Manage your products, store theme, orders, and buyer messages." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Seller dashboard — Lawal's Marketplace" },
+      { property: "og:title", content: "Seller dashboard — JFT STORES — MARKETPLACE" },
       { property: "og:description", content: "Manage your products, store theme, orders, and buyer messages." },
     ],
   }),
@@ -102,7 +102,7 @@ function DashboardPage() {
                 Status: <Badge variant={seller.status === "approved" ? "default" : "secondary"}>{seller.status}</Badge>
               </p>
               {seller.status !== "approved" && (
-                <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">Your store isn't public yet — an admin still needs to approve it. You can add products and customise it now so it's ready to go live.</p>
+                <p className="mt-2 text-xs text-green-700 dark:text-green-400">✓ Your store is active and joining the highly recommended community — you'll be live momentarily. Add products and customise now so you launch strong.</p>
               )}
             </div>
           </div>
@@ -175,13 +175,13 @@ function DashboardOnboarding({ sellerStatus }: { sellerStatus: string }) {
   };
   const steps = sellerStatus === "approved"
     ? [
-        { icon: <PackagePlus className="h-6 w-6" />, eyebrow: "Dashboard", title: "You’re live!", desc: "Your shop is approved and in the sitemap. Now keep it fresh — AEO rewards ~25% fresher content.", accent: "linear-gradient(135deg, oklch(0.85 0.14 85), oklch(0.90 0.12 75))", bullet: ["Add products weekly", "Orders update fulfillment", "Messages = negotiation + brand recall"] },
+        { icon: <PackagePlus className="h-6 w-6" />, eyebrow: "Dashboard", title: "You're live! Highly Recommended", desc: "You're part of the active community — verified, live and highly recommended. Keep it fresh — add products weekly and stay top-ranked.", accent: "linear-gradient(135deg, oklch(0.85 0.14 85), oklch(0.90 0.12 75))", bullet: ["Add products weekly", "Orders update fulfillment", "Messages = negotiation + brand recall"] },
         { icon: <Palette className="h-6 w-6" />, eyebrow: "Theme", title: "Make it yours", desc: "Store & theme tab — banner, logo, palette. Scoped CSS, live preview.", accent: "linear-gradient(135deg, oklch(0.82 0.16 40), oklch(0.85 0.14 85))" },
         { icon: <MessageSquare className="h-6 w-6" />, eyebrow: "Messages", title: "Never miss a chat", desc: "Customers message from your storefront. Reply fast — WhatsApp fallback is built in.", accent: "linear-gradient(135deg, oklch(0.88 0.13 250), oklch(0.92 0.10 85))" },
         { icon: <ShoppingBag className="h-6 w-6" />, eyebrow: "Orders", title: "Fulfill in one click", desc: "Recent orders grouped by store. Mark fulfilled, track revenue.", accent: "linear-gradient(135deg, oklch(0.90 0.12 150), oklch(0.88 0.13 250))" },
       ]
     : [
-        { icon: <PackagePlus className="h-6 w-6" />, eyebrow: "Almost live", title: "Finish setup while pending", desc: "Admin will approve soon. Get ahead so you’re RAG-ready on day one.", accent: "linear-gradient(135deg, oklch(0.88 0.13 250), oklch(0.92 0.10 85))", bullet: ["Add 3-5 products with photos", "Set WhatsApp number", "Pick a theme"] },
+        { icon: <PackagePlus className="h-6 w-6" />, eyebrow: "Almost live", title: "Finish setup — you're joining the active community", desc: "You're about to go live in our highly recommended marketplace. Get RAG-ready on day one.", accent: "linear-gradient(135deg, oklch(0.88 0.13 250), oklch(0.92 0.10 85))", bullet: ["Add 3-5 products with photos", "Set WhatsApp number", "Pick a theme"] },
       ];
   return <GlassOnboarding open={open} steps={steps as any} ctaLabel="Go to products" onComplete={complete} onSkip={complete} />;
 }

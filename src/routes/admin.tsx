@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { useAuth } from "@/lib/auth";
@@ -6,10 +6,10 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Admin — Lawal's Marketplace" },
+      { title: "Admin — JFT STORES — MARKETPLACE" },
       { name: "description", content: "Internal admin command center for users, stores, orders, and analytics." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Admin — Lawal's Marketplace" },
+      { property: "og:title", content: "Admin — JFT STORES — MARKETPLACE" },
       { property: "og:description", content: "Internal admin command center for users, stores, orders, and analytics." },
     ],
   }),

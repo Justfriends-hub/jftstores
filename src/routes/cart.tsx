@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2, MessageCircle, ArrowRight } from "lucide-react";
 import { PageShell } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,10 @@ import { NegotiateButton } from "@/components/chat/chat-drawer";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: "Your cart — Lawal's Marketplace" },
+      { title: "Your cart — JFT STORES — MARKETPLACE" },
       { name: "description", content: "Review your selections from independent shops and check out in one place." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Your cart — Lawal's Marketplace" },
+      { property: "og:title", content: "Your cart — JFT STORES — MARKETPLACE" },
       { property: "og:description", content: "Review your selections from independent shops and check out in one place." },
     ],
   }),
@@ -101,7 +101,7 @@ function CartPage() {
                             </div>
                             {!negotiated && (
                               <div className="mt-2">
-                                <NegotiateButton sellerId={it.sellerId} productId={it.productId} className="h-8 text-xs" label="Negotiate Price 💬" />
+                                <NegotiateButton sellerId={it.sellerId} productId={it.productId} className="h-8 text-xs" label="Negotiate Price ðŸ’¬" />
                               </div>
                             )}
                           </div>

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { PageShell } from "@/components/site-shell";
@@ -15,11 +15,11 @@ import { ConversationFilters, type ConversationFilter } from "@/components/chat/
 export const Route = createFileRoute("/messages")({
   head: () => ({
     meta: [
-      { title: "Messages — Lawal's Marketplace" },
-      { name: "description", content: "Your conversations and price negotiations with sellers on Lawal's Marketplace." },
+      { title: "Messages — JFT STORES — MARKETPLACE" },
+      { name: "description", content: "Your conversations and price negotiations with sellers on JFT STORES — MARKETPLACE." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Messages — Lawal's Marketplace" },
-      { property: "og:description", content: "Your conversations and price negotiations with sellers on Lawal's Marketplace." },
+      { property: "og:title", content: "Messages — JFT STORES — MARKETPLACE" },
+      { property: "og:description", content: "Your conversations and price negotiations with sellers on JFT STORES — MARKETPLACE." },
     ],
   }),
   component: MessagesPage,

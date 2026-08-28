@@ -17,7 +17,7 @@ const steps: Step[] = [
     icon: <Search className="h-6 w-6" />,
     eyebrow: "Step 1 — Browse",
     title: "Find shops you’ll love",
-    desc: "Filter by Fashion, Beauty, Home, Food, Art, Jewelry and more. Featured shops are hand-picked and approved.",
+    desc: "Filter by Fashion, Beauty, Home, Food, Art, Jewelry and more. Featured shops are live, verified and highly recommended — our active community's best.",
     accent: "linear-gradient(135deg, oklch(0.88 0.14 250), oklch(0.78 0.12 240))",
     bullet: ["Try categories on the home grid", "Use search in the header", "Tap any card to enter a world"],
   },

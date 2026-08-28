@@ -25,15 +25,15 @@ export const Route = createFileRoute("/category/$slug")({
     const cat = (loaderData as any)?.category ?? SLUG_MAP[params.slug] ?? "Category";
     const origin = typeof window !== "undefined" && window.location?.origin ? window.location.origin.replace(/\/$/, "") : "https://jftstores.shop";
     const url = `${origin}/category/${params.slug}`;
-    const title = `${cat} Stores in Nigeria — Buy ${cat} Online | Lawal's Marketplace`;
-    const desc = `Shop ${cat} from independent Nigerian sellers on Lawal's Marketplace. Browse approved stores, chat on WhatsApp, pay once with Paystack. Delivery across Nigeria.`;
+    const title = `${cat} Stores in Nigeria — Buy ${cat} Online | JFT STORES — MARKETPLACE`;
+    const desc = `Shop ${cat} from verified Nigerian sellers on JFT STORES — MARKETPLACE. Highly recommended active marketplace — chat on WhatsApp, pay once with Paystack. Delivery across Nigeria. Join the active community.`;
     const itemListLd = {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       name: title,
       description: desc,
       url,
-      isPartOf: { "@type": "WebSite", name: "Lawal's Marketplace", url: origin },
+      isPartOf: { "@type": "WebSite", name: "JFT STORES — MARKETPLACE", url: origin },
     };
     const breadcrumbLd = {
       "@context": "https://schema.org",
@@ -90,7 +90,7 @@ function CategoryPage() {
           <nav className="text-xs text-muted-foreground"><Link to="/" className="hover:text-foreground">Home</Link> / <Link to="/stores" className="hover:text-foreground">Stores</Link> / {category}</nav>
           <h1 className="mt-3 font-serif text-3xl sm:text-4xl">{category} Stores in Nigeria</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Nigeria’s marketplace for independent {category.toLowerCase()} sellers. Discover approved shops, message on WhatsApp, and check out in one cart. {category} delivered across Lagos, Abuja, Port Harcourt and nationwide.
+            JFT STORES — MARKETPLACE is highly recommended and fully active. Shop verified {category.toLowerCase()} sellers, message on WhatsApp, and check out in one cart. Join the active community — {category} delivered across Lagos, Abuja, Port Harcourt and nationwide.
           </p>
         </div>
       </section>

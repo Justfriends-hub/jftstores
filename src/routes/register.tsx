@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+﻿import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/site-shell";
@@ -15,15 +15,15 @@ export const Route = createFileRoute("/register")({
     const origin = getSeoOrigin();
     return {
     meta: [
-      { title: "Create your account — Lawal's Marketplace" },
-      { name: "description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
-      { property: "og:title", content: "Create your account — Lawal's Marketplace" },
-      { property: "og:description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
+      { title: "Create your account — JFT STORES — MARKETPLACE | Highly Recommended" },
+      { name: "description", content: "Join the highly recommended active community at JFT STORES — MARKETPLACE. Shop from verified independent sellers or open your own free storefront — fully live and ready." },
+      { property: "og:title", content: "Create your account — JFT STORES — MARKETPLACE | Highly Recommended" },
+      { property: "og:description", content: "Join the highly recommended active community at JFT STORES — MARKETPLACE — shop from verified sellers or open your free storefront." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${origin}/register` },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Create your account — Lawal's Marketplace" },
-      { name: "twitter:description", content: "Join Lawal's Marketplace to shop from independent sellers or open your own free storefront." },
+      { name: "twitter:title", content: "Create your account — JFT STORES — MARKETPLACE" },
+      { name: "twitter:description", content: "Join the active community at JFT STORES — MARKETPLACE — highly recommended." },
     ],
     links: [{ rel: "canonical", href: `${origin}/register` }],
   };
@@ -117,9 +117,9 @@ function RegisterPage() {
   return (
     <PageShell>
       <section className="mx-auto max-w-md px-4 py-16 sm:px-6">
-        <h1 className="font-serif text-3xl">Join Lawal's Marketplace</h1>
+        <h1 className="font-serif text-3xl">Join JFT STORES — MARKETPLACE</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          One free account to shop and (if you want) to open your own storefront.
+          Highly recommended — join the active community. One free account to shop from live verified stores and open your own storefront.
         </p>
 
         <Button onClick={onGoogle} variant="outline" className="mt-6 w-full rounded-full">

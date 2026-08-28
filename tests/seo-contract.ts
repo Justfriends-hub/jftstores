@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Expected SEO contract for every core route.
  *
  * Used by tests/seo.test.ts and by `bun run seo:check` (scripts/seo-check.ts),
@@ -21,7 +21,7 @@ export type RouteExpectation = {
 };
 
 export const CORE_ROUTES: RouteExpectation[] = [
-  { path: "/", canonical: "/", noindex: false, titleIncludes: "Lawal's Marketplace" },
+  { path: "/", canonical: "/", noindex: false, titleIncludes: "JFT STORES — MARKETPLACE" },
   { path: "/stores", canonical: "/stores", noindex: false, titleIncludes: "Browse stores" },
   { path: "/sell", canonical: "/sell", noindex: false, titleIncludes: "free shop" },
   { path: "/login", canonical: "/login", noindex: false, titleIncludes: "Sign in" },

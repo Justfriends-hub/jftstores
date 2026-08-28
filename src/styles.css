@@ -1,11 +1,11 @@
-@import "tailwindcss" source(none);
+﻿@import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Lawal's Marketplace — warm marketplace palette.
+ * JFT STORES — MARKETPLACE — warm marketplace palette.
  * Brand tokens: sun gold, ocean blue, warm white, terracotta accent.
  * All colors in oklch.
  */

@@ -29,6 +29,9 @@ import { Route as AdminStoresRouteImport } from './routes/admin.stores'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as StoreSlugRouteImport } from './routes/store.$slug'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as AuthHandoffRouteImport } from './routes/auth.handoff'
 import { Route as AdminStoresIdRouteImport } from './routes/admin.stores.$id'
 import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
 
@@ -127,6 +130,21 @@ const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
   path: '/success',
   getParentRoute: () => CheckoutRoute,
 } as any)
+const ProductIdRoute = ProductIdRouteImport.update({
+  id: '/product/$id',
+  path: '/product/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthHandoffRoute = AuthHandoffRouteImport.update({
+  id: '/auth/handoff',
+  path: '/auth/handoff',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoreSlugRoute = StoreSlugRouteImport.update({
   id: '/store/$slug',
   path: '/store/$slug',
@@ -155,6 +173,9 @@ export interface FileRoutesByFullPath {
   '/sell': typeof SellRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/stores': typeof StoresRoute
+  '/auth/handoff': typeof AuthHandoffRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/product/$id': typeof ProductIdRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/broadcasts': typeof AdminBroadcastsRoute
   '/admin/conversations': typeof AdminConversationsRoute

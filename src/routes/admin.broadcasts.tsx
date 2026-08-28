@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/admin/broadcasts")({
   head: () => ({
     meta: [
       { title: "Broadcasts — Admin" },
-      { name: "description", content: "Admin broadcast center for Lawal's Marketplace: send targeted push and in-app notifications to customers and store owners." },
+      { name: "description", content: "Admin broadcast center for JFT STORES — MARKETPLACE: send targeted push and in-app notifications to customers and store owners." },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -98,7 +98,7 @@ function BroadcastsPage() {
         <CardContent className="p-5 space-y-4">
           <div>
             <Label>Title</Label>
-            <Input value={form.title} maxLength={120} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="🎉 New summer collection just dropped" />
+            <Input value={form.title} maxLength={120} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="ðŸŽ‰ New summer collection just dropped" />
           </div>
           <div>
             <Label>Message</Label>

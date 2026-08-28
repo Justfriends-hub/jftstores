@@ -1,4 +1,4 @@
-# AI Access — Lawal's Marketplace
+﻿# AI Access — JFT STORES — MARKETPLACE
 # See /llms.txt for full topic map. This file confirms RAG access.
 
 User-agent: *

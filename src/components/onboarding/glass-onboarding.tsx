@@ -71,7 +71,7 @@ export function GlassOnboarding({
         {/* header */}
         <div className="relative flex items-center justify-between px-6 pt-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/60 px-3 py-1 text-[11px] font-semibold tracking-widest uppercase text-foreground/70 backdrop-blur">
-            <Sparkles className="h-3 w-3 text-[var(--terracotta)]" /> Lawal&apos;s Marketplace
+            <Sparkles className="h-3 w-3 text-[var(--terracotta)]" /> JFT STORES — MARKETPLACE
           </span>
           <button
             onClick={onSkip}
